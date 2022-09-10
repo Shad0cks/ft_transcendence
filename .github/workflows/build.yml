@@ -30,9 +30,10 @@ jobs:
       - name: Install dependencies
         run: |
           cd ui/
-          npm i -g rimraf
           npm install
         env:
           CI: true
       - name: Generate build
-        run: npm run build
+        run: |
+          cd ui/
+          npm run build
