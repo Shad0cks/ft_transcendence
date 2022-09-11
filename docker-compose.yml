@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
 
   back:
@@ -27,7 +27,6 @@ services:
       dockerfile: ../docker/front.Dockerfile
     ports:
       - 3000:3000
-
 
 volumes:
   db:
