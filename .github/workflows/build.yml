@@ -54,7 +54,10 @@ jobs:
           node-version: 18.x
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          cd ui/
+          npm install
         env:
           CI: true
 
