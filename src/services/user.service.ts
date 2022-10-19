@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,6 +15,7 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+
   async createUser(userDTO: UserDTO, login42: string): Promise<void> {
     const user = new User();
 
@@ -32,5 +34,22 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  async editNickname(id: string, nickname: string): Promise<void> {
+    if (!nickname) {
+      throw new BadRequestException('Nickname is missing');
+    }
+    const result = await this.userRepository
+      .createQueryBuilder()
+      .update({
+        nickname,
+      })
+      .where({
+        id: id,
+      })
+      .returning('*')
+      .execute();
+    return result.raw[0];
   }
 }

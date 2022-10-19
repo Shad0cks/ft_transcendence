@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { UserDTO } from 'src/dto/user.dto';
 import { UserService } from '../services/user.service';
 
@@ -13,5 +13,13 @@ export class UserController {
     const login42 = 'gartaud';
 
     await this.userService.createUser(userDTO, login42);
+  }
+
+  @Put(':id/nickname')
+  async editNicknameAction(
+    @Param('id') id: string,
+    @Body() userDTO: UserDTO,
+  ): Promise<void> {
+    return await this.userService.editNickname(id, userDTO.nickname);
   }
 }
