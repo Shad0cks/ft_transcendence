@@ -22,4 +22,12 @@ export class UserController {
   ): Promise<void> {
     return await this.userService.editNickname(id, userDTO.nickname);
   }
+
+  @Put(':id/avatar')
+  async editAvatarAction(
+    @Param('id') id: string,
+    @Body() userDTO: UserDTO,
+  ): Promise<void> {
+    return await this.userService.editAvatar(id, userDTO.avatar);
+  }
 }

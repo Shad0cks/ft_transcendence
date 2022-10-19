@@ -59,4 +59,20 @@ export class UserService {
       }
     }
   }
+
+  async editAvatar(id: string, avatar: string): Promise<void> {
+    if (!avatar) {
+      throw new BadRequestException('Avatar is missing');
+    }
+    await this.userRepository
+      .createQueryBuilder()
+      .update({
+        avatar,
+      })
+      .where({
+        id: id,
+      })
+      .returning('*')
+      .execute();
+  }
 }
