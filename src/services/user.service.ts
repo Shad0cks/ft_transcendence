@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDTO } from 'src/dto/user.dto';
@@ -34,6 +35,16 @@ export class UserService {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  async findOne(id: string): Promise<UserDTO> {
+    const user = await this.userRepository.findOneBy({
+      id: parseInt(id),
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   async editNickname(id: string, nickname: string): Promise<void> {
