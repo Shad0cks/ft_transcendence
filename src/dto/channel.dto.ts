@@ -1,5 +1,5 @@
 export class ChannelDTO {
   name: string;
-  isPublic: boolean;
+  restriction: string;
   password: string;
 }

@@ -9,7 +9,7 @@ export class Channel {
   name: string;
 
   @Column()
-  isPublic: boolean;
+  restriction: string;
 
   @Column()
   password: string;

@@ -11,11 +11,17 @@ export class ChatService {
     @InjectRepository(Channel)
     private channelRepository: Repository<Channel>,
   ) {}
+
+  async findAll(): Promise<Channel[]> {
+    const allChannels = await this.channelRepository.find();
+    return allChannels;
+  }
+
   async createChannel(channelDTO: ChannelDTO): Promise<void> {
     const channel = new Channel();
 
     channel.name = channelDTO.name;
-    channel.isPublic = channelDTO.isPublic;
+    channel.restriction = channelDTO.restriction;
     channel.password = await bcrypt.hash(channelDTO.password, 10);
     await this.channelRepository.save(channel);
   }
