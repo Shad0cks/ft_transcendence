@@ -11,6 +11,6 @@ export class Channel {
   @Column()
   restriction: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 }
