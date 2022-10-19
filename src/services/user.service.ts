@@ -28,8 +28,8 @@ export class UserService {
       await this.userRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        // duplicate login42
-        throw new ConflictException('login42 already exists');
+        // duplicate login42 or nickname
+        throw new ConflictException('login42 or nickname already exists');
       } else {
         throw new InternalServerErrorException();
       }
@@ -40,16 +40,23 @@ export class UserService {
     if (!nickname) {
       throw new BadRequestException('Nickname is missing');
     }
-    const result = await this.userRepository
-      .createQueryBuilder()
-      .update({
-        nickname,
-      })
-      .where({
-        id: id,
-      })
-      .returning('*')
-      .execute();
-    return result.raw[0];
+    try {
+      const result = await this.userRepository
+        .createQueryBuilder()
+        .update({
+          nickname,
+        })
+        .where({
+          id: id,
+        })
+        .returning('*')
+        .execute();
+      return result.raw[0];
+    } catch (error) {
+      if (error.code === '23505') {
+        // duplicate nickname
+        throw new ConflictException('Nickname already exists');
+      }
+    }
   }
 }
