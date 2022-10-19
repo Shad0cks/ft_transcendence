@@ -14,19 +14,12 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
-  async createUser(userDTO: UserDTO): Promise<void> {
+  async createUser(userDTO: UserDTO, login42: string): Promise<void> {
     const user = new User();
 
-    user.login42 = userDTO.login42;
+    user.login42 = login42;
     user.nickname = userDTO.nickname;
-    if (userDTO.avatar) {
-      user.avatar = userDTO.avatar;
-    } else {
-      // TODO
-      // here encode a default avatar in base64
-      // and put it in user.avatar
-      user.avatar = '';
-    }
+    user.avatar = userDTO.avatar;
     user.wins = 0;
     user.losses = 0;
     try {

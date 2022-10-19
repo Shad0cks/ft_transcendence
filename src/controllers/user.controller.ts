@@ -10,7 +10,8 @@ export class UserController {
   async createUserAction(@Body() userDTO: UserDTO): Promise<void> {
     // TODO
     // extract the login42 from the auth token
-    // and put it in userDTO.login42
-    await this.userService.createUser(userDTO);
+    const login42 = 'gartaud';
+
+    await this.userService.createUser(userDTO, login42);
   }
 }
