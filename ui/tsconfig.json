@@ -14,7 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
-  "include": ["src", "pages/index.tsx", "src/pages/_app.tsx"]
+  "include": ["src"]
 }

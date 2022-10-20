@@ -1,5 +1,6 @@
 export type Channel = {
+  id: number;
   name: string;
-  isPublic: boolean;
+  restriction: string;
   password: string;
 };

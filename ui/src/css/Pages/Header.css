@@ -1,0 +1,20 @@
+.home_block {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin: 50px;
+}
+
+.home_title {
+  color: whitesmoke;
+  font-weight: bold;
+}
+
+.home_user_icon {
+  position: absolute;
+  right: 0;
+}
+
+.home_user_icon:hover {
+  cursor: pointer;
+}

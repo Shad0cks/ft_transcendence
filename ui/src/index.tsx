@@ -1,7 +1,9 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import About from './pages/About';
-import Home from './pages/Home';
+import App from './App';
+import NotFound from './pages/NotFound';
+import MainGame from './pages/GamePage/MainGame';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -9,8 +11,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/" element={<App />} />
+      <Route path="*" element={<NotFound />} />
+      <Route path="/game_:id" element={<MainGame />} />
     </Routes>
   </BrowserRouter>,
 );

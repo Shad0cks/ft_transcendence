@@ -1,0 +1,17 @@
+.ListeParty_block {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.ListeParty_title {
+  color: whitesmoke;
+}
+
+.ListeParty_list {
+  margin: 0 auto;
+  margin-top: 40px;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  justify-items: center;
+}

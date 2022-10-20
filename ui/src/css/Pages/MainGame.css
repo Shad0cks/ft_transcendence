@@ -1,0 +1,73 @@
+.mainGame_block {
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100vh;
+}
+
+.mainGame_GameTitle {
+  color: whitesmoke;
+  font-weight: bold;
+  font-size: 60px;
+}
+.mainGame_selectTypeGame {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+.mainGame_blockGame {
+  margin: 0 auto;
+  cursor: none;
+}
+
+.mainGame_boLevel {
+  color: white;
+}
+.mainGame_Chatcontainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.mainGame_iconDispay {
+  width: 50px;
+  margin: 30px 30px 0 0;
+}
+.mainGame_ChatcontainerIn {
+  background-color: aliceblue;
+  height: 100%;
+  width: 20vw;
+}
+
+.mainGame_containerWithoutChat {
+  width: 60%;
+  margin: 0 auto;
+}
+
+@media (max-width: 1000px) {
+  .mainGame_container {
+    margin: 0 auto;
+    width: 50vw;
+  }
+}
+
+@media (mix-width: 1000px) {
+  .mainGame_container {
+    margin: 0 auto;
+    width: 50vw;
+  }
+}
+
+.mainGame_container {
+  margin: 0 auto;
+  width: 50vw;
+}
