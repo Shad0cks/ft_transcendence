@@ -13,7 +13,7 @@ export class ChatController {
   }
 
   @Post('channels')
-  createChannelAction(@Body() channelDTO: ChannelDTO): void {
-    this.chatService.createChannel(channelDTO);
+  createChannelAction(@Body() channelDTO: ChannelDTO): Promise<ChannelDTO> {
+    return this.chatService.createChannel(channelDTO);
   }
 }

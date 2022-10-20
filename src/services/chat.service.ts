@@ -17,7 +17,7 @@ export class ChatService {
     return allChannels;
   }
 
-  async createChannel(channelDTO: ChannelDTO): Promise<void> {
+  async createChannel(channelDTO: ChannelDTO): Promise<Channel> {
     const channel = new Channel();
     const restrictions = ['public', 'protected', 'private'];
 
@@ -27,7 +27,13 @@ export class ChatService {
 
     channel.name = channelDTO.name;
     channel.restriction = channelDTO.restriction;
-    channel.password = await bcrypt.hash(channelDTO.password, 10);
-    await this.channelRepository.save(channel);
+    if (channelDTO.restriction === 'private') {
+      channel.password = await bcrypt.hash(channelDTO.password, 10);
+    } else {
+      channel.password = '';
+    }
+    const result = await this.channelRepository.save(channel);
+    delete result.password;
+    return result;
   }
 }
