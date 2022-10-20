@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChannelDTO } from 'src/dto/channel.dto';
 import { Repository } from 'typeorm';
@@ -19,6 +19,11 @@ export class ChatService {
 
   async createChannel(channelDTO: ChannelDTO): Promise<void> {
     const channel = new Channel();
+    const restrictions = ['public', 'protected', 'private'];
+
+    if (!restrictions.includes(channelDTO.restriction)) {
+      throw new BadRequestException('Unknown restriction');
+    }
 
     channel.name = channelDTO.name;
     channel.restriction = channelDTO.restriction;
