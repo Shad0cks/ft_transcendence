@@ -35,4 +35,12 @@ export class UserController {
   ): Promise<void> {
     return await this.userService.editAvatar(id, userDTO.avatar);
   }
+
+  @Put(':id/2fa')
+  async edit2faAction(
+    @Param('id') id: string,
+    @Body() userDTO: UserDTO,
+  ): Promise<void> {
+    await this.userService.edit2fa(id, userDTO.twofa_enabled);
+  }
 }

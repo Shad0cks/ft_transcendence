@@ -8,6 +8,9 @@ export class User {
   @Column({ unique: true })
   login42: string;
 
+  @Column()
+  twofa_enabled: boolean;
+
   @Column({ unique: true })
   nickname: string;
 

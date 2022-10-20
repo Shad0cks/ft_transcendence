@@ -23,6 +23,7 @@ export class UserService {
     user.login42 = login42;
     user.nickname = userDTO.nickname;
     user.avatar = userDTO.avatar;
+    user.twofa_enabled = false;
     user.wins = 0;
     user.losses = 0;
     try {
@@ -31,6 +32,8 @@ export class UserService {
       if (error.code === '23505') {
         // duplicate login42 or nickname
         throw new ConflictException('login42 or nickname already exists');
+      } else if (error.code === '23502') {
+        throw new BadRequestException('Avatar is missing');
       } else {
         throw new InternalServerErrorException();
       }
@@ -80,6 +83,21 @@ export class UserService {
       .update({
         avatar,
       })
+      .where({
+        id: id,
+      })
+      .returning('*')
+      .execute();
+  }
+
+  async edit2fa(id: string, enabled: boolean): Promise<void> {
+    if (!enabled && enabled !== false) {
+      throw new BadRequestException('enabled is missing');
+    }
+    await this.userRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ twofa_enabled: enabled })
       .where({
         id: id,
       })
