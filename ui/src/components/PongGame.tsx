@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import '../css/Components/PongGame.css';
+import socketIOClient from "socket.io-client";
 
 export default function PongGame({
   width,
@@ -14,8 +15,10 @@ export default function PongGame({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [keys, setKeys] = useState<boolean[]>([]);
+  
 
   interface playerProps {
+    id: number;
     x: number;
     y: number;
     height: number;
@@ -26,6 +29,7 @@ export default function PongGame({
   }
 
   const user1 = {
+    id: 1,
     x: 20,
     y: height / 2 - 60 / 2,
     height: 60,
@@ -36,6 +40,7 @@ export default function PongGame({
   };
 
   const user2 = {
+    id : 2,
     x: width - 10 - 20,
     y: height / 2 - 60 / 2,
     height: 60,
@@ -70,6 +75,16 @@ export default function PongGame({
     velocityX: 5,
     velocityY: 5,
   };
+
+//   socket.on('playermove', function(data : playerProps){
+//     data.id == 1 ? user1.y = data.y : user2.y = data.y;
+// });
+
+  function sendPlayers()
+  {
+    // socket.emit('playermove', user1);
+    // socket.emit('playermove', user2);
+  }
 
   function drawMidLine(context: CanvasRenderingContext2D) {
     for (let index = 0; index <= height; index += 10) {
@@ -229,6 +244,7 @@ export default function PongGame({
     whatKey();
     updateGame();
     createTerrin(context);
+    sendPlayers();
   }
 
   const mouseMouveEvent = useCallback((e: MouseEvent) => {
@@ -297,6 +313,8 @@ export default function PongGame({
   );
 
   useEffect(() => {
+    const socket = socketIOClient("http://localhost:8080");
+    socket.on('connect', ()=> console.log('connectected'));
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
@@ -313,6 +331,8 @@ export default function PongGame({
         }, 1000 / frame);
 
         return () => {
+          socket.off('connect');
+          //socket.off('playermove');
           clearInterval(interval);
           window.removeEventListener('mousemove', mouseMouveEvent);
           window.removeEventListener('touchmove', touchStartLister);

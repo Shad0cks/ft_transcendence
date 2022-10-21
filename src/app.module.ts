@@ -3,10 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatModule } from './chat.module';
 import { UserModule } from './user.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    SocketModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
