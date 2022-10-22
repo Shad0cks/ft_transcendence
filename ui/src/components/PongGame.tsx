@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import '../css/Components/PongGame.css';
-import socketIOClient from "socket.io-client";
+import socketIOClient from 'socket.io-client';
 
 export default function PongGame({
   width,
@@ -15,8 +15,7 @@ export default function PongGame({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [keys, setKeys] = useState<boolean[]>([]);
-  const [socket] = useState(socketIOClient("http://localhost:8080"))
-  
+  const [socket] = useState(socketIOClient('http://localhost:8080'));
 
   interface playerProps {
     id: number;
@@ -41,7 +40,7 @@ export default function PongGame({
   };
 
   const user2 = {
-    id : 2,
+    id: 2,
     x: width - 10 - 20,
     y: height / 2 - 60 / 2,
     height: 60,
@@ -77,10 +76,7 @@ export default function PongGame({
     velocityY: 5,
   };
 
-  
-
-  function sendPlayers()
-  {
+  function sendPlayers() {
     socket.emit('playermove', user1);
     socket.emit('playermove', user2);
   }
@@ -236,16 +232,14 @@ export default function PongGame({
       return;
     }
   }
-  socket.on('playermove', function(data : playerProps){
-    data.id == 1 ? user1.y = data.y : user2.y = data.y;
-});
+  socket.on('playermove', function (data: playerProps) {
+    data.id === 1 ? (user1.y = data.y) : (user2.y = data.y);
+  });
   function game(context: CanvasRenderingContext2D) {
-    
     sendPlayers();
     whatKey();
     updateGame();
     createTerrin(context);
-    
   }
 
   const mouseMouveEvent = useCallback((e: MouseEvent) => {
@@ -314,7 +308,7 @@ export default function PongGame({
   );
 
   useEffect(() => {
-    socket.on('connect', ()=> console.log('connectected'));
+    socket.on('connect', () => console.log('connectected'));
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');

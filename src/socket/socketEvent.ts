@@ -1,40 +1,40 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Subscriber } from "rxjs";
-import { Server, Socket } from "socket.io";
-import { PlayerDTO } from "src/dto/player.dto";
+import {
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { PlayerDTO } from 'src/dto/player.dto';
 
 @WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
+  cors: {
+    origin: '*',
+  },
 })
-export class SocketEvent{
+export class SocketEvent {
+  @WebSocketServer()
+  server: Server;
 
+  //connexion
+  handleConnection(client: Socket) {
+    console.log(`Client Connected: ${client.id}`);
+  }
 
-    @WebSocketServer()
-    server: Server;
+  //deconnexion
 
-    //connexion
-    handleConnection(client: Socket){
-        console.log(`Client Connected: ${client.id}`)
-    }
+  handleDisconnect(client: Socket) {
+    console.log(`Client disConnected: ${client.id}`);
+  }
 
-    //deconnexion
+  //recevoir un event (s'abboner à un message)
+  // @SubscribeMessage(`message`)
+  // handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket){
+  //     // envoyer un event
+  //     this.server.emit('message', client.id, data);
+  // }
 
-    handleDisconnect(client: Socket){
-        console.log(`Client disConnected: ${client.id}`)
-    }
-
-    //recevoir un event (s'abboner à un message)
-    // @SubscribeMessage(`message`)
-    // handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket){
-    //     // envoyer un event
-    //     this.server.emit('message', client.id, data);
-    // }
-
-    @SubscribeMessage('playermove') handleEvent( @MessageBody() data: PlayerDTO, @ConnectedSocket() client: Socket) 
-    {
-        this.server.emit('playermove', data);
-    }
-
+  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
+    this.server.emit('playermove', data);
+  }
 }
