@@ -7,17 +7,20 @@ export default function PongGame({
   height,
   gameType,
   botLevel,
+  playerID
 }: {
   width: number;
   height: number;
   gameType: number;
   botLevel: number;
+  playerID: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [keys, setKeys] = useState<boolean[]>([]);
-  const [socket] = useState(socketIOClient('http://localhost:8080'));
+  const [socket] = useState(socketIOClient("http://localhost:8080"));
 
   interface playerProps {
+    lien: string;
     id: number;
     x: number;
     y: number;
@@ -29,6 +32,7 @@ export default function PongGame({
   }
 
   const user1 = {
+    lien: window.location.pathname,
     id: 1,
     x: 20,
     y: height / 2 - 60 / 2,
@@ -40,6 +44,7 @@ export default function PongGame({
   };
 
   const user2 = {
+    lien: window.location.pathname,
     id: 2,
     x: width - 10 - 20,
     y: height / 2 - 60 / 2,
@@ -77,8 +82,10 @@ export default function PongGame({
   };
 
   function sendPlayers() {
-    socket.emit('playermove', user1);
-    socket.emit('playermove', user2);
+    if (playerID == 1)
+      socket.emit('playermove', user1);
+    else
+      socket.emit('playermove', user2);
   }
 
   function drawMidLine(context: CanvasRenderingContext2D) {
@@ -233,7 +240,13 @@ export default function PongGame({
     }
   }
   socket.on('playermove', function (data: playerProps) {
-    data.id === 1 ? (user1.y = data.y) : (user2.y = data.y);
+    if (data.lien === user1.lien && gameType == 2)
+    {
+      if (data.id == 2 && playerID == 1)
+        user2.y = data.y;
+      else if (playerID == 2 && data.id == 1)
+        user1.y = data.y;
+    }
   });
   function game(context: CanvasRenderingContext2D) {
     sendPlayers();
@@ -243,20 +256,21 @@ export default function PongGame({
   }
 
   const mouseMouveEvent = useCallback((e: MouseEvent) => {
+      let temp = playerID === 1 ? user1  : user2;
     if (canvasRef.current) {
       const userRect = canvasRef.current.getBoundingClientRect();
       const userRation = userRect.height / height;
       const ratio = (e.clientY - userRect.top) / userRect.height;
-      const userHeight = (userRation * user1.height) / 2;
+      const userHeight = (userRation * temp.height) / 2;
 
       if (
         ratio * (e.clientY - userHeight) > 10 &&
         ratio * (e.clientY + userHeight) < height - 10
       ) {
-        user1.y = ratio * (e.clientY - userHeight);
+        temp.y = ratio * (e.clientY - userHeight);
       } else if (ratio * (e.clientY - userHeight) > 10) {
-        user1.y = height - user1.height - 10;
-      } else user1.y = 10;
+        temp.y = height - user1.height - 10;
+      } else temp.y = 10;
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

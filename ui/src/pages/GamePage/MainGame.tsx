@@ -5,11 +5,26 @@ import '../../css/Pages/MainGame.css';
 function MainGame() {
   const [gameType, setGameType] = useState<number>(1);
   const [botLevel, setBotLevel] = useState<number>(3);
+  const [player, setPlayer] = useState<number>(1);
 
   useEffect(() => {}, [gameType]);
 
   return (
     <div className="mainGame_block">
+      <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => setPlayer(1)}
+        >
+          Player 1
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => setPlayer(2)}
+        >
+          Player 2
+        </button>
       <h1 className="mainGame_GameTitle"> Game Page </h1>
       <div className="mainGame_selectTypeGame">
         <button
@@ -50,12 +65,13 @@ function MainGame() {
           id="customRange2"
         />
       </div>
-      <div key={gameType + botLevel} className="mainGame_blockGame">
+      <div key={gameType + botLevel + player} className="mainGame_blockGame">
         <PongGame
           width={1000}
           height={600}
           gameType={gameType}
           botLevel={botLevel}
+          playerID={player}
         />
       </div>
     </div>
