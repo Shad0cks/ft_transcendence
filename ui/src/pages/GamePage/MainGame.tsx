@@ -1,16 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PongGame from '../../components/PongGame';
 import '../../css/Pages/MainGame.css';
-
+import GamePlayerChoose from './GamePlayerChoose';
+import GameModChoose from './GameModChoose';
+import GameMapChoose from './GameMapChoose';
+import { GameObj } from '../../models/game';
+ 
 function MainGame() {
-  const [gameType, setGameType] = useState<number>(1);
-  const [botLevel, setBotLevel] = useState<number>(3);
-  const [player, setPlayer] = useState<number>(1);
+  
+  const [gameOption, setGameOption] = useState<number>(1);
+  
+  const incrementGameOp = (inc : number = 1) => {
+    setGameOption((e : number) => e + inc)
+  }
 
-  useEffect(() => {}, [gameType]);
+  const setGameOp = () => { 
+    switch (gameOption) {
+      case 1:
+        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+      case 2:
+        return <GameModChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+      case 3:
+          return <GameMapChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+      case 4:
+        console.log(game);
+        return <PongGame width={1000} height={600} gameType={1} botLevel={1} playerID={1}/>
+      default:
+        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+    }
+  } 
 
-  return (
-    <div className="mainGame_block">
+  const [game, setGame] = useState<GameObj>({gameID: "url", player1Taken: false, player2Taken: false, offline: false, computer: false, mapID: -1, botLevel: 5});
+
+  return ( 
+    <div  className={gameOption === 4 ? "mainGame_block" : ""}>
+      
+      {setGameOp()}
+      
+      {/* <div> 
       <button
           type="button"
           className="btn btn-outline-danger"
@@ -74,6 +101,7 @@ function MainGame() {
           playerID={player}
         />
       </div>
+    </div> */}
     </div>
   );
 }

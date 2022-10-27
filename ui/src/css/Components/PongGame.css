@@ -2,11 +2,14 @@
 
 .canvasGame {
   border: solid 1px blue;
-  margin: 0 auto;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: -1;
+  width: 80%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  
 }
+.canvasGame:hover
+{
+  cursor: none;
+} 

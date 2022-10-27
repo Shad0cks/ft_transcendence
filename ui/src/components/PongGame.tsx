@@ -82,7 +82,7 @@ export default function PongGame({
   };
 
   function sendPlayers() {
-    if (playerID == 1)
+    if (playerID === 1)
       socket.emit('playermove', user1);
     else
       socket.emit('playermove', user2);
@@ -240,11 +240,11 @@ export default function PongGame({
     }
   }
   socket.on('playermove', function (data: playerProps) {
-    if (data.lien === user1.lien && gameType == 2)
+    if (data.lien === user1.lien && gameType === 2)
     {
-      if (data.id == 2 && playerID == 1)
+      if (data.id === 2 && playerID === 1)
         user2.y = data.y;
-      else if (playerID == 2 && data.id == 1)
+      else if (playerID === 2 && data.id === 1)
         user1.y = data.y;
     }
   });
