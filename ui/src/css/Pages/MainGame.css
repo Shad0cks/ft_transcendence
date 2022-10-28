@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+
 .mainGame_block {
   margin: 0 auto;
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   height: 100vh;
 }
@@ -11,7 +13,7 @@
 
 .GamePlayerChoose_container
 {
-  position: absolute;
+  position: absolute; 
   width: 50vw;
   height: 50vw; 
   top: 50%;
@@ -40,3 +42,42 @@
    width: 50%;
    margin: 0 auto; 
 }
+.playeCont
+{
+  bottom: 0;
+  color:white;
+  width: 100%;
+  display: flex;
+  justify-content: space-around; 
+  position: absolute; 
+  font-family: "Orbitron"; 
+  font-size: 4em;             
+}
+ 
+@media (min-width: 1px) and (max-width: 645px){ 
+  .playeCont
+  {
+    bottom: 0;
+    color:white;
+    width: 100%;
+    display: flex;
+    justify-content: space-around; 
+    position: absolute; 
+    font-family: "Orbitron"; 
+    font-size: 2em;             
+  }
+ }
+
+ @media (min-width: 647px){ 
+  .playeCont
+  {
+    bottom: 0;
+    color:white;
+    width: 100%;
+    display: flex;
+    justify-content: space-around; 
+    position: absolute; 
+    font-family: "Orbitron";  
+    font-size: 4em;             
+  }
+ }

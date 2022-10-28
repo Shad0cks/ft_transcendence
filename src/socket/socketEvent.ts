@@ -5,6 +5,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { GameObjDTO } from 'src/dto/game.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 
 @WebSocketGateway({
@@ -37,4 +38,9 @@ export class SocketEvent {
   @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
     this.server.emit('playermove', data);
   }
+
+  @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
+    this.server.emit('gameOption', data);
+  }
+
 }

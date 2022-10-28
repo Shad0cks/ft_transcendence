@@ -1,107 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PongGame from '../../components/PongGame';
 import '../../css/Pages/MainGame.css';
 import GamePlayerChoose from './GamePlayerChoose';
 import GameModChoose from './GameModChoose';
 import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
- 
+import socketIOClient, {Socket} from 'socket.io-client';
+import Header from '../HomePage/Header';
+
 function MainGame() {
   
-  const [gameOption, setGameOption] = useState<number>(1);
-  
+  const [game, setGame] = useState<GameObj>({gameID: window.location.pathname, emiter: undefined, offline: false, computer: false, screen: 1, mapID: -1, botLevel: 5, player1: {taken: false, socket: undefined}, player2: {taken: false, socket: undefined}});
+  const [socket, setSocket] = useState<Socket>();
+
   const incrementGameOp = (inc : number = 1) => {
-    setGameOption((e : number) => e + inc)
+    setGame({...game, screen: game.screen + inc, emiter: socket?.id})
   }
 
+  function setPlayerSocket(playerID: number)
+  {
+    if (playerID === 1)
+    {
+      if (game.player2.socket !== socket?.id)
+        setGame({...game, player1: {...game.player1, taken: true, socket: socket?.id}, emiter: socket?.id})
+    }
+    else
+    {
+      if (game.player1.socket !== socket?.id)
+        setGame({...game, player2: {...game.player2, taken: true, socket: socket?.id}, emiter: socket?.id})
+    }
+  }
+
+  useEffect(() => {
+    socket?.on('gameOption', (data: GameObj) =>
+    {
+      if (data.gameID === game.gameID && data.emiter !== socket.id)
+        setGame(data)
+    })
+  }, [socket])// eslint-disable-line react-hooks/exhaustive-deps
+  
+  useEffect(() => {
+    if (socket && socket.id !== undefined)
+    {
+      if (game.emiter !== socket.id) return ;
+      socket.emit('gameOption', game);
+    }
+  }, [game])// eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setSocket(socketIOClient("http://localhost:8080"))
+    socket?.on('connect', () => { });
+
+    
+
+    return () => {
+          socket?.off('connect');
+          socket?.off('gameOption');
+        };
+      }
+  , [])// eslint-disable-line react-hooks/exhaustive-deps
+
   const setGameOp = () => { 
-    switch (gameOption) {
+    switch (game.screen) {
       case 1:
-        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp} setSocket={setPlayerSocket} socket={socket}/>
       case 2:
-        return <GameModChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+        return <GameModChoose game={game} setGame={setGame} nextPage={incrementGameOp} socket={socket}/>
       case 3:
-          return <GameMapChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+          return <GameMapChoose game={game} setGame={setGame} nextPage={incrementGameOp} socket={socket}/>
       case 4:
-        console.log(game);
-        return <PongGame width={1000} height={600} gameType={1} botLevel={1} playerID={1}/>
+        console.log(game)
+        return  <div className="mainGame_block"><Header/><div className="playeCont"><p className="playerNum">Player 1</p><p className="playerNum">Player 2</p></div><PongGame width={1000} height={600} gameInfo={game} socket={socket!}/></div>
       default:
-        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp}/>
+        return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp} setSocket={setPlayerSocket} socket={socket}/>
     }
   } 
 
-  const [game, setGame] = useState<GameObj>({gameID: "url", player1Taken: false, player2Taken: false, offline: false, computer: false, mapID: -1, botLevel: 5});
+ 
 
   return ( 
-    <div  className={gameOption === 4 ? "mainGame_block" : ""}>
+    <div>
       
-      {setGameOp()}
+      {setGameOp()} 
       
-      {/* <div> 
-      <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={() => setPlayer(1)}
-        >
-          Player 1
-        </button>
-        <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={() => setPlayer(2)}
-        >
-          Player 2
-        </button>
-      <h1 className="mainGame_GameTitle"> Game Page </h1>
-      <div className="mainGame_selectTypeGame">
-        <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={() => setGameType(1)}
-        >
-          Local 1v1
-        </button>
-        <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={() => setGameType(3)}
-        >
-          Bot
-        </button>
-        <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={() => setGameType(2)}
-        >
-          Online
-        </button>
-      </div>
-      <div
-        className="mainGame_boLevel"
-        style={gameType !== 3 ? { visibility: 'hidden' } : undefined}
-      >
-        <label className="form-label">Bot Level : {botLevel}</label>
-        <input
-          type="range"
-          className="form-range"
-          onChange={(e) => setBotLevel(+e.target.value)}
-          min="1"
-          max="9"
-          step="0.1"
-          defaultValue="3"
-          id="customRange2"
-        />
-      </div>
-      <div key={gameType + botLevel + player} className="mainGame_blockGame">
-        <PongGame
-          width={1000}
-          height={600}
-          gameType={gameType}
-          botLevel={botLevel}
-          playerID={player}
-        />
-      </div>
-    </div> */}
     </div>
   );
 }

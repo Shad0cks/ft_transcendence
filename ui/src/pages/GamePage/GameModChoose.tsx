@@ -1,7 +1,8 @@
 import React, { SetStateAction, useState } from 'react';
 import { GameObj } from '../../models/game';
+import { Socket } from 'socket.io-client';
 
-export default function GameModChoose({game, setGame, nextPage} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void}) {
+export default function GameModChoose({game, setGame, nextPage, socket} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void, socket: Socket | undefined}) {
   const [clicked, setClicked] = useState(-1);
 
 
@@ -13,14 +14,14 @@ export default function GameModChoose({game, setGame, nextPage} : {setGame: Reac
             <button
             type="button"
             className={"btn btn-outline-danger" + (clicked === 1 ? " disabled" : "")}
-            onClick={() => {setGame({...game, computer:false}); setClicked(1)}}
+            onClick={() => {setGame({...game, offline: true, computer:false, emiter: socket?.id}); setClicked(1)}}
             >
             Local
             </button>  
             <button
             type="button"
             className={"btn btn-outline-danger" + (clicked === 0 ? " disabled" : "")}
-            onClick={() => {setGame({...game, computer:true}); setClicked(0)}}
+            onClick={() => {setGame({...game, offline: true, computer:true, emiter: socket?.id}); setClicked(0)}}
             >
             Computer
             </button> 

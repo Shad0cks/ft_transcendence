@@ -1,14 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
 
-.canvasGame {
-  border: solid 1px blue;
-  padding: 0;
-  width: 80%;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  
-}
+
+ 
+@media (min-height: 1px) and (max-height: 520px){ 
+  .canvasGame {
+    border: solid 1px blue;
+    padding: 0;
+    width: 50%;           
+    height: 50%;   
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+ }
+ 
+ @media (min-height: 521px){ 
+  .canvasGame {
+    border: solid 1px blue;
+    padding: 0;
+    width: 70%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+ }
+
 .canvasGame:hover
 {
   cursor: none;

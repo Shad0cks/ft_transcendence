@@ -1,13 +1,14 @@
 import React, { SetStateAction } from 'react';
 import { GameObj } from '../../models/game';
+import { Socket } from 'socket.io-client';
 
-export default function GamePlayerChoose({game, setGame, nextPage} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void}) {
+export default function GamePlayerChoose({game, setGame, nextPage, setSocket, socket} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void, setSocket: (playerID: number)=> void,  socket: Socket | undefined}) {
 
   const changePage = () => 
   {
-    if (!game.player2Taken || !game.player1Taken)
+    if (!game.player1.taken || !game.player2.taken)
     {
-        setGame({...game, offline:true});
+        setGame({...game, offline:true, emiter: socket?.id});
         nextPage()
     }
     else
@@ -20,26 +21,26 @@ export default function GamePlayerChoose({game, setGame, nextPage} : {setGame: R
          <div className="GamePlayerChoose_box">
             <button
             type="button"
-            className={"btn btn-outline-danger" + (game.player1Taken ? " disabled" : "")}
-            onClick={() => {setGame({...game, player1Taken:true})}}
+            className={"btn btn-outline-danger" + (game.player1.taken ? " disabled" : "")}
+            onClick={() => {setSocket(1)}}
             > 
             Player 1 
             </button>
             <button
             type="button"
-            className={"btn btn-outline-danger" + (game.player2Taken ? " disabled" : "")}
-            onClick={() => {setGame({...game, player2Taken:true})}}
+            className={"btn btn-outline-danger" + (game.player2.taken ? " disabled" : "")}
+            onClick={() => {setSocket(2)}}
             >
             Player 2
             </button> 
         </div>
         {
-          game.player1Taken || game.player2Taken ?
+          (game.player1.taken && game.player1.socket === socket?.id) ||  (game.player2.taken && game.player2.socket === socket?.id) ?
         <button
         type="button"
         className="btn btn-outline-success"
         style={{margin: "0 auto"}} 
-        onClick={changePage} 
+        onClick={() => {changePage()}} 
         > 
         Choose Mods
         </button> 

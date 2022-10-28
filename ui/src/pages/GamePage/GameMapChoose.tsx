@@ -1,7 +1,8 @@
 import React, { SetStateAction } from 'react';
 import { GameObj } from '../../models/game';
+import { Socket } from 'socket.io-client';
 
-export default function GameMapChoose({game, setGame, nextPage} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void}) {
+export default function GameMapChoose({game, setGame, nextPage, socket} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void, socket: Socket | undefined}) {
   
     return (
 
@@ -14,7 +15,7 @@ export default function GameMapChoose({game, setGame, nextPage} : {setGame: Reac
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:1})}
+             onClick={() => setGame({...game, mapID:1, emiter: socket?.id})}
              alt="background1"
             /> 
             <img
@@ -23,7 +24,7 @@ export default function GameMapChoose({game, setGame, nextPage} : {setGame: Reac
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:2})}
+             onClick={() => setGame({...game, mapID:2, emiter: socket?.id})}
              alt="background2"
             /> 
             <img
@@ -32,7 +33,7 @@ export default function GameMapChoose({game, setGame, nextPage} : {setGame: Reac
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:3})}
+             onClick={() => setGame({...game, mapID:3, emiter: socket?.id})}
              alt="background3"
             /> 
         </div> 

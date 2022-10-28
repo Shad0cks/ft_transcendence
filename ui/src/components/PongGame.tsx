@@ -1,23 +1,24 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import '../css/Components/PongGame.css';
-import socketIOClient from 'socket.io-client';
+import { Socket } from "socket.io-client";
+import { GameObj } from '../models/game';
+
+const keys : boolean[] = []
 
 export default function PongGame({
   width,
   height,
-  gameType,
-  botLevel,
-  playerID
+  gameInfo,
+  socket
 }: {
   width: number;
   height: number;
-  gameType: number;
-  botLevel: number;
-  playerID: number;
+  gameInfo: GameObj;
+  socket: Socket;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [keys, setKeys] = useState<boolean[]>([]);
-  const [socket] = useState(socketIOClient("http://localhost:8080"));
+
+  const playerID = getPlayerID()
 
   interface playerProps {
     lien: string;
@@ -27,13 +28,13 @@ export default function PongGame({
     height: number;
     width: number;
     score: number;
-    color: string;
+    color: string; 
     speed: number;
   }
 
   const user1 = {
     lien: window.location.pathname,
-    id: 1,
+    id: 1, 
     x: 20,
     y: height / 2 - 60 / 2,
     height: 60,
@@ -82,9 +83,14 @@ export default function PongGame({
   };
 
   function sendPlayers() {
-    if (playerID === 1)
+    if (gameInfo.offline)
+    {
       socket.emit('playermove', user1);
-    else
+      socket.emit('playermove', user2);
+    }
+    else if (playerID === 1)
+      socket.emit('playermove', user1);
+    else if (playerID === 2)
       socket.emit('playermove', user2);
   }
 
@@ -203,11 +209,12 @@ export default function PongGame({
     let colidePoint = 0;
     let angleCollision = 0;
 
-    if (gameType === 3) {
-      let botMove = (ball.y - (user2.y + user2.height / 2)) * (botLevel / 10);
+    if (gameInfo.computer) {
+      let temp = gameInfo.player1.taken ? user2 : user1;
+      let botMove = (ball.y - (temp.y + temp.height / 2)) * (gameInfo.botLevel / 10);
 
-      if (botMove - user2.height < height && botMove + user2.height > 0)
-        user2.y += botMove;
+      if (botMove - temp.height < height && botMove + temp.height > 0)
+        temp.y += botMove;
     }
 
     ball.x += ball.velocityX;
@@ -240,7 +247,15 @@ export default function PongGame({
     }
   }
   socket.on('playermove', function (data: playerProps) {
-    if (data.lien === user1.lien && gameType === 2)
+    if (data.lien !== user1.lien) return;
+    if (gameInfo.offline && playerID === 3)
+    {
+      if (data.id === 2)
+        user2.y = data.y;
+      else
+        user1.y = data.y;
+    }
+    else if (!gameInfo.offline)
     {
       if (data.id === 2 && playerID === 1)
         user2.y = data.y;
@@ -256,6 +271,7 @@ export default function PongGame({
   }
 
   const mouseMouveEvent = useCallback((e: MouseEvent) => {
+      if (playerID === 3) return;
       let temp = playerID === 1 ? user1  : user2;
     if (canvasRef.current) {
       const userRect = canvasRef.current.getBoundingClientRect();
@@ -275,60 +291,70 @@ export default function PongGame({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const touchStartLister = useCallback((e: TouchEvent) => {
+    if (playerID === 3) return;
+    let temp = playerID === 1 ? user1  : user2;
     if (canvasRef.current) {
       let newPos = e.touches[0].clientY;
       let userRect = canvasRef.current.getBoundingClientRect();
 
       const userRation = userRect.height / height;
       const ratio = (newPos - userRect.top) / userRect.height;
-      const userHeight = (userRation * user1.height) / 2;
+      const userHeight = (userRation * temp.height) / 2;
 
       if (
         ratio * (newPos - userHeight) > 10 &&
         ratio * (newPos + userHeight) < height - 10
       )
-        user1.y = ratio * (newPos - userHeight);
-      else if (newPos - userRect.top - user1.height / 2 > 10)
-        user1.y = height - user1.height - 10;
-      else user1.y = 10;
+      temp.y = ratio * (newPos - userHeight);
+      else if (newPos - userRect.top - temp.height / 2 > 10)
+        temp.y = height - temp.height - 10;
+      else temp.y = 10;
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function whatKey() {
+    if (playerID === 3) return;
+    let temp = gameInfo.player1.taken ? user2 : user1;
     if (keys[38] && keys[40]) return;
-    if (keys[38] && user2.y > 0) {
-      user2.y -= user2.speed;
-    } else if (keys[40] && user2.y + user1.height < height) {
-      user2.y += user2.speed;
+    if (keys[38] && temp.y > 0) {
+      temp.y -= temp.speed;
+    } else if (keys[40] && temp.y + user1.height < height) {
+      temp.y += user2.speed;
     }
   }
 
   const handleUserKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      const updatedArray = [...keys];
-      updatedArray[e.keyCode] = true;
-      setKeys(updatedArray);
+      keys[e.keyCode] = true;
     },
-    [keys],
+    [],
   );
 
   const handleUserKeyUp = useCallback(
     (e: KeyboardEvent) => {
-      const updatedArray = [...keys];
-      updatedArray[e.keyCode] = false;
-      setKeys(updatedArray);
+      keys[e.keyCode] = false;
     },
-    [keys],
+    [],
   );
 
+
+  function getPlayerID()
+  {
+    if (socket.id === gameInfo.player1.socket)
+      return 1;
+    else if (socket.id === gameInfo.player2.socket)
+      return 2;
+    else
+      return 3;
+  }
+
   useEffect(() => {
-    socket.on('connect', () => console.log('connectected'));
-    if (canvasRef.current) {
+    if (canvasRef.current) {      
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       window.addEventListener('mousemove', mouseMouveEvent);
       window.addEventListener('touchmove', touchStartLister);
-      if (gameType === 1) {
+      if (gameInfo.offline) {
         window.addEventListener('keydown', handleUserKeyPress);
         window.addEventListener('keyup', handleUserKeyUp);
       }
@@ -339,19 +365,18 @@ export default function PongGame({
         }, 1000 / frame);
 
         return () => {
-          socket.off('connect');
           socket.off('playermove');
           clearInterval(interval);
           window.removeEventListener('mousemove', mouseMouveEvent);
           window.removeEventListener('touchmove', touchStartLister);
-          if (gameType === 1) {
+          if (gameInfo.offline) {
             window.removeEventListener('keydown', handleUserKeyPress);
             window.removeEventListener('keyup', handleUserKeyUp);
           }
         };
       }
     }
-  });
+  }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <canvas
