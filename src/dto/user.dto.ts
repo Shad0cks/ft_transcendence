@@ -1,9 +1,9 @@
 import {
-  IsBase64,
   IsBoolean,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUrl,
   Min,
 } from 'class-validator';
 
@@ -19,7 +19,7 @@ export class UserDTO {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsBase64()
+  @IsUrl()
   avatar: string;
 
   @IsOptional()

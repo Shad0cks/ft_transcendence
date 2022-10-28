@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatModule } from './chat.module';
 import { UserModule } from './user.module';
 import { SocketModule } from './socket/socket.module';
+import { AuthModule } from './auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SocketModule } from './socket/socket.module';
     }),
     ChatModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
