@@ -37,5 +37,6 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload);
     response.cookie('jwt', jwt, { httpOnly: true });
+    response.redirect('http://localhost:3000');
   }
 }
