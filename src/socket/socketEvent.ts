@@ -5,6 +5,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 
@@ -40,7 +41,14 @@ export class SocketEvent {
   }
 
   @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
+    if (data === null) return ;
     this.server.emit('gameOption', data);
   }
+
+  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
+    
+    this.server.emit('ballPos', data);
+  }
+
 
 }

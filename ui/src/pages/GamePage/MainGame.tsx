@@ -32,11 +32,17 @@ function MainGame() {
   }
 
   useEffect(() => {
+    socket?.on('connect', () => { console.log("Player connect :", socket );});
     socket?.on('gameOption', (data: GameObj) =>
     {
+      console.log("call GameOptiob");
       if (data.gameID === game.gameID && data.emiter !== socket.id)
         setGame(data)
     })
+    return () => {
+      socket?.off('connect');
+      socket?.off('gameOption');
+    };
   }, [socket])// eslint-disable-line react-hooks/exhaustive-deps
   
   useEffect(() => {
@@ -49,14 +55,6 @@ function MainGame() {
 
   useEffect(() => {
     setSocket(socketIOClient("http://localhost:8080"))
-    socket?.on('connect', () => { });
-
-    
-
-    return () => {
-          socket?.off('connect');
-          socket?.off('gameOption');
-        };
       }
   , [])// eslint-disable-line react-hooks/exhaustive-deps
 

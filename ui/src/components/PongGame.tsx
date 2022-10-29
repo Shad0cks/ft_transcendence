@@ -27,10 +27,22 @@ export default function PongGame({
     y: number;
     height: number;
     width: number;
-    score: number;
     color: string; 
     speed: number;
   }
+
+  interface ballProps {
+    likedGame: string;
+    x: number;
+    y: number;
+    r: number;
+    color: string;
+    speed: number;
+    velocityX: number;
+    velocityY: number;
+    user1score: number;
+    user2score: number;
+  };
 
   const user1 = {
     lien: window.location.pathname,
@@ -39,7 +51,6 @@ export default function PongGame({
     y: height / 2 - 60 / 2,
     height: 60,
     width: 10,
-    score: 0,
     color: 'WHITE',
     speed: 15,
   };
@@ -51,7 +62,6 @@ export default function PongGame({
     y: height / 2 - 60 / 2,
     height: 60,
     width: 10,
-    score: 0,
     color: 'WHITE',
     speed: 15,
   };
@@ -73,6 +83,7 @@ export default function PongGame({
   };
 
   const ball = {
+    likedGame: window.location.pathname,
     x: width / 2,
     y: height / 2,
     r: 10,
@@ -80,7 +91,14 @@ export default function PongGame({
     speed: 6,
     velocityX: 5,
     velocityY: 5,
+    user1score: 0,
+    user2score: 0
   };
+
+  function sendBallPos() {
+    if (playerID === 1 || (gameInfo.offline && playerID === 2))
+      socket.emit('ballPos', ball);
+  }
 
   function sendPlayers() {
     if (gameInfo.offline)
@@ -111,10 +129,12 @@ export default function PongGame({
   function resetTerrain() {
     ball.x = width / 2;
     ball.y = height / 2;
-    if (true) {
+    if (Math.round(Math.random()) === 0) {
       ball.velocityX = 5;
       ball.velocityY = 5;
     } else {
+      ball.velocityX = -5;
+      ball.velocityY = 5;
     }
     ball.speed = 6;
   }
@@ -131,14 +151,14 @@ export default function PongGame({
     drawMidLine(context);
     drawtText(
       context,
-      user1.score.toString(),
+      ball.user1score.toString(),
       (width / 4) * 1.4,
       height / 5,
       'WHITE',
     );
     drawtText(
       context,
-      user2.score.toString(),
+      ball.user2score.toString(),
       (width / 4) * 2.4,
       height / 5,
       'WHITE',
@@ -217,8 +237,12 @@ export default function PongGame({
         temp.y += botMove;
     }
 
-    ball.x += ball.velocityX;
-    ball.y += ball.velocityY;
+    if (playerID === 1 || (gameInfo.offline && playerID === 2))
+    {
+      ball.x += ball.velocityX;
+      ball.y += ball.velocityY;
+    }
+    
     if (ball.y + ball.r >= height || ball.y - ball.r <= 0)
       ball.velocityY = -ball.velocityY;
     else if (player_collision(user1)) {
@@ -237,34 +261,65 @@ export default function PongGame({
       ball.speed += 2;
     } else if (ball.x + ball.r >= width || ball.x - ball.r <= 0) {
       if (ball.x + ball.r >= width) {
-        user1.score += 1;
+        ball.user1score += 1;
         resetTerrain();
         return;
       }
-      user2.score += 1;
+      ball.user2score += 1;
       resetTerrain();
       return;
     }
   }
+
   socket.on('playermove', function (data: playerProps) {
     if (data.lien !== user1.lien) return;
     if (gameInfo.offline && playerID === 3)
     {
       if (data.id === 2)
+      {
         user2.y = data.y;
+        
+      }
       else
+      {
         user1.y = data.y;
+        
+      }
     }
-    else if (!gameInfo.offline)
+    else
     {
-      if (data.id === 2 && playerID === 1)
-        user2.y = data.y;
-      else if (playerID === 2 && data.id === 1)
-        user1.y = data.y;
+      if (playerID === 1)
+      {
+        if (data.id === 2 && !gameInfo.offline)
+          user2.y = data.y;
+      }
+      else if (playerID === 2)
+      {
+        if (data.id === 1 && !gameInfo.offline)
+        {
+          user1.y = data.y;
+          
+        }
+        
+      }
     }
   });
+
+  socket.on('ballPos', function (data: ballProps) {
+    if (data.likedGame !== user1.lien || (playerID === 1 || (gameInfo.offline && playerID === 2))) return;
+    ball.velocityX = data.velocityX
+    ball.velocityY = data.velocityY
+    ball.speed = data.speed
+    ball.x = data.x;
+    ball.y = data.y
+    ball.user1score = data.user1score;
+    ball.user2score = data.user2score;
+  });
+
+
   function game(context: CanvasRenderingContext2D) {
     sendPlayers();
+    sendBallPos();
     whatKey();
     updateGame();
     createTerrin(context);
