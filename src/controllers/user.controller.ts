@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { UserDTO } from 'src/dto/user.dto';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
 
 @Controller('user')
@@ -7,7 +8,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserDTO> {
+  @UseGuards(JwtAuthGuard)
+  async findOneAction(@Param('id') id: string): Promise<UserDTO> {
     return this.userService.findOne(id);
   }
 

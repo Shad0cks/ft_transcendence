@@ -6,6 +6,8 @@ import {
 import { UserDTO } from 'src/dto/user.dto';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/strategies/Jwt.strategy';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async logUserIn(request: any): Promise<void> {
+  async logUserIn(request: any, response: Response): Promise<void> {
     if (typeof request.user == 'undefined') {
       throw new BadRequestException();
     }
@@ -28,5 +30,12 @@ export class AuthService {
         throw error;
       }
     }
+
+    const payload: JwtPayload = {
+      nickname: user.nickname,
+      isAuthenticated: !user.twofa_enabled,
+    };
+    const jwt = this.jwtService.sign(payload);
+    response.cookie('jwt', jwt, { httpOnly: true });
   }
 }
