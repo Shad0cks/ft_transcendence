@@ -5,6 +5,11 @@ import { Socket } from 'socket.io-client';
 export default function GameModChoose({game, setGame, nextPage, socket} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void, socket: Socket | undefined}) {
   const [clicked, setClicked] = useState(-1);
 
+  function isPlayer() : boolean
+  {
+      if (game.player1.socket === socket?.id || game.player2.socket === socket?.id) return true
+      return false;
+  }
 
   return (
 
@@ -14,14 +19,14 @@ export default function GameModChoose({game, setGame, nextPage, socket} : {setGa
             <button
             type="button"
             className={"btn btn-outline-danger" + (clicked === 1 ? " disabled" : "")}
-            onClick={() => {setGame({...game, offline: true, computer:false, emiter: socket?.id}); setClicked(1)}}
+            onClick={() => {if (isPlayer()) {setGame({...game, offline: true, computer:false, emiter: socket?.id}); setClicked(1)}}}
             >
             Local
             </button>  
             <button
             type="button"
             className={"btn btn-outline-danger" + (clicked === 0 ? " disabled" : "")}
-            onClick={() => {setGame({...game, offline: true, computer:true, emiter: socket?.id}); setClicked(0)}}
+            onClick={() => {if (isPlayer()) {setGame({...game, offline: true, computer:true, emiter: socket?.id}); setClicked(0)}}}
             >
             Computer
             </button> 
@@ -34,7 +39,7 @@ export default function GameModChoose({game, setGame, nextPage, socket} : {setGa
         <input 
           type="range"
           className="form-range" 
-          onChange={(e) => {setGame({...game, botLevel:+e.target.value}); setClicked(0)}}
+          onChange={(e) => { if (isPlayer()) {setGame({...game, botLevel:+e.target.value}); setClicked(0)}}}
           min="1"
           max="9"
           step="0.1"
@@ -49,7 +54,7 @@ export default function GameModChoose({game, setGame, nextPage, socket} : {setGa
           type="button"
           className="btn btn-outline-success"
           style={{margin: "0 auto"}} 
-          onClick={() => nextPage()}
+          onClick={() =>  isPlayer() ? nextPage() : null}
           >
           Play
           </button>

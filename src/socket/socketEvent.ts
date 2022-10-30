@@ -5,8 +5,10 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
+import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 
 @WebSocketGateway({
@@ -48,6 +50,11 @@ export class SocketEvent {
   @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
     
     this.server.emit('ballPos', data);
+  }
+
+  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
+    
+    this.server.emit('newPlayer', data);
   }
 
 

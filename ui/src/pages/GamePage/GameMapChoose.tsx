@@ -3,7 +3,14 @@ import { GameObj } from '../../models/game';
 import { Socket } from 'socket.io-client';
 
 export default function GameMapChoose({game, setGame, nextPage, socket} : {setGame: React.Dispatch<SetStateAction<GameObj>>, game: GameObj, nextPage: (inc?: number) => void, socket: Socket | undefined}) {
-  
+    
+
+    function isPlayer() : boolean
+    {
+        if (game.player1.socket === socket?.id || game.player2.socket === socket?.id) return true
+        return false;
+    }
+
     return (
 
     <div className="GamePlayerChoose_container">
@@ -15,7 +22,7 @@ export default function GameMapChoose({game, setGame, nextPage, socket} : {setGa
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:1, emiter: socket?.id})}
+             onClick={() => isPlayer() ? setGame({...game, mapID:1, emiter: socket?.id}) : null}
              alt="background1"
             /> 
             <img
@@ -24,7 +31,7 @@ export default function GameMapChoose({game, setGame, nextPage, socket} : {setGa
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:2, emiter: socket?.id})}
+             onClick={() => isPlayer() ? setGame({...game, mapID:2, emiter: socket?.id}) : null}
              alt="background2"
             /> 
             <img
@@ -33,7 +40,7 @@ export default function GameMapChoose({game, setGame, nextPage, socket} : {setGa
              height="80px"
              width="80px"
              style={{cursor: "pointer"}}
-             onClick={() => setGame({...game, mapID:3, emiter: socket?.id})}
+             onClick={() => isPlayer() ? setGame({...game, mapID:3, emiter: socket?.id}) : null}
              alt="background3"
             /> 
         </div> 
@@ -43,7 +50,7 @@ export default function GameMapChoose({game, setGame, nextPage, socket} : {setGa
             type="button"
             className="btn btn-outline-success"
             style={{margin: "0 auto"}} 
-            onClick={() => nextPage()}
+            onClick={() => isPlayer() ? nextPage() : null}
             > 
             Play
             </button> : null

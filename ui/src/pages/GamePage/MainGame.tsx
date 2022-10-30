@@ -7,6 +7,7 @@ import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
 import socketIOClient, {Socket} from 'socket.io-client';
 import Header from '../HomePage/Header';
+import { newPlayer } from '../../models/newPlayer';
 
 function MainGame() {
   
@@ -15,6 +16,12 @@ function MainGame() {
 
   const incrementGameOp = (inc : number = 1) => {
     setGame({...game, screen: game.screen + inc, emiter: socket?.id})
+  }
+
+  function isPlayer() : boolean
+  {
+      if (game.player1.socket === socket?.id || game.player2.socket === socket?.id) return true
+      return false;
   }
 
   function setPlayerSocket(playerID: number)
@@ -32,13 +39,14 @@ function MainGame() {
   }
 
   useEffect(() => {
-    socket?.on('connect', () => { console.log("Player connect :", socket );});
+    socket?.on('connect', () => { socket.emit('newPlayer', {socketID: socket.id, gameID: window.location.pathname}); });
+    //socket?.on('disconnect', () => {console.log("disco", socket.id); if (isPlayer()) setGame({...game, screen: 5, emiter: socket.id, player1: {...game.player1, socket: "disconnected"}})})
     socket?.on('gameOption', (data: GameObj) =>
     {
-      console.log("call GameOptiob");
       if (data.gameID === game.gameID && data.emiter !== socket.id)
         setGame(data)
     })
+
     return () => {
       socket?.off('connect');
       socket?.off('gameOption');
@@ -54,6 +62,20 @@ function MainGame() {
   }, [game])// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    socket?.on('newPlayer', (data: newPlayer) =>
+    {
+      if (data.gameID === game.gameID && data.socketID !== socket.id)
+      {
+        socket.emit('gameOption', {...game, emiter: socket.id});
+      }
+    })
+    return () => {
+      socket?.off('newPlayer');
+      socket?.off('disconnected');
+    }
+  }, [game, socket])
+
+  useEffect(() => {
     setSocket(socketIOClient("http://localhost:8080"))
       }
   , [])// eslint-disable-line react-hooks/exhaustive-deps
@@ -67,8 +89,9 @@ function MainGame() {
       case 3:
           return <GameMapChoose game={game} setGame={setGame} nextPage={incrementGameOp} socket={socket}/>
       case 4:
-        console.log(game)
         return  <div className="mainGame_block"><Header/><div className="playeCont"><p className="playerNum">Player 1</p><p className="playerNum">Player 2</p></div><PongGame width={1000} height={600} gameInfo={game} socket={socket!}/></div>
+      case 5:
+          return <div className='win'> {game.player1.socket === "disconnected" ? "Player 1 Win" : "Player 2 Win"} </div>
       default:
         return <GamePlayerChoose game={game} setGame={setGame} nextPage={incrementGameOp} setSocket={setPlayerSocket} socket={socket}/>
     }
