@@ -102,8 +102,7 @@ function MainGame() {
   return ( 
     <div>
       
-      {setGameOp()} 
-      
+      {setGameOp()}
     </div>
   );
 }
