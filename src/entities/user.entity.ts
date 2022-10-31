@@ -5,9 +5,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  login42: string;
-
   @Column()
   twofa_enabled: boolean;
 

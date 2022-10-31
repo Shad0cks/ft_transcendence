@@ -17,23 +17,20 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createUser(userDTO: UserDTO, login42: string): Promise<void> {
+  async createUser(userDTO: UserDTO): Promise<void> {
     const user = new User();
 
-    user.login42 = login42;
     user.nickname = userDTO.nickname;
     user.avatar = userDTO.avatar;
-    user.twofa_enabled = false;
-    user.wins = 0;
-    user.losses = 0;
+    user.twofa_enabled = userDTO.twofa_enabled;
+    user.wins = userDTO.wins;
+    user.losses = userDTO.losses;
     try {
       await this.userRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        // duplicate login42 or nickname
-        throw new ConflictException('login42 or nickname already exists');
-      } else if (error.code === '23502') {
-        throw new BadRequestException('Avatar is missing');
+        // duplicate nickname
+        throw new ConflictException('nickname already exists');
       } else {
         throw new InternalServerErrorException();
       }
@@ -43,6 +40,16 @@ export class UserService {
   async findOne(id: string): Promise<UserDTO> {
     const user = await this.userRepository.findOneBy({
       id: parseInt(id),
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  async findOneByNickname(nickname: string): Promise<UserDTO> {
+    const user = await this.userRepository.findOneBy({
+      nickname: nickname,
     });
     if (!user) {
       throw new NotFoundException('User not found');
