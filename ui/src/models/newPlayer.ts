@@ -1,4 +1,4 @@
 export interface newPlayer {
-    socketID: string,
-    gameID: string
-  };
+  socketID: string;
+  gameID: string;
+}

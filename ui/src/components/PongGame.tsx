@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import '../css/Components/PongGame.css';
-import { Socket } from "socket.io-client";
+import { Socket } from 'socket.io-client';
 import { GameObj } from '../models/game';
 
-const keys : boolean[] = []
+const keys: boolean[] = [];
 
 export default function PongGame({
   width,
   height,
   gameInfo,
-  socket
+  socket,
 }: {
   width: number;
   height: number;
@@ -18,7 +18,7 @@ export default function PongGame({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const playerID = getPlayerID()
+  const playerID = getPlayerID();
 
   interface playerProps {
     lien: string;
@@ -27,7 +27,7 @@ export default function PongGame({
     y: number;
     height: number;
     width: number;
-    color: string; 
+    color: string;
     speed: number;
   }
 
@@ -42,11 +42,11 @@ export default function PongGame({
     velocityY: number;
     user1score: number;
     user2score: number;
-  };
+  }
 
   const user1 = {
     lien: window.location.pathname,
-    id: 1, 
+    id: 1,
     x: 20,
     y: height / 2 - 60 / 2,
     height: 60,
@@ -92,7 +92,7 @@ export default function PongGame({
     velocityX: 5,
     velocityY: 5,
     user1score: 0,
-    user2score: 0
+    user2score: 0,
   };
 
   function sendBallPos() {
@@ -101,15 +101,11 @@ export default function PongGame({
   }
 
   function sendPlayers() {
-    if (gameInfo.offline)
-    {
+    if (gameInfo.offline) {
       socket.emit('playermove', user1);
       socket.emit('playermove', user2);
-    }
-    else if (playerID === 1)
-      socket.emit('playermove', user1);
-    else if (playerID === 2)
-      socket.emit('playermove', user2);
+    } else if (playerID === 1) socket.emit('playermove', user1);
+    else if (playerID === 2) socket.emit('playermove', user2);
   }
 
   function drawMidLine(context: CanvasRenderingContext2D) {
@@ -231,18 +227,18 @@ export default function PongGame({
 
     if (gameInfo.computer) {
       let temp = gameInfo.player1.taken ? user2 : user1;
-      let botMove = (ball.y - (temp.y + temp.height / 2)) * (gameInfo.botLevel / 10);
+      let botMove =
+        (ball.y - (temp.y + temp.height / 2)) * (gameInfo.botLevel / 10);
 
       if (botMove - temp.height < height && botMove + temp.height > 0)
         temp.y += botMove;
     }
 
-    if (playerID === 1 || (gameInfo.offline && playerID === 2))
-    {
+    if (playerID === 1 || (gameInfo.offline && playerID === 2)) {
       ball.x += ball.velocityX;
       ball.y += ball.velocityY;
     }
-    
+
     if (ball.y + ball.r >= height || ball.y - ball.r <= 0)
       ball.velocityY = -ball.velocityY;
     else if (player_collision(user1)) {
@@ -273,49 +269,37 @@ export default function PongGame({
 
   socket.on('playermove', function (data: playerProps) {
     if (data.lien !== user1.lien) return;
-    if (gameInfo.offline && playerID === 3)
-    {
-      if (data.id === 2)
-      {
+
+    if (playerID === 3) {
+      if (data.id === 2) {
         user2.y = data.y;
-        
-      }
-      else
-      {
+      } else {
         user1.y = data.y;
-        
       }
-    }
-    else
-    {
-      if (playerID === 1)
-      {
-        if (data.id === 2 && !gameInfo.offline)
-          user2.y = data.y;
-      }
-      else if (playerID === 2)
-      {
-        if (data.id === 1 && !gameInfo.offline)
-        {
-          user1.y = data.y;
-          
-        }
-        
+    } else if (playerID === 1) {
+      if (data.id === 2 && !gameInfo.offline) user2.y = data.y;
+    } else if (playerID === 2) {
+      if (data.id === 1 && !gameInfo.offline) {
+        user1.y = data.y;
       }
     }
   });
 
   socket.on('ballPos', function (data: ballProps) {
-    if (data.likedGame !== user1.lien || (playerID === 1 || (gameInfo.offline && playerID === 2))) return;
-    ball.velocityX = data.velocityX
-    ball.velocityY = data.velocityY
-    ball.speed = data.speed
+    if (
+      data.likedGame !== user1.lien ||
+      playerID === 1 ||
+      (gameInfo.offline && playerID === 2)
+    )
+      return;
+    ball.velocityX = data.velocityX;
+    ball.velocityY = data.velocityY;
+    ball.speed = data.speed;
     ball.x = data.x;
-    ball.y = data.y
+    ball.y = data.y;
     ball.user1score = data.user1score;
     ball.user2score = data.user2score;
   });
-
 
   function game(context: CanvasRenderingContext2D) {
     sendPlayers();
@@ -326,8 +310,8 @@ export default function PongGame({
   }
 
   const mouseMouveEvent = useCallback((e: MouseEvent) => {
-      if (playerID === 3) return;
-      let temp = playerID === 1 ? user1  : user2;
+    if (playerID === 3) return;
+    let temp = playerID === 1 ? user1 : user2;
     if (canvasRef.current) {
       const userRect = canvasRef.current.getBoundingClientRect();
       const userRation = userRect.height / height;
@@ -347,7 +331,7 @@ export default function PongGame({
 
   const touchStartLister = useCallback((e: TouchEvent) => {
     if (playerID === 3) return;
-    let temp = playerID === 1 ? user1  : user2;
+    let temp = playerID === 1 ? user1 : user2;
     if (canvasRef.current) {
       let newPos = e.touches[0].clientY;
       let userRect = canvasRef.current.getBoundingClientRect();
@@ -360,7 +344,7 @@ export default function PongGame({
         ratio * (newPos - userHeight) > 10 &&
         ratio * (newPos + userHeight) < height - 10
       )
-      temp.y = ratio * (newPos - userHeight);
+        temp.y = ratio * (newPos - userHeight);
       else if (newPos - userRect.top - temp.height / 2 > 10)
         temp.y = height - temp.height - 10;
       else temp.y = 10;
@@ -378,33 +362,22 @@ export default function PongGame({
     }
   }
 
-  const handleUserKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      keys[e.keyCode] = true;
-    },
-    [],
-  );
+  const handleUserKeyPress = useCallback((e: KeyboardEvent) => {
+    keys[e.keyCode] = true;
+  }, []);
 
-  const handleUserKeyUp = useCallback(
-    (e: KeyboardEvent) => {
-      keys[e.keyCode] = false;
-    },
-    [],
-  );
+  const handleUserKeyUp = useCallback((e: KeyboardEvent) => {
+    keys[e.keyCode] = false;
+  }, []);
 
-
-  function getPlayerID()
-  {
-    if (socket.id === gameInfo.player1.socket)
-      return 1;
-    else if (socket.id === gameInfo.player2.socket)
-      return 2;
-    else
-      return 3;
+  function getPlayerID() {
+    if (socket.id === gameInfo.player1.socket) return 1;
+    else if (socket.id === gameInfo.player2.socket) return 2;
+    else return 3;
   }
 
   useEffect(() => {
-    if (canvasRef.current) {      
+    if (canvasRef.current) {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       window.addEventListener('mousemove', mouseMouveEvent);
@@ -431,7 +404,7 @@ export default function PongGame({
         };
       }
     }
-  }, []);// eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <canvas

@@ -13,11 +13,6 @@ export default function ListeParty() {
     return JSON.parse(txt);
   }
 
-  const callLogin = () => 
-  {
-    window.location.replace("http://localhost:8080/auth/42/login")
-  }
-
   useEffect(() => {
     getListParty().then((e) => setGames(e));
   }, []);

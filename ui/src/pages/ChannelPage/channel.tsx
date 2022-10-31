@@ -10,53 +10,59 @@ const popover = (
   <Popover id="popover-basic">
     <Popover.Header as="h3">Player Name</Popover.Header>
     <Popover.Body>
-      <Button variant="success">Game</Button> <Button variant="primary">DM</Button>
-    </Popover.Body> 
+      <Button variant="success">Game</Button>{' '}
+      <Button variant="primary">DM</Button>
+    </Popover.Body>
   </Popover>
 );
-const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 export default function Channel() {
- 
-    const [playerClicked, setPlayerClicked] = useState<number>() 
+  const [playerClicked, setPlayerClicked] = useState<number>();
 
-    function clickPlayer(e : React.MouseEvent, playerClickID: number)
-    {
-        e.preventDefault()
-        if (playerClickID === playerClicked)
-            setPlayerClicked(-1);
-        else
-            setPlayerClicked(playerClickID)
-    }
-    
-    useEffect(() =>
-    {
-        setPlayerClicked(-1);
-    }, [])
+  function clickPlayer(e: React.MouseEvent, playerClickID: number) {
+    e.preventDefault();
+    if (playerClickID === playerClicked) setPlayerClicked(-1);
+    else setPlayerClicked(playerClickID);
+  }
 
-    function needShowInfo(playerID: number) : boolean
-    {
-        return (playerID === playerClicked) 
-    }
+  useEffect(() => {
+    setPlayerClicked(-1);
+  }, []);
 
-  return ( 
-    <div className="ChannelContainer"> 
-       <Chat/>
-       <div className='playerList' style={playerClicked === -1 ? {overflow:"scroll"} : {overflow:"hidden"}}>
-       <ListGroup variant="flush">
-           {
-            array.map((elem) => ( 
-                <ListGroup.Item key={elem} onClick={(e) => clickPlayer(e, elem)}> 
-                    <OverlayTrigger show={needShowInfo(elem)} trigger="click" placement="right" overlay={popover}>  
-                        <a onMouseOver={(e) => e.preventDefault()} className='playerListItem'>{"Player " + elem}</a> 
-                    </OverlayTrigger>  
-                </ListGroup.Item> 
-            ))   
-           }
-    </ListGroup>
-       </div> 
-      
+  function needShowInfo(playerID: number): boolean {
+    return playerID === playerClicked;
+  }
+
+  return (
+    <div className="ChannelContainer">
+      <Chat />
+      <div
+        className="playerList"
+        style={
+          playerClicked === -1 ? { overflow: 'scroll' } : { overflow: 'hidden' }
+        }
+      >
+        <ListGroup variant="flush">
+          {array.map((elem) => (
+            <ListGroup.Item key={elem} onClick={(e) => clickPlayer(e, elem)}>
+              <OverlayTrigger
+                show={needShowInfo(elem)}
+                trigger="click"
+                placement="right"
+                overlay={popover}
+              >
+                <span
+                  onMouseOver={(e) => e.preventDefault()}
+                  className="playerListItem"
+                >
+                  {'Player ' + elem}
+                </span>
+              </OverlayTrigger>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </div>
     </div>
   );
 }
-  

@@ -10,12 +10,10 @@
   height: 100vh;
 }
 
-
-.GamePlayerChoose_container
-{
-  position: absolute; 
+.GamePlayerChoose_container {
+  position: absolute;
   width: 50vw;
-  height: 50vw; 
+  height: 50vw;
   top: 50%;
   transform: translateY(-50%) translateX(50%);
   border: solid 1px blue;
@@ -26,66 +24,59 @@
   flex-direction: column;
   justify-content: space-evenly;
 }
-.GamePlayerChoose_box
-{
+.GamePlayerChoose_box {
   display: flex;
   justify-content: space-evenly;
-  align-items: center; 
+  align-items: center;
 }
 
-.GamePlayerChoose_sl
-{
+.GamePlayerChoose_sl {
   border: solid 2px red;
 }
-.GamePlayerChoose_range
-{
-   width: 50%;
-   margin: 0 auto; 
+.GamePlayerChoose_range {
+  width: 50%;
+  margin: 0 auto;
 }
-.playeCont
-{
+.playeCont {
   bottom: 0;
-  color:white;
+  color: white;
   width: 100%;
   display: flex;
-  justify-content: space-around; 
-  position: absolute; 
-  font-family: "Orbitron"; 
-  font-size: 4em;             
+  justify-content: space-around;
+  position: absolute;
+  font-family: 'Orbitron';
+  font-size: 4em;
 }
- 
-@media (min-width: 1px) and (max-width: 645px){ 
-  .playeCont
-  {
+
+@media (min-width: 1px) and (max-width: 645px) {
+  .playeCont {
     bottom: 0;
-    color:white;
+    color: white;
     width: 100%;
     display: flex;
-    justify-content: space-around; 
-    position: absolute; 
-    font-family: "Orbitron"; 
-    font-size: 2em;             
+    justify-content: space-around;
+    position: absolute;
+    font-family: 'Orbitron';
+    font-size: 2em;
   }
- }
+}
 
- @media (min-width: 647px){ 
-  .playeCont
-  {
+@media (min-width: 647px) {
+  .playeCont {
     bottom: 0;
-    color:white;
+    color: white;
     width: 100%;
     display: flex;
-    justify-content: space-around; 
-    position: absolute; 
-    font-family: "Orbitron";  
-    font-size: 4em;             
+    justify-content: space-around;
+    position: absolute;
+    font-family: 'Orbitron';
+    font-size: 4em;
   }
- }
+}
 
- .win
- {
-  font-family: "Orbitron"; 
-  font-size: 6em;  
+.win {
+  font-family: 'Orbitron';
+  font-size: 6em;
   text-align: center;
   margin-top: 40%;
- }
+}

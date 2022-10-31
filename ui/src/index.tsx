@@ -13,9 +13,10 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
+      <Route path="/callback" element={<App />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/game_:id" element={<MainGame />} />
-      <Route path="/channel_:id" element={<Channel/>} />
+      <Route path="/channel_:id" element={<Channel />} />
     </Routes>
   </BrowserRouter>,
 );

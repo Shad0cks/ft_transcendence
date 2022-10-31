@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
 
-export default function Header() {
+export default function Header({ username }: { username: string | undefined }) {
   return (
     <div>
       <Navbar bg="dark" variant="dark" fixed="top">
@@ -14,7 +14,7 @@ export default function Header() {
           <Navbar.Toggle />
           <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
             <Nav className="justify-content-end">
-              <NavDropdown title="Username" id="collasible-nav-dropdown">
+              <NavDropdown title={username} id="collasible-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">
                   Profile Edit
                 </NavDropdown.Item>

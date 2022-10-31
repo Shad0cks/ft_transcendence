@@ -53,7 +53,6 @@ export class SocketEvent {
   }
 
   @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
-    
     this.server.emit('newPlayer', data);
   }
 
