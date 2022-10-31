@@ -43,18 +43,15 @@ export class SocketEvent {
   }
 
   @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
-    if (data === null) return ;
+    if (data === null) return;
     this.server.emit('gameOption', data);
   }
 
   @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
-    
     this.server.emit('ballPos', data);
   }
 
   @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
     this.server.emit('newPlayer', data);
   }
-
-
 }

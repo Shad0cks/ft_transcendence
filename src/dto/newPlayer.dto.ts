@@ -1,4 +1,4 @@
 export class newPlayerDTO {
-    socketID: string;
-    gameID: string;
-  };
+  socketID: string;
+  gameID: string;
+}
