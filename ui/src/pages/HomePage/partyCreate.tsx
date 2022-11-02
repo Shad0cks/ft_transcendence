@@ -44,10 +44,10 @@ export default function PartyCreate() {
 
   return (
     <div style={{ margin: '100px auto', color: '#fff', width: '40%' }}>
-      <h3 style={{ marginBottom: '20px' }}> Create your game </h3>
+      <h3 style={{ marginBottom: '20px' }}> Create your Channel </h3>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="gameName">Game name</Form.Label>
+          <Form.Label htmlFor="gameName">Channel name</Form.Label>
           <Form.Control
             id="gameName"
             placeholder="Wanderful name"
@@ -55,7 +55,7 @@ export default function PartyCreate() {
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="disabledSelect">Game visibility</Form.Label>
+          <Form.Label htmlFor="disabledSelect">Channel visibility</Form.Label>
           <Form.Select id="disabledSelect" {...register('restriction')}>
             <option>protected</option>
             <option>public</option>
@@ -67,7 +67,7 @@ export default function PartyCreate() {
             <Form.Label htmlFor="gamePass">Password</Form.Label>
             <Form.Control
               id="gamePass"
-              placeholder="1234"
+              placeholder="1234" 
               type="password"
               {...register('password')}
             />

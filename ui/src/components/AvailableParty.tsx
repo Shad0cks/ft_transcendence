@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 export default function AvailableParty({
   name,
@@ -22,9 +21,9 @@ export default function AvailableParty({
           <h5 className="card-title">{name}</h5>
 
           <p className="card-text"> {password ? 'public' : 'Private Game'} </p>
-          <Link to={'/game_' + id} className="btn btn-primary">
-            Join
-          </Link>
+          <button className="btn btn-primary">
+            Join 
+          </button>
         </div>
       </div>
     </div>

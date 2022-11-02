@@ -4,6 +4,7 @@ import App from './App';
 import NotFound from './pages/NotFound';
 import MainGame from './pages/GamePage/MainGame';
 import './index.css';
+import PartyManage from './pages/HomePage/PartyManage';
 import Channel from './pages/ChannelPage/channel';
 
 const root = ReactDOM.createRoot(
@@ -14,9 +15,10 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/callback" element={<App />} />
+      <Route path="/chat" element={<Channel />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/game_:id" element={<MainGame />} />
-      <Route path="/channel_:id" element={<Channel />} />
+      <Route path="/channelManager" element={<PartyManage />} />
     </Routes>
   </BrowserRouter>,
 );

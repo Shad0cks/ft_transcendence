@@ -4,13 +4,15 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header({ username }: { username: string | undefined }) {
+  const navigate = useNavigate();
   return (
     <div>
       <Navbar bg="dark" variant="dark" fixed="top">
         <Container>
-          <Navbar.Brand href="#home">Navbar with text</Navbar.Brand>
+          <Navbar.Brand style={{cursor: "pointer"}} onClick={() => navigate('/')}>Navbar with text</Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
             <Nav className="justify-content-end">

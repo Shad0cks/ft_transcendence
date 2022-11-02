@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import Header from './pages/HomePage/Header';
-import { useSearchParams } from 'react-router-dom';
-import ListeParty from './pages/HomePage/ListeParty';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
-
-import PartyCreate from './pages/HomePage/partyCreate';
 import Login from './pages/Login';
+import { Button } from 'react-bootstrap';
 
 function App() {
   const [searchParams] = useSearchParams();
   const [isLog, seIsLog] = useState<boolean>();
-  const [imageProgile, setImageProgile] = useState<string>();
   const [username, setUsername] = useState<string>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const logReq = searchParams.get('isLog');
-    console.log(imageProgile);
-    const imReq = searchParams.get('icon');
     const usrReq = searchParams.get('username');
 
     if (logReq && logReq === 'true') seIsLog(true);
     else seIsLog(false);
 
-    setImageProgile(imReq ? imReq : undefined);
     setUsername(usrReq ? usrReq : undefined);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       {isLog ? (
-        <div>
-          <Header username={username} />
-          <PartyCreate />
-          <ListeParty />
-        </div>
+        <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: "column",
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <Header username='bob'/>
+        <Button   variant="success">Play</Button>  
+        <Button onClick={() => {navigate('/chat')}} variant="success">Chat</Button>  
+      </div>
       ) : (
-        <Login />
+        <Login /> 
       )}
     </div>
   );
