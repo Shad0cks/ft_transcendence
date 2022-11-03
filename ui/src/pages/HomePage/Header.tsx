@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header({ username }: { username: string | undefined }) {
   const navigate = useNavigate();
@@ -31,15 +31,15 @@ export default function Header({ username }: { username: string | undefined }) {
           <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
             <Nav className="justify-content-end">
               <NavDropdown title={username} id="collasible-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">
-                  Game History
+                <NavDropdown.Item>
+                      <Link className="linkH" to={"/editProfile"} state={{username: username}}>Profile Edit</Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Friends</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.3">
-                  Profile Edit
+                    Game History
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">Log Out</NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.4"> Log Out </NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>

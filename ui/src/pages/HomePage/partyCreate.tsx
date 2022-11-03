@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import { AlertColor } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Channel } from '../../models/channel';
-import { createChannel } from '../../services/createChannel';
+import { createChannel } from '../../services/Channel/createChannel';
 import TSSnackbar from '../../components/TSSnackbar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom/dist';

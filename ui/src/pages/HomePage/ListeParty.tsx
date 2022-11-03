@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AvailableParty from '../../components/AvailableParty';
 import '../../css/Pages/ListeParty.css';
 import { Channel } from '../../models/channel';
-import { GetChannels } from '../../services/getChannels';
+import { GetChannels } from '../../services/Channel/getChannels';
 
 export default function ListeParty() {
   let [games, setGames] = useState<Channel[]>([]);

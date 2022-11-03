@@ -20,3 +20,9 @@
 .home_user_icon:hover {
   cursor: pointer;
 }
+
+.linkH, .linkH:hover
+{
+  text-decoration: none;
+  color: inherit;
+}
