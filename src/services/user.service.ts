@@ -17,7 +17,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createUser(userDTO: UserDTO): Promise<void> {
+  async createUser(userDTO: UserDTO, login42: string): Promise<User> {
     const user = new User();
 
     user.nickname = userDTO.nickname;
@@ -25,8 +25,9 @@ export class UserService {
     user.twofa_enabled = userDTO.twofa_enabled;
     user.wins = userDTO.wins;
     user.losses = userDTO.losses;
+    user.login42 = login42;
     try {
-      await this.userRepository.save(user);
+      return await this.userRepository.save(user);
     } catch (error) {
       if (error.code === '23505') {
         // duplicate nickname
@@ -47,7 +48,7 @@ export class UserService {
     return user;
   }
 
-  async findOneByNickname(nickname: string): Promise<UserDTO> {
+  async findOneByNickname(nickname: string): Promise<User> {
     const user = await this.userRepository.findOneBy({
       nickname: nickname,
     });
@@ -57,23 +58,38 @@ export class UserService {
     return user;
   }
 
-  async editNickname(id: string, nickname: string): Promise<void> {
-    if (!nickname) {
+  async findOneByLogin42(nickname: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({
+      login42: nickname,
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  async editNickname(oldNickname: string, newNickname: string): Promise<void> {
+    if (!newNickname) {
       throw new BadRequestException('Nickname is missing');
     }
     try {
       const result = await this.userRepository
         .createQueryBuilder()
-        .update({
-          nickname,
-        })
+        .update(User)
+        .set({ nickname: newNickname })
         .where({
-          id: id,
+          nickname: oldNickname,
         })
         .returning('*')
         .execute();
+      if (result.affected === 0) {
+        throw new NotFoundException('User not found');
+      }
       return result.raw[0];
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       if (error.code === '23505') {
         // duplicate nickname
         throw new ConflictException('Nickname already exists');
@@ -81,23 +97,22 @@ export class UserService {
     }
   }
 
-  async editAvatar(id: string, avatar: string): Promise<void> {
-    if (!avatar) {
+  async editAvatar(nickname: string, newAvatar: string): Promise<void> {
+    if (!newAvatar) {
       throw new BadRequestException('Avatar is missing');
     }
     await this.userRepository
       .createQueryBuilder()
-      .update({
-        avatar,
-      })
+      .update(User)
+      .set({ avatar: newAvatar })
       .where({
-        id: id,
+        nickname: nickname,
       })
       .returning('*')
       .execute();
   }
 
-  async edit2fa(id: string, enabled: boolean): Promise<void> {
+  async edit2fa(nickname: string, enabled: boolean): Promise<void> {
     if (!enabled && enabled !== false) {
       throw new BadRequestException('enabled is missing');
     }
@@ -106,7 +121,7 @@ export class UserService {
       .update(User)
       .set({ twofa_enabled: enabled })
       .where({
-        id: id,
+        nickname: nickname,
       })
       .returning('*')
       .execute();

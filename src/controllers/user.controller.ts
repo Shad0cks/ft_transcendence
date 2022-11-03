@@ -3,33 +3,34 @@ import { UserDTO } from 'src/dto/user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
 
-@Controller('user')
+@Controller('user/:nickname')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':nickname')
+  @Get()
   @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
     return this.userService.findOneByNickname(nickname);
   }
 
-  @Put(':id/nickname')
+  @Put('nickname')
+  @UseGuards(JwtAuthGuard)
   async editNicknameAction(
-    @Param('id') id: string,
+    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
   ): Promise<void> {
-    return await this.userService.editNickname(id, userDTO.nickname);
+    return await this.userService.editNickname(nickname, userDTO.nickname);
   }
 
-  @Put(':id/avatar')
+  @Put('avatar')
   async editAvatarAction(
-    @Param('id') id: string,
+    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
   ): Promise<void> {
-    return await this.userService.editAvatar(id, userDTO.avatar);
+    return await this.userService.editAvatar(nickname, userDTO.avatar);
   }
 
-  @Put(':id/2fa')
+  @Put('2fa')
   async edit2faAction(
     @Param('id') id: string,
     @Body() userDTO: UserDTO,

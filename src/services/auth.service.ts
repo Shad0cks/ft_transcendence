@@ -3,11 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UserDTO } from 'src/dto/user.dto';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/strategies/Jwt.strategy';
 import { Response } from 'express';
+import { User } from 'src/entities/user.entity';
+import { UserDTO } from 'src/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,12 +35,15 @@ export class AuthService {
     if (typeof request.user == 'undefined') {
       throw new BadRequestException();
     }
-    let user: UserDTO = request.user;
+    // here the nickname in the DTO is the login42
+    const userDTO: UserDTO = request.user;
+    let user: User;
+
     try {
-      user = await this.userService.findOneByNickname(user.nickname);
+      user = await this.userService.findOneByLogin42(userDTO.nickname);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        await this.userService.createUser(user);
+        user = await this.userService.createUser(userDTO, userDTO.nickname);
       } else {
         throw error;
       }
@@ -47,6 +51,7 @@ export class AuthService {
 
     const payload: JwtPayload = {
       nickname: user.nickname,
+      login42: user.login42,
       isAuthenticated: !user.twofa_enabled,
     };
     const jwt = this.jwtService.sign(payload);

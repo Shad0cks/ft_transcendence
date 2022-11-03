@@ -11,6 +11,9 @@ export class User {
   @Column({ unique: true })
   nickname: string;
 
+  @Column({ select: false })
+  login42: string;
+
   @Column()
   avatar: string;
 
