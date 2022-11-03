@@ -6,9 +6,9 @@ import { Channel } from '../../models/channel';
 import { createChannel } from '../../services/createChannel';
 import TSSnackbar from '../../components/TSSnackbar';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom/dist';
+import { useNavigate, useLocation } from 'react-router-dom/dist';
 
-export default function PartyCreate() {
+export default function PartyCreate({ username }: { username: string | undefined }) {
   const { register, watch, handleSubmit } = useForm<Channel>();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -26,7 +26,7 @@ export default function PartyCreate() {
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e) => {
-            navigate('/game_' + e.id);
+            navigate('/game_' + e.id, {state :{username: username}});
           });
         } else {
           setSnackbarMessage('Error while creating channel.');

@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
 import Header from '../HomePage/Header';
 
 const popover  =  (elem: number) => (
@@ -21,6 +21,7 @@ const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 export default function Channel() {
   const navigate = useNavigate();
+  const {state} = useLocation();
   const [playerClicked, setPlayerClicked] = useState<number>();
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
@@ -31,6 +32,8 @@ export default function Channel() {
 
   useEffect(() => {
     setPlayerClicked(-1);
+    if (state === null || state.username === undefined)
+      navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
   }, []);
 
   function needShowInfo(playerID: number): boolean {
@@ -38,8 +41,10 @@ export default function Channel() {
   }
 
   return (
-    <div>
-      <Header username='helo'/>
+    state ? 
+    (
+      <div>
+      <Header username={state.username}/>
       <div className= "btnCont">
         <h1 className= "txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
@@ -72,8 +77,13 @@ export default function Channel() {
             </ListGroup>
           </div>
         </div>
-        <Button  onClick={() => {navigate('/channelManager')}} variant="success">Manage Channels</Button> 
+        <Button  onClick={() => {navigate('/channelManager', {state :{username: state.username}})}} variant="success">Manage Channels</Button> 
       </div> 
     </div>
+    )
+    :
+    (
+      null
+    )
   );
 }
