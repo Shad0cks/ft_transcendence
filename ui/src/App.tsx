@@ -28,7 +28,7 @@ function App() {
         <div
         style={{
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'space-evenly',
           alignItems: 'center',
           flexDirection: "column",
           width: '100%',
