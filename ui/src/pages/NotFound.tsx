@@ -11,7 +11,7 @@ export default function NotFound() {
   useEffect(() => {
     if (state === null || state.username === undefined)
       navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
-  }, [])
+  }, [])// eslint-disable-line react-hooks/exhaustive-deps
   
 
   return (

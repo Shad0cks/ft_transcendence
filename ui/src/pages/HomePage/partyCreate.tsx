@@ -6,7 +6,7 @@ import { Channel } from '../../models/channel';
 import { createChannel } from '../../services/createChannel';
 import TSSnackbar from '../../components/TSSnackbar';
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom/dist';
+import { useNavigate } from 'react-router-dom/dist';
 
 export default function PartyCreate({ username }: { username: string | undefined }) {
   const { register, watch, handleSubmit } = useForm<Channel>();

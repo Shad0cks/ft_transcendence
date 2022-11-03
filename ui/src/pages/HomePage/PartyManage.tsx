@@ -11,7 +11,7 @@ export default function PartyManage() {
   useEffect(() => {
     if (state === null || state.username === undefined)
       navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
-  }, [])
+  }, [])// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     state ? 

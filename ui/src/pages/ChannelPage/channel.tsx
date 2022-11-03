@@ -34,7 +34,7 @@ export default function Channel() {
     setPlayerClicked(-1);
     if (state === null || state.username === undefined)
       navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
     return playerID === playerClicked;
