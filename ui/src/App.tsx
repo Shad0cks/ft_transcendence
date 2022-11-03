@@ -11,39 +11,53 @@ function App() {
   const [isLog, seIsLog] = useState<boolean>();
   const [username, setUsername] = useState<string>();
   const navigate = useNavigate();
-  const {state} = useLocation();
+  const { state } = useLocation();
 
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
 
-    if ((logReq && logReq === 'true') ||  (state && state.alreadyLog === true)) seIsLog(true);
+    if ((logReq && logReq === 'true') || (state && state.alreadyLog === true))
+      seIsLog(true);
     else seIsLog(false);
     if (state && state.alreadyUsername !== undefined)
       setUsername(state.alreadyUsername);
-    else
-      setUsername(usrReq ? usrReq : undefined);
+    else setUsername(usrReq ? usrReq : undefined);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
       {isLog && username !== undefined ? (
         <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          flexDirection: "column",
-          width: '100%',
-          height: '100vh',
-        }}
-      >
-        <Header username={username}/>
-        <Button  onClick={() => {navigate('/game_1', { state: {username: username}})}} variant="success">Play</Button>
-        <Button onClick={() => {navigate('/chat', {state : {username: username}})}} variant="success">Chat</Button>
-      </div>
+          style={{
+            display: 'flex',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            flexDirection: 'column',
+            width: '100%',
+            height: '100vh',
+          }}
+        >
+          <Header username={username} />
+          <Button
+            onClick={() => {
+              navigate('/game_1', { state: { username: username } });
+            }}
+            variant="success"
+          >
+            Play
+          </Button>
+          <Button
+            onClick={() => {
+              navigate('/chat', { state: { username: username } });
+            }}
+            variant="success"
+          >
+            Chat
+          </Button>
+        </div>
       ) : (
-        <Login /> 
+        <Login />
       )}
     </div>
   );

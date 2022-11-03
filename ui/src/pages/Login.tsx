@@ -1,11 +1,9 @@
 import React from 'react';
 
 export default function Login() {
-  
-  const callLogin = () =>
-    {
-      window.location.replace("http://localhost:8080/auth/42/login")
-    }
+  const callLogin = () => {
+    window.location.replace('http://localhost:8080/auth/42/login');
+  };
 
   return (
     <div

@@ -10,9 +10,23 @@ export default function Header({ username }: { username: string | undefined }) {
   const navigate = useNavigate();
   return (
     <div>
-      <Navbar bg="dark" variant="dark" fixed="top" style={{fontFamily: 'Orbitron'}}>
+      <Navbar
+        bg="dark"
+        variant="dark"
+        fixed="top"
+        style={{ fontFamily: 'Orbitron' }}
+      >
         <Container>
-          <Navbar.Brand style={{cursor: "pointer"}} onClick={() => navigate('/', { state :{alreadyUsername: username, alreadyLog: true}})}>FT_TRANSCENDENCE</Navbar.Brand>
+          <Navbar.Brand
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              navigate('/', {
+                state: { alreadyUsername: username, alreadyLog: true },
+              })
+            }
+          >
+            FT_TRANSCENDENCE
+          </Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
             <Nav className="justify-content-end">
@@ -20,9 +34,7 @@ export default function Header({ username }: { username: string | undefined }) {
                 <NavDropdown.Item href="#action/3.1">
                   Game History
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Friends
-                </NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.2">Friends</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.3">
                   Profile Edit
                 </NavDropdown.Item>

@@ -21,9 +21,7 @@ export default function AvailableParty({
           <h5 className="card-title">{name}</h5>
 
           <p className="card-text"> {password ? 'public' : 'Private Game'} </p>
-          <button className="btn btn-primary">
-            Join 
-          </button>
+          <button className="btn btn-primary">Join</button>
         </div>
       </div>
     </div>

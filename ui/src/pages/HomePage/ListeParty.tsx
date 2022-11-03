@@ -19,7 +19,7 @@ export default function ListeParty() {
 
   return (
     <div className="ListeParty_block">
-      <h2 className="ListeParty_title">Available Channels: </h2> 
+      <h2 className="ListeParty_title">Available Channels: </h2>
       <div className="ListeParty_list">
         {games.map((e: Channel) => {
           return e.restriction !== 'private' ? (

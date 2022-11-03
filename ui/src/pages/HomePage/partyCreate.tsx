@@ -8,7 +8,11 @@ import TSSnackbar from '../../components/TSSnackbar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom/dist';
 
-export default function PartyCreate({ username }: { username: string | undefined }) {
+export default function PartyCreate({
+  username,
+}: {
+  username: string | undefined;
+}) {
   const { register, watch, handleSubmit } = useForm<Channel>();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -26,7 +30,7 @@ export default function PartyCreate({ username }: { username: string | undefined
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e) => {
-            navigate('/game_' + e.id, {state :{username: username}});
+            navigate('/game_' + e.id, { state: { username: username } });
           });
         } else {
           setSnackbarMessage('Error while creating channel.');
@@ -67,7 +71,7 @@ export default function PartyCreate({ username }: { username: string | undefined
             <Form.Label htmlFor="gamePass">Password</Form.Label>
             <Form.Control
               id="gamePass"
-              placeholder="1234" 
+              placeholder="1234"
               type="password"
               {...register('password')}
             />

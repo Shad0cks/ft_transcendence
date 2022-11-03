@@ -5,14 +5,14 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
-import {useNavigate, useLocation} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../HomePage/Header';
 
-const popover  =  (elem: number) => (
+const popover = (elem: number) => (
   <Popover id="popover-basic">
     <Popover.Header as="h3">Player Name</Popover.Header>
     <Popover.Body>
-      <Button variant="success">Game</Button>{' '} 
+      <Button variant="success">Game</Button>{' '}
       <Button variant="primary">DM</Button>
     </Popover.Body>
   </Popover>
@@ -21,7 +21,7 @@ const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 export default function Channel() {
   const navigate = useNavigate();
-  const {state} = useLocation();
+  const { state } = useLocation();
   const [playerClicked, setPlayerClicked] = useState<number>();
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
@@ -33,57 +33,75 @@ export default function Channel() {
   useEffect(() => {
     setPlayerClicked(-1);
     if (state === null || state.username === undefined)
-      navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
+      navigate('/', {
+        state: { alreadyUsername: undefined, alreadyLog: false },
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
     return playerID === playerClicked;
   }
 
-  return (
-    state ? 
-    (
-      <div>
-      <Header username={state.username}/>
-      <div className= "btnCont">
-        <h1 className= "txtChannel">Chat Room</h1>
+  return state ? (
+    <div>
+      <Header username={state.username} />
+      <div className="btnCont">
+        <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
           <Chat />
           <div
             className="playerList"
             style={
-              playerClicked === -1 ? { overflow: 'scroll' } : { overflow: 'hidden' }
+              playerClicked === -1
+                ? { overflow: 'scroll' }
+                : { overflow: 'hidden' }
             }
           >
             <ListGroup variant="flush">
               {array.map((elem) => (
-                <ListGroup.Item key={elem} onClick={(e) => clickPlayer(e, elem)} style={playerClicked === -1 || playerClicked === elem ? {cursor:"pointer"} :  {cursor:""}}>    
+                <ListGroup.Item
+                  key={elem}
+                  onClick={(e) => clickPlayer(e, elem)}
+                  style={
+                    playerClicked === -1 || playerClicked === elem
+                      ? { cursor: 'pointer' }
+                      : { cursor: '' }
+                  }
+                >
                   <OverlayTrigger
                     show={needShowInfo(elem)}
                     trigger="click"
-                    placement="bottom"  
+                    placement="bottom"
                     overlay={popover(elem)}
                   >
                     <span
-                      style={playerClicked === elem ? {color: "red"} : {color: "black"}} 
+                      style={
+                        playerClicked === elem
+                          ? { color: 'red' }
+                          : { color: 'black' }
+                      }
                       onMouseOver={(e) => e.preventDefault()}
                       className="playerListItem"
                     >
                       {'Player ' + elem}
                     </span>
-                  </OverlayTrigger> 
-                </ListGroup.Item> 
+                  </OverlayTrigger>
+                </ListGroup.Item>
               ))}
             </ListGroup>
           </div>
         </div>
-        <Button  onClick={() => {navigate('/channelManager', {state :{username: state.username}})}} variant="success">Manage Channels</Button> 
-      </div> 
+        <Button
+          onClick={() => {
+            navigate('/channelManager', {
+              state: { username: state.username },
+            });
+          }}
+          variant="success"
+        >
+          Manage Channels
+        </Button>
+      </div>
     </div>
-    )
-    :
-    (
-      null
-    )
-  );
+  ) : null;
 }

@@ -24,7 +24,7 @@ function MainGame() {
     player2: { taken: false, socket: undefined },
   });
   const [socket, setSocket] = useState<Socket>();
-  const {state} = useLocation();
+  const { state } = useLocation();
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
   };
@@ -55,7 +55,9 @@ function MainGame() {
 
   useEffect(() => {
     if (state === null || state.username === undefined)
-      navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
+      navigate('/', {
+        state: { alreadyUsername: undefined, alreadyLog: false },
+      });
     socket?.on('connect', () => {
       socket.emit('newPlayer', {
         socketID: socket.id,
@@ -164,20 +166,12 @@ function MainGame() {
     }
   };
 
-  return (
-  
-    state ? 
-    (
-      <div>
-        <Header username={state.username} />
-        {setGameOp()}
+  return state ? (
+    <div>
+      <Header username={state.username} />
+      {setGameOp()}
     </div>
-    )
-    :
-    (
-      null
-    )
-  );
+  ) : null;
 }
 
 export default MainGame;

@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<App />}/>
+      <Route path="/" element={<App />} />
       <Route path="/callback" element={<App />} />
       <Route path="/chat" element={<Channel />} />
       <Route path="*" element={<NotFound />} />
