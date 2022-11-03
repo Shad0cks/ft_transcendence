@@ -8,8 +8,10 @@ import { GameObj } from '../../models/game';
 import socketIOClient, { Socket } from 'socket.io-client';
 import Header from '../HomePage/Header';
 import { newPlayer } from '../../models/newPlayer';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function MainGame() {
+  const navigate = useNavigate();
   const [game, setGame] = useState<GameObj>({
     gameID: window.location.pathname,
     emiter: undefined,
@@ -22,7 +24,7 @@ function MainGame() {
     player2: { taken: false, socket: undefined },
   });
   const [socket, setSocket] = useState<Socket>();
-
+  const { state } = useLocation();
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
   };
@@ -52,6 +54,10 @@ function MainGame() {
   }
 
   useEffect(() => {
+    if (state === null || state.username === undefined)
+      navigate('/', {
+        state: { alreadyUsername: undefined, alreadyLog: false },
+      });
     socket?.on('connect', () => {
       socket.emit('newPlayer', {
         socketID: socket.id,
@@ -126,7 +132,6 @@ function MainGame() {
       case 4:
         return (
           <div className="mainGame_block">
-            <Header username="fs" />
             <div className="playeCont">
               <p className="playerNum">Player 1</p>
               <p className="playerNum">Player 2</p>
@@ -161,7 +166,12 @@ function MainGame() {
     }
   };
 
-  return <div>{setGameOp()}</div>;
+  return state ? (
+    <div>
+      <Header username={state.username} />
+      {setGameOp()}
+    </div>
+  ) : null;
 }
 
 export default MainGame;

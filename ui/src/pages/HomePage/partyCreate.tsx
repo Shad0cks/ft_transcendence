@@ -8,7 +8,11 @@ import TSSnackbar from '../../components/TSSnackbar';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom/dist';
 
-export default function PartyCreate() {
+export default function PartyCreate({
+  username,
+}: {
+  username: string | undefined;
+}) {
   const { register, watch, handleSubmit } = useForm<Channel>();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -26,7 +30,7 @@ export default function PartyCreate() {
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e) => {
-            navigate('/game_' + e.id);
+            navigate('/game_' + e.id, { state: { username: username } });
           });
         } else {
           setSnackbarMessage('Error while creating channel.');
@@ -44,10 +48,10 @@ export default function PartyCreate() {
 
   return (
     <div style={{ margin: '100px auto', color: '#fff', width: '40%' }}>
-      <h3 style={{ marginBottom: '20px' }}> Create your game </h3>
+      <h3 style={{ marginBottom: '20px' }}> Create your Channel </h3>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="gameName">Game name</Form.Label>
+          <Form.Label htmlFor="gameName">Channel name</Form.Label>
           <Form.Control
             id="gameName"
             placeholder="Wanderful name"
@@ -55,7 +59,7 @@ export default function PartyCreate() {
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label htmlFor="disabledSelect">Game visibility</Form.Label>
+          <Form.Label htmlFor="disabledSelect">Channel visibility</Form.Label>
           <Form.Select id="disabledSelect" {...register('restriction')}>
             <option>protected</option>
             <option>public</option>

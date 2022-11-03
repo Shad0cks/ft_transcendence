@@ -1,11 +1,10 @@
 import React from 'react';
 
 export default function Login() {
-  // const callLogin = () =>
-  //   {
-  //     //window.location.replace("http://localhost:8080/auth/42/login")
-  //     window.location.replace("http://localhost:8080/callback?isLog=true&username=hugo&icon=http://image.jpg")
-  //   }
+  const callLogin = () => {
+    window.location.replace('http://localhost:8080/auth/42/login');
+  };
+
   return (
     <div
       style={{
@@ -16,16 +15,14 @@ export default function Login() {
         height: '100vh',
       }}
     >
-      <a
+      <button
         type="button"
         className="btn btn-outline-success"
         style={{ margin: '0 auto' }}
-        href={
-          'http://localhost:3000/callback?isLog=true&username=hugo&icon=http://image.jpg'
-        }
+        onClick={callLogin}
       >
         Login
-      </a>
+      </button>
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import '../css/Pages/NotFound.css';
-import Header from './HomePage/Header';
+import PartyCreate from './partyCreate';
+import ListeParty from './ListeParty';
+import Header from './Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function NotFound() {
+export default function PartyManage() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -15,9 +16,10 @@ export default function NotFound() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return state ? (
-    <div className="NotFound_block">
+    <div>
       <Header username={state.username} />
-      <h1>Page Not Found</h1>
+      <PartyCreate username={state.username} />
+      <ListeParty />
     </div>
   ) : null;
 }
