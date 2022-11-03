@@ -7,10 +7,10 @@ import { UserService } from '../services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
+  @Get(':nickname')
   @UseGuards(JwtAuthGuard)
-  async findOneAction(@Param('id') id: string): Promise<UserDTO> {
-    return this.userService.findOne(id);
+  async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
+    return this.userService.findOneByNickname(nickname);
   }
 
   @Put(':id/nickname')
