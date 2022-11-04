@@ -1,11 +1,10 @@
-import { newUser } from '../../models/newUser';
-
-export function createUser(url: string, userId: string) {
-  return fetch(process.env.REACT_APP_API_URL + '/user/'+userId+'/avatar/', {
-    method: 'POST',
+export function UserSetAvatar(url: string, userNickname: string) {
+  return fetch(process.env.REACT_APP_API_URL + '/user/' + userNickname + '/avatar/', {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(url),
+    credentials: 'include',
+    body: JSON.stringify({avatar: url}),
   });
 }
