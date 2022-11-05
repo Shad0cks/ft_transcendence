@@ -23,6 +23,7 @@ export class UserController {
   }
 
   @Put('avatar')
+  @UseGuards(JwtAuthGuard)
   async editAvatarAction(
     @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
@@ -31,10 +32,11 @@ export class UserController {
   }
 
   @Put('2fa')
+  @UseGuards(JwtAuthGuard)
   async edit2faAction(
-    @Param('id') id: string,
+    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
   ): Promise<void> {
-    await this.userService.edit2fa(id, userDTO.twofa_enabled);
+    await this.userService.edit2fa(nickname, userDTO.twofa_enabled);
   }
 }

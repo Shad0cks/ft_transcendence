@@ -38,7 +38,7 @@ export class UserService {
     }
   }
 
-  async findOne(id: string): Promise<UserDTO> {
+  async findOneById(id: string): Promise<UserDTO> {
     const user = await this.userRepository.findOneBy({
       id: parseInt(id),
     });
