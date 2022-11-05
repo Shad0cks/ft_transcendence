@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../../css/Pages/MainUserProfile.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../HomePage/Header';
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Image from 'react-bootstrap/Image';
 import { GetUserIt } from '../../models/getUser';
@@ -12,10 +11,11 @@ import { BlobServiceClient } from '@azure/storage-blob';
 import { UserSetAvatar } from '../../services/User/userSetAvatar';
 import { SetUserNickname } from '../../services/User/setUserNickname';
 import { ChechLocalStorage } from '../../services/checkIsLog';
+import { Form } from 'react-bootstrap';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
-  const [newName, setNewName] = useState<string>('');
+  const newName = useRef(null);
   const [user, setUser] = useState<GetUserIt>();
   const [username, setUsername] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export default function MainUserProfile() {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e: GetUserIt) => {
             setUser(e);
-            setNewName(e.nickname);
+            setUsername(e.nickname);
           });
         } else {
           console.log('err req', res.status);
@@ -44,10 +44,14 @@ export default function MainUserProfile() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function updateName() {
-    if (user && newName !== '') {
-      SetUserNickname(user.nickname, newName).then((res) => {
+    if (!newName.current) {
+      return;
+    }
+    const newValue = (newName.current as HTMLInputElement).value;
+    if (user && newValue !== '') {
+      SetUserNickname(user.nickname, newValue).then((res) => {
         if (res.ok) {
-          localStorage.setItem('nickname', newName);
+          localStorage.setItem('nickname', newValue);
           window.location.reload();
         }
       });
@@ -88,7 +92,7 @@ export default function MainUserProfile() {
         <h1>Edit Profile</h1>
         <Image
           style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-          src={user.avatar + '?rand=' + Date.now()}
+          src={user.avatar}
           roundedCircle
         />
         <InputGroup className="mb-3" style={{ width: '300px' }}>
@@ -96,10 +100,8 @@ export default function MainUserProfile() {
             placeholder="Username"
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
-            value={newName}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setNewName(event.target.value)
-            }
+            defaultValue={username}
+            ref={newName}
           />
           <Button
             onClick={updateName}
