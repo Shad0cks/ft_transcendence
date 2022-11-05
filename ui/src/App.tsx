@@ -1,28 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import Header from './pages/HomePage/Header';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
 import Login from './pages/Login';
 import { Button } from 'react-bootstrap';
+import { ChechLocalStorage } from './services/checkIsLog';
 
 function App() {
   const [searchParams] = useSearchParams();
   const [isLog, seIsLog] = useState<boolean>();
   const [username, setUsername] = useState<string>();
   const navigate = useNavigate();
-  const { state } = useLocation();
 
   useEffect(() => {
+    ChechLocalStorage();
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
+    const usernameStorage = localStorage.getItem('nickname');
 
-    if ((logReq && logReq === 'true') || (state && state.alreadyLog === true))
+    if ((logReq && logReq === 'true') || usernameStorage !== null)
       seIsLog(true);
     else seIsLog(false);
-    if (state && state.alreadyUsername !== undefined)
-      setUsername(state.alreadyUsername);
-    else setUsername(usrReq ? usrReq : undefined);
+    if (usernameStorage !== null) setUsername(usernameStorage);
+    else if (usrReq) {
+      setUsername(usrReq);
+      localStorage.setItem('nickname', usrReq);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -41,7 +45,7 @@ function App() {
           <Header username={username} />
           <Button
             onClick={() => {
-              navigate('/game_1', { state: { username: username } });
+              navigate('/game_1');
             }}
             variant="success"
           >
@@ -49,7 +53,7 @@ function App() {
           </Button>
           <Button
             onClick={() => {
-              navigate('/chat', { state: { username: username } });
+              navigate('/chat');
             }}
             variant="success"
           >
