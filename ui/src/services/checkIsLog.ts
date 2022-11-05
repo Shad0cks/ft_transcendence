@@ -6,9 +6,13 @@ export function ChechLocalStorage() {
   GetUserInfo(usernameStorage)
     .then((res) => {
       if (res.ok) return;
-      else localStorage.removeItem('nickname');
+      else {
+        localStorage.removeItem('nickname');
+        window.location.reload();
+      }
     })
     .catch(() => {
       localStorage.removeItem('nickname');
+      window.location.reload();
     });
 }

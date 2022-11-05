@@ -41,6 +41,7 @@ export default function Header({ username }: { username: string | undefined }) {
                   onClick={() => {
                     localStorage.removeItem('nickname');
                     navigate('/');
+                    window.location.reload();
                   }}
                 >
                   {' '}
