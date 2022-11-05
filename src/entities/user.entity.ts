@@ -1,11 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ select: false })
   twofa_enabled: boolean;
 
   @Column({ unique: true })
@@ -13,6 +19,10 @@ export class User {
 
   @Column({ select: false })
   login42: string;
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  friends: User[];
 
   @Column()
   avatar: string;

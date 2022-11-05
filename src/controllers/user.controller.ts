@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
@@ -23,6 +32,7 @@ export class UserController {
   }
 
   @Put('avatar')
+  @UseGuards(JwtAuthGuard)
   async editAvatarAction(
     @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
@@ -31,10 +41,26 @@ export class UserController {
   }
 
   @Put('2fa')
+  @UseGuards(JwtAuthGuard)
   async edit2faAction(
-    @Param('id') id: string,
+    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
   ): Promise<void> {
-    await this.userService.edit2fa(id, userDTO.twofa_enabled);
+    await this.userService.edit2fa(nickname, userDTO.twofa_enabled);
+  }
+
+  @Post('friends')
+  @UseGuards(JwtAuthGuard)
+  async addFriendAction(
+    @Param('nickname') userNickname: string,
+    @Body() friendDTO: FriendDTO,
+  ) {
+    await this.userService.addFriend(userNickname, friendDTO);
+  }
+
+  @Get('friends')
+  @UseGuards(JwtAuthGuard)
+  async getFriendsAction(@Param('nickname') nickname: string) {
+    return await this.userService.getFriendsByNickname(nickname);
   }
 }
