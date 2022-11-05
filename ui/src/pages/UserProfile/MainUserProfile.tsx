@@ -92,7 +92,7 @@ export default function MainUserProfile() {
         <h1>Edit Profile</h1>
         <Image
           style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-          src={user.avatar}
+          src={user.avatar + '?rand=' + Date.now()}
           roundedCircle
         />
         <InputGroup className="mb-3" style={{ width: '300px' }}>
