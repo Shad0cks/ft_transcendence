@@ -1,24 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PartyCreate from './partyCreate';
 import ListeParty from './ListeParty';
 import Header from './Header';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { ChechLocalStorage } from '../../services/checkIsLog';
 
 export default function PartyManage() {
-  const { state } = useLocation();
   const navigate = useNavigate();
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state === null || state.username === undefined)
-      navigate('/', {
-        state: { alreadyUsername: undefined, alreadyLog: false },
-      });
+    (async () => {await ChechLocalStorage()})()
+    const usernameStorage = localStorage.getItem("nickname")
+    setUsername(usernameStorage)
+    if (usernameStorage === null)
+      navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return state ? (
+  return username ? (
     <div>
-      <Header username={state.username} />
-      <PartyCreate username={state.username} />
+      <Header username={username} />
+      <PartyCreate username={username} />
       <ListeParty />
     </div>
   ) : null;

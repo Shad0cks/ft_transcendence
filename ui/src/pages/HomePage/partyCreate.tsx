@@ -30,7 +30,7 @@ export default function PartyCreate({
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e) => {
-            navigate('/game_' + e.id, { state: { username: username } });
+            navigate('/game_' + e.id);
           });
         } else {
           setSnackbarMessage('Error while creating channel.');

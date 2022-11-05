@@ -8,7 +8,8 @@ import { GameObj } from '../../models/game';
 import socketIOClient, { Socket } from 'socket.io-client';
 import Header from '../HomePage/Header';
 import { newPlayer } from '../../models/newPlayer';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { ChechLocalStorage } from '../../services/checkIsLog';
 
 function MainGame() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function MainGame() {
     player2: { taken: false, socket: undefined },
   });
   const [socket, setSocket] = useState<Socket>();
-  const { state } = useLocation();
+  const [username, setUsername] = useState<string | null>(null);
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
   };
@@ -54,16 +55,13 @@ function MainGame() {
   }
 
   useEffect(() => {
-    if (state === null || state.username === undefined)
-      navigate('/', {
-        state: { alreadyUsername: undefined, alreadyLog: false },
-      });
     socket?.on('connect', () => {
       socket.emit('newPlayer', {
         socketID: socket.id,
         gameID: window.location.pathname,
       });
     });
+
     //socket?.on('disconnect', () => {console.log("disco", socket.id); if (isPlayer()) setGame({...game, screen: 5, emiter: socket.id, player1: {...game.player1, socket: "disconnected"}})})
     socket?.on('gameOption', (data: GameObj) => {
       if (data.gameID === game.gameID && data.emiter !== socket.id)
@@ -96,7 +94,12 @@ function MainGame() {
   }, [game, socket]);
 
   useEffect(() => {
+    (async () => {await ChechLocalStorage()})()
     setSocket(socketIOClient('http://localhost:8080'));
+    const usernameStorage = localStorage.getItem("nickname")
+    setUsername(usernameStorage)
+    if (usernameStorage === null)
+      navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {
@@ -166,9 +169,9 @@ function MainGame() {
     }
   };
 
-  return state ? (
+  return username ? (
     <div>
-      <Header username={state.username} />
+      <Header username={username} />
       {setGameOp()}
     </div>
   ) : null;

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../../css/Pages/MainUserProfile.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../HomePage/Header';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -11,21 +11,25 @@ import { GetUserInfo } from '../../services/User/getUserInfo';
 import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 import { UserSetAvatar } from '../../services/User/userSetAvatar';
 import { SetUserNickname } from '../../services/User/setUserNickname';
+import { ChechLocalStorage } from '../../services/checkIsLog';
 
 
 export default function MainUserProfile() {
 
-  const {state} = useLocation();
   const navigate = useNavigate();
   const [newName, setNewName] = useState<string>('')
   const [user, setUser] = useState<GetUserIt>()
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    if (state === null || state.username === undefined)
-      navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
+    (async () => {await ChechLocalStorage()})()
+    const usernameStorage = localStorage.getItem("nickname")
+    setUsername(usernameStorage)
+    if (usernameStorage === null)
+      navigate('/');
     
 
-    GetUserInfo(state.username).then((res) =>
+    GetUserInfo(usernameStorage!).then((res) =>
       {
         if (res.ok)
         {
@@ -42,17 +46,22 @@ export default function MainUserProfile() {
       }
     )
     .catch((err) => {
-      navigate('/', {state :{alreadyUsername: undefined, alreadyLog: false}})
+      navigate('/')
       console.log(err);
     });
   }, [])// eslint-disable-line react-hooks/exhaustive-deps
 
-  async function  updateName ()
+  function updateName ()
   {
     if (user && newName !== "")
     {
-      await SetUserNickname(user.nickname, newName)
-      state.username = newName;
+      SetUserNickname(user.nickname, newName).then(res => {
+        if (res.ok)
+        {
+          localStorage.setItem("nickname", newName)
+          window.location.reload()
+        }
+      })
     }
   }
  
@@ -68,7 +77,6 @@ export default function MainUserProfile() {
       const newFile = new File([file], user.id + fileExt);
       const blobServiceClient = new BlobServiceClient(
       `https://${account}.blob.core.windows.net/?${sas}`,
-      
       );
       const containerClient = blobServiceClient.getContainerClient("avatarimg");
       const blobClient = containerClient.getBlockBlobClient(newFile.name);
@@ -77,18 +85,23 @@ export default function MainUserProfile() {
         `Upload block blob avatarimg successfully`,
         uploadBlobResponse.requestId,
       );
-      await UserSetAvatar(`https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id}${fileExt}`, user.nickname)
+      UserSetAvatar(`https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id}${fileExt}`, user.nickname)
+      .then(res => 
+        {
+          if (res.ok)
+            window.location.reload()
+        })
     } 
   }
 
   return (
-    state && user ? 
+    username && user ? 
     (
       <div>
-        <Header username={state.username}/>
+        <Header username={username}/>
         <div className="MainUserProfile_block">
           <h1>Edit Profile</h1>  
-          <Image style={{width: "150px", height: "150px", cursor: "pointer"}} src={user.avatar} roundedCircle/> 
+          <Image style={{width: "150px", height: "150px", cursor: "pointer"}} src={user.avatar + "?rand=" + Date.now()} roundedCircle/> 
           <InputGroup className="mb-3" style={{width: "300px"}}>
             <Form.Control
               placeholder="Username"
