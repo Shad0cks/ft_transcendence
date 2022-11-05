@@ -5,8 +5,9 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../HomePage/Header';
+import { ChechLocalStorage } from '../../services/checkIsLog';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -21,8 +22,8 @@ const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 export default function Channel() {
   const navigate = useNavigate();
-  const { state } = useLocation();
   const [playerClicked, setPlayerClicked] = useState<number>();
+  const [username, setUsername] = useState<string | null>(null);
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
@@ -31,20 +32,20 @@ export default function Channel() {
   }
 
   useEffect(() => {
+    ChechLocalStorage();
     setPlayerClicked(-1);
-    if (state === null || state.username === undefined)
-      navigate('/', {
-        state: { alreadyUsername: undefined, alreadyLog: false },
-      });
+    const usernameStorage = localStorage.getItem('nickname');
+    setUsername(usernameStorage);
+    if (usernameStorage === null) navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
     return playerID === playerClicked;
   }
 
-  return state ? (
+  return username ? (
     <div>
-      <Header username={state.username} />
+      <Header username={username} />
       <div className="btnCont">
         <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
@@ -61,7 +62,7 @@ export default function Channel() {
               {array.map((elem) => (
                 <ListGroup.Item
                   key={elem}
-                  onClick={(e) => clickPlayer(e, elem)}
+                  onClick={(e: React.MouseEvent) => clickPlayer(e, elem)}
                   style={
                     playerClicked === -1 || playerClicked === elem
                       ? { cursor: 'pointer' }
@@ -93,9 +94,7 @@ export default function Channel() {
         </div>
         <Button
           onClick={() => {
-            navigate('/channelManager', {
-              state: { username: state.username },
-            });
+            navigate('/channelManager');
           }}
           variant="success"
         >

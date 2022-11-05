@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -38,7 +39,7 @@ export class UserService {
     }
   }
 
-  async findOne(id: string): Promise<UserDTO> {
+  async findOneById(id: string): Promise<UserDTO> {
     const user = await this.userRepository.findOneBy({
       id: parseInt(id),
     });
@@ -125,5 +126,36 @@ export class UserService {
       })
       .returning('*')
       .execute();
+  }
+
+  async getFriends(user: User): Promise<User[]> {
+    return this.userRepository
+      .createQueryBuilder()
+      .relation(User, 'friends')
+      .of(user)
+      .loadMany();
+  }
+
+  async getFriendsByNickname(nickname: string): Promise<User[]> {
+    const user = await this.findOneByNickname(nickname);
+    return this.getFriends(user);
+  }
+
+  async pushNewFriend(nickname: string, newFriend: User) {
+    const user = await this.findOneByNickname(nickname);
+    user.friends = await this.getFriends(user);
+    user.friends.push(newFriend);
+    await this.userRepository.save(user);
+  }
+
+  async addFriend(userNickname: string, friendDTO: FriendDTO) {
+    try {
+      const friend = await this.findOneByNickname(friendDTO.nickname);
+      await this.pushNewFriend(userNickname, friend);
+    } catch (error) {
+      if (error.status === 404) {
+        throw new NotFoundException(error.message);
+      }
+    }
   }
 }
