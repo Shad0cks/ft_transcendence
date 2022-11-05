@@ -21,8 +21,8 @@
   cursor: pointer;
 }
 
-.linkH, .linkH:hover
-{
+.linkH,
+.linkH:hover {
   text-decoration: none;
   color: inherit;
 }

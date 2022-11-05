@@ -1,6 +1,4 @@
-
 export interface newUser {
-    nickname: string;
-    avatar: string;
+  nickname: string;
+  avatar: string;
 }
-      

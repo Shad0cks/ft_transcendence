@@ -94,12 +94,11 @@ function MainGame() {
   }, [game, socket]);
 
   useEffect(() => {
-    (async () => {await ChechLocalStorage()})()
+    ChechLocalStorage();
     setSocket(socketIOClient('http://localhost:8080'));
-    const usernameStorage = localStorage.getItem("nickname")
-    setUsername(usernameStorage)
-    if (usernameStorage === null)
-      navigate('/');
+    const usernameStorage = localStorage.getItem('nickname');
+    setUsername(usernameStorage);
+    if (usernameStorage === null) navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {

@@ -10,11 +10,10 @@ export default function PartyManage() {
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {await ChechLocalStorage()})()
-    const usernameStorage = localStorage.getItem("nickname")
-    setUsername(usernameStorage)
-    if (usernameStorage === null)
-      navigate('/');
+    ChechLocalStorage();
+    const usernameStorage = localStorage.getItem('nickname');
+    setUsername(usernameStorage);
+    if (usernameStorage === null) navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return username ? (

@@ -32,12 +32,11 @@ export default function Channel() {
   }
 
   useEffect(() => {
-    (async () => {await ChechLocalStorage()})()
+    ChechLocalStorage();
     setPlayerClicked(-1);
-    const usernameStorage = localStorage.getItem("nickname")
-    setUsername(usernameStorage)
-    if (usernameStorage === null)
-      navigate('/');
+    const usernameStorage = localStorage.getItem('nickname');
+    setUsername(usernameStorage);
+    if (usernameStorage === null) navigate('/');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
@@ -80,7 +79,7 @@ export default function Channel() {
                       style={
                         playerClicked === elem
                           ? { color: 'red' }
-                          : { color: 'black'}
+                          : { color: 'black' }
                       }
                       onMouseOver={(e) => e.preventDefault()}
                       className="playerListItem"

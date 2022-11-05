@@ -14,23 +14,19 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      await ChechLocalStorage()
-      const logReq = searchParams.get('isAuthenticated');
-      const usrReq = searchParams.get('nickname');
-      const usernameStorage = localStorage.getItem("nickname")
+    ChechLocalStorage();
+    const logReq = searchParams.get('isAuthenticated');
+    const usrReq = searchParams.get('nickname');
+    const usernameStorage = localStorage.getItem('nickname');
 
-      if ((logReq && logReq === 'true') || (usernameStorage !== null))
-        seIsLog(true);
-      else seIsLog(false);
-      if (usernameStorage !== null )
-        setUsername(usernameStorage);
-      else if (usrReq) 
-      {
-        setUsername(usrReq);
-        localStorage.setItem("nickname", usrReq)
-      }
-    })()
+    if ((logReq && logReq === 'true') || usernameStorage !== null)
+      seIsLog(true);
+    else seIsLog(false);
+    if (usernameStorage !== null) setUsername(usernameStorage);
+    else if (usrReq) {
+      setUsername(usrReq);
+      localStorage.setItem('nickname', usrReq);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -70,5 +66,5 @@ function App() {
     </div>
   );
 }
- 
+
 export default App;

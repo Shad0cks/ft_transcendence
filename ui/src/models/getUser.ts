@@ -1,11 +1,8 @@
-
-
 export interface GetUserIt {
-    id: number,
-    login42: string,
-    nickname: string,
-    avatar: string,
-    wins: number,
-    losses: number
+  id: number;
+  login42: string;
+  nickname: string;
+  avatar: string;
+  wins: number;
+  losses: number;
 }
-      

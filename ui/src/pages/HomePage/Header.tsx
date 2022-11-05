@@ -19,9 +19,7 @@ export default function Header({ username }: { username: string | undefined }) {
         <Container>
           <Navbar.Brand
             style={{ cursor: 'pointer' }}
-            onClick={() =>
-              navigate('/')
-            }
+            onClick={() => navigate('/')}
           >
             FT_TRANSCENDENCE
           </Navbar.Brand>
@@ -30,14 +28,24 @@ export default function Header({ username }: { username: string | undefined }) {
             <Nav className="justify-content-end">
               <NavDropdown title={username} id="collasible-nav-dropdown">
                 <NavDropdown.Item>
-                      <Link className="linkH" to={"/editProfile"}>Profile Edit</Link>
+                  <Link className="linkH" to={'/editProfile'}>
+                    Profile Edit
+                  </Link>
                 </NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Friends</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.3">
-                    Game History
+                  Game History
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item onClick={() => {localStorage.removeItem('nickname'); navigate('/')}}> Log Out </NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    localStorage.removeItem('nickname');
+                    navigate('/');
+                  }}
+                >
+                  {' '}
+                  Log Out{' '}
+                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
