@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -62,5 +63,14 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async getFriendsAction(@Param('nickname') nickname: string) {
     return await this.userService.getFriendsByNickname(nickname);
+  }
+
+  @Delete('friends')
+  @UseGuards(JwtAuthGuard)
+  async deleteFriendAction(
+    @Param('nickname') nickname: string,
+    @Body() friendDTO: FriendDTO,
+  ) {
+    await this.userService.deleteFriend(nickname, friendDTO);
   }
 }

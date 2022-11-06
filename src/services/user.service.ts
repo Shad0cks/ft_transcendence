@@ -158,4 +158,13 @@ export class UserService {
       }
     }
   }
+
+  async deleteFriend(userNickname: string, friendDTO: FriendDTO) {
+    const user = await this.findOneByNickname(userNickname);
+    user.friends = await this.getFriends(user);
+    user.friends = user.friends.filter((friend) => {
+      return friend.nickname !== friendDTO.nickname;
+    });
+    await this.userRepository.save(user);
+  }
 }
