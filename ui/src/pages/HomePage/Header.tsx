@@ -32,7 +32,11 @@ export default function Header({ username }: { username: string | undefined }) {
                     Profile Edit
                   </Link>
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Friends</NavDropdown.Item>
+                <NavDropdown.Item>
+                  <Link className="linkH" to={'/friends'}>
+                    Friends
+                  </Link>
+                </NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.3">
                   Game History
                 </NavDropdown.Item>

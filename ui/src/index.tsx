@@ -7,6 +7,7 @@ import './index.css';
 import PartyManage from './pages/HomePage/PartyManage';
 import Channel from './pages/ChannelPage/channel';
 import MainUserProfile from './pages/UserProfile/MainUserProfile';
+import Friends from './pages/UserProfile/Friends';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -21,6 +22,7 @@ root.render(
       <Route path="/game_:id" element={<MainGame />} />
       <Route path="/channelManager" element={<PartyManage />} />
       <Route path="/editProfile" element={<MainUserProfile />} />
+      <Route path="/friends" element={<Friends />} />
     </Routes>
   </BrowserRouter>,
 );
