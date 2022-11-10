@@ -144,11 +144,19 @@ export class UserService {
   async pushNewFriend(nickname: string, newFriend: User) {
     const user = await this.findOneByNickname(nickname);
     user.friends = await this.getFriends(user);
+    if (
+      user.friends.find((element) => element.nickname === newFriend.nickname)
+    ) {
+      throw new BadRequestException('You are already friends');
+    }
     user.friends.push(newFriend);
     await this.userRepository.save(user);
   }
 
   async addFriend(userNickname: string, friendDTO: FriendDTO): Promise<User> {
+    if (userNickname === friendDTO.nickname) {
+      throw new BadRequestException("You can't add yourself as friend");
+    }
     try {
       const friend = await this.findOneByNickname(friendDTO.nickname);
       await this.pushNewFriend(userNickname, friend);
@@ -157,6 +165,7 @@ export class UserService {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
       }
+      throw error;
     }
   }
 
