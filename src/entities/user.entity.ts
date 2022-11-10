@@ -3,8 +3,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ChannelMessage } from './channelMessage.entity';
+import { ChannelParticipant } from './channelParticipant.entity';
 
 @Entity()
 export class User {
@@ -32,4 +35,13 @@ export class User {
 
   @Column()
   losses: number;
+
+  @OneToMany(
+    () => ChannelParticipant,
+    (channelParticipant) => channelParticipant.user,
+  )
+  channelParticipants: ChannelParticipant[];
+
+  @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.sender)
+  channelMessages: ChannelMessage[];
 }

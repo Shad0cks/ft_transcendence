@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ChannelMessage } from './channelMessage.entity';
+import { ChannelParticipant } from './channelParticipant.entity';
 
 export type ChannelRestrictionType = 'public' | 'protected' | 'private';
 
@@ -19,4 +21,13 @@ export class Channel {
 
   @Column({ select: false })
   password: string;
+
+  @OneToMany(
+    () => ChannelParticipant,
+    (channelParticipant) => channelParticipant.user,
+  )
+  channelParticipants: ChannelParticipant[];
+
+  @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.channel)
+  channelMessages: ChannelMessage[];
 }
