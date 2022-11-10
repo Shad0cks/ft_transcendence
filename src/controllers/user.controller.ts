@@ -55,8 +55,8 @@ export class UserController {
   async addFriendAction(
     @Param('nickname') userNickname: string,
     @Body() friendDTO: FriendDTO,
-  ) {
-    await this.userService.addFriend(userNickname, friendDTO);
+  ): Promise<UserDTO> {
+    return await this.userService.addFriend(userNickname, friendDTO);
   }
 
   @Get('friends')

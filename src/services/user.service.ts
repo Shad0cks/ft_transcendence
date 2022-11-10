@@ -148,10 +148,11 @@ export class UserService {
     await this.userRepository.save(user);
   }
 
-  async addFriend(userNickname: string, friendDTO: FriendDTO) {
+  async addFriend(userNickname: string, friendDTO: FriendDTO): Promise<User> {
     try {
       const friend = await this.findOneByNickname(friendDTO.nickname);
       await this.pushNewFriend(userNickname, friend);
+      return friend;
     } catch (error) {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
