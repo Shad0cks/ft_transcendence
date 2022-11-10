@@ -61,11 +61,12 @@ export default function MainUserProfile() {
   async function updateImg(event: React.ChangeEvent<HTMLInputElement>) {
     const account = process.env.REACT_APP_AZURE_ACCOUNT_NAME;
     const sas = process.env.REACT_APP_SAS_TOKEN;
+    const time = Date.now();
 
     if (user && event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
       const fileExt = file.name.substring(file.name.lastIndexOf('.'));
-      const newFile = new File([file], user.id + fileExt);
+      const newFile = new File([file], user.id.toString() + time + fileExt);
       const blobServiceClient = new BlobServiceClient(
         `https://${account}.blob.core.windows.net/?${sas}`,
       );
@@ -77,7 +78,7 @@ export default function MainUserProfile() {
         uploadBlobResponse.requestId,
       );
       UserSetAvatar(
-        `https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id}${fileExt}`,
+        `https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id.toString()}${time}${fileExt}`,
         user.nickname,
       ).then((res) => {
         if (res.ok) window.location.reload();
@@ -92,7 +93,7 @@ export default function MainUserProfile() {
         <h1>Edit Profile</h1>
         <Image
           style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-          src={user.avatar + '?rand=' + Date.now()}
+          src={user.avatar}
           roundedCircle
         />
         <InputGroup className="mb-3" style={{ width: '300px' }}>

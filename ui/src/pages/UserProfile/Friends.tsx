@@ -34,7 +34,10 @@ export default function Friends() {
           setSnackbarMessage('Successfully adding new friend');
           setSnackbarSeverity('success');
           setOpenSnackbar(true);
-          window.location.reload();
+          const requete = res.text().then((e) => JSON.parse(e));
+          requete.then((e) => {
+            setFriendsList([...friendsList, e]);
+          });
         } else {
           setSnackbarMessage('Error while adding friend.');
           setSnackbarSeverity('error');
@@ -54,6 +57,7 @@ export default function Friends() {
       ...friendsList.slice(0, index),
       ...friendsList.slice(index + 1),
     ]);
+
     RemoveFriend(friend, username!)
       .then((res) => {
         if (res.ok) {
@@ -97,63 +101,68 @@ export default function Friends() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="containerFriend">
+    <div>
       <Header username={username!} />
-      <InputGroup className="mb-3" style={{ width: '300px' }}>
-        <Form.Control
-          placeholder="Add Friend"
-          aria-label="Recipient's username"
-          aria-describedby="basic-addon2"
-          ref={newFriend}
-        />
-        <Button
-          variant="outline-success"
-          id="button-addon2"
-          onClick={updateName}
+      <div className="containerFriend">
+        <InputGroup
+          className="mb-3"
+          style={{ margin: '100px auto', width: '300px', alignSelf: 'center' }}
         >
-          ADD
-        </Button>
-      </InputGroup>
+          <Form.Control
+            placeholder="Add Friend"
+            aria-label="Recipient's username"
+            aria-describedby="basic-addon2"
+            ref={newFriend}
+          />
+          <Button
+            variant="outline-success"
+            id="button-addon2"
+            onClick={updateName}
+          >
+            ADD
+          </Button>
+        </InputGroup>
 
-      <div className="containerRow">
-        {friendsList?.map((elem, key) => (
-          <Card style={{ width: '18rem' }} key={key} border="primary">
-            <Card.Img variant="top" src={elem.avatar} />
-            <Card.Body className="cardBody">
-              <Card.Title>{elem.nickname}</Card.Title>
-              <Card.Text>
-                Wins : {elem.wins} / Losses: {elem.losses}
-              </Card.Text>
-              <ButtonGroup aria-label="Basic example">
-                <Button variant="secondary">Play</Button>
-                <Button variant="secondary">Profile</Button>
-                <Button variant="secondary">DM</Button>
-                <span
-                  style={{
-                    color: 'red',
-                    marginRight: '.05em',
-                    display: 'inline-block',
-                  }}
-                >
-                  &nbsp;
-                </span>
-                <Button
-                  variant="danger"
-                  onClick={() => deleteFriend(elem.nickname, key)}
-                >
-                  <RiDeleteBinLine />
-                </Button>
-              </ButtonGroup>
-            </Card.Body>
-          </Card>
-        ))}
+        <div className="containerRow">
+          {friendsList?.map((elem, key) => (
+            <Card style={{ width: '18rem' }} key={key} border="primary">
+              <Card.Img variant="top" src={elem.avatar} />
+              <Card.Body className="cardBody">
+                <Card.Title>{elem.nickname}</Card.Title>
+                <Card.Text>
+                  Wins : {elem.wins} / Losses: {elem.losses}
+                </Card.Text>
+                <ButtonGroup aria-label="Basic example">
+                  <Button variant="secondary">Play</Button>
+                  <Button variant="secondary">Profile</Button>
+                  <Button variant="secondary">DM</Button>
+                  <span
+                    style={{
+                      color: 'red',
+                      marginRight: '.05em',
+                      display: 'inline-block',
+                    }}
+                  >
+                    &nbsp;
+                  </span>
+                  <Button
+                    variant="danger"
+                    onClick={() => deleteFriend(elem.nickname, key)}
+                  >
+                    <RiDeleteBinLine />
+                  </Button>
+                </ButtonGroup>
+              </Card.Body>
+            </Card>
+          ))}
+        </div>
+        <TSSnackbar
+          open={openSnackbar}
+          setOpen={setOpenSnackbar}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+        />
       </div>
-      <TSSnackbar
-        open={openSnackbar}
-        setOpen={setOpenSnackbar}
-        severity={snackbarSeverity}
-        message={snackbarMessage}
-      />
     </div>
   );
 }
