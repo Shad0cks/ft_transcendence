@@ -1,4 +1,5 @@
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ChannelRestrictionType } from 'src/entities/channel.entity';
 
 export class ChannelDTO {
   @IsNotEmpty()
@@ -8,7 +9,7 @@ export class ChannelDTO {
   @IsNotEmpty()
   @IsString()
   @IsIn(['public', 'protected', 'private'])
-  restriction: string;
+  restriction: ChannelRestrictionType;
 
   @IsOptional()
   @IsString()

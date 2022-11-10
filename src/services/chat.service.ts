@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChannelDTO } from 'src/dto/channel.dto';
 import { Repository } from 'typeorm';
@@ -19,21 +19,23 @@ export class ChatService {
 
   async createChannel(channelDTO: ChannelDTO): Promise<Channel> {
     const channel = new Channel();
-    const restrictions = ['public', 'protected', 'private'];
 
-    if (!restrictions.includes(channelDTO.restriction)) {
-      throw new BadRequestException('Unknown restriction');
+    try {
+      channel.name = channelDTO.name;
+      channel.restriction = channelDTO.restriction;
+      if (channelDTO.restriction === 'private') {
+        channel.password = await bcrypt.hash(channelDTO.password, 10);
+      } else {
+        channel.password = '';
+      }
+      const result = await this.channelRepository.save(channel);
+      delete result.password;
+      return result;
+    } catch (error) {
+      if (error.code === '23505') {
+        // duplicate nickname
+        throw new ConflictException('Channel name already exists');
+      }
     }
-
-    channel.name = channelDTO.name;
-    channel.restriction = channelDTO.restriction;
-    if (channelDTO.restriction === 'private') {
-      channel.password = await bcrypt.hash(channelDTO.password, 10);
-    } else {
-      channel.password = '';
-    }
-    const result = await this.channelRepository.save(channel);
-    delete result.password;
-    return result;
   }
 }
