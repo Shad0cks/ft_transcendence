@@ -7,9 +7,11 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { ballDTO } from 'src/dto/ballGame.dto';
+import { channelMessageDTO } from 'src/dto/channel.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
+import { Usersocket } from 'src/dto/user.dto';
 
 @WebSocketGateway({
   cors: {
@@ -19,6 +21,8 @@ import { PlayerDTO } from 'src/dto/player.dto';
 export class SocketEvent {
   @WebSocketServer()
   server: Server;
+
+  Usersockets: Array<Usersocket> = [];
 
   //connexion
   handleConnection(client: Socket) {
@@ -54,4 +58,13 @@ export class SocketEvent {
   @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
     this.server.emit('newPlayer', data);
   }
+
+  @SubscribeMessage('addMessage')
+  async onAddMessage(socket: Socket, message: channelMessageDTO) {
+    // // const Userfromchannel: Usersocket[] = getuserfromchannel(message.channel);
+    // for(const user of Userfromchannel) {
+    //   await this.server.to(user.socketid).emit('messageAdded', message);
+    return;
+    }
 }
+

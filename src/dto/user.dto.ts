@@ -30,3 +30,9 @@ export class UserDTO {
   @Min(0)
   losses: number;
 }
+
+export class Usersocket{
+  nickname: string;
+  
+  socketid: string;
+}
