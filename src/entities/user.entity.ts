@@ -1,24 +1,12 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { ChannelMessage } from './channelMessage.entity';
-import { ChannelParticipant } from './channelParticipant.entity';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({ unique: true })
+  nickname: string;
 
   @Column({ select: false })
   twofa_enabled: boolean;
-
-  @Column({ unique: true })
-  nickname: string;
 
   @Column({ select: false })
   login42: string;
@@ -35,13 +23,4 @@ export class User {
 
   @Column()
   losses: number;
-
-  @OneToMany(
-    () => ChannelParticipant,
-    (channelParticipant) => channelParticipant.user,
-  )
-  channelParticipants: ChannelParticipant[];
-
-  @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.sender)
-  channelMessages: ChannelMessage[];
 }

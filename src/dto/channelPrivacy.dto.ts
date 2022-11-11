@@ -1,7 +1,7 @@
-import { IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ChannelPrivacyType } from 'src/entities/channel.entity';
 
-export class ChannelDTO {
+export class ChannelPrivacyDTO {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -10,4 +10,8 @@ export class ChannelDTO {
   @IsString()
   @IsIn(['public', 'protected', 'private'])
   privacy: ChannelPrivacyType;
+
+  @IsOptional()
+  @IsString()
+  password: string;
 }
