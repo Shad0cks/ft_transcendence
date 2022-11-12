@@ -5,12 +5,14 @@ import {
   IsString,
   IsUrl,
   Min,
+  IsAlphanumeric
 } from 'class-validator';
 
 export class UserDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @IsAlphanumeric()
   nickname: string;
 
   @IsOptional()
