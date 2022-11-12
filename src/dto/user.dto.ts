@@ -5,7 +5,7 @@ import {
   IsString,
   IsUrl,
   Min,
-  IsAlphanumeric
+  IsAlphanumeric,
 } from 'class-validator';
 
 export class UserDTO {
