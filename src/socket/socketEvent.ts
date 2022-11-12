@@ -4,30 +4,27 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
+import { CustomSocket } from 'src/adapters/socket.adapter';
 
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
+@WebSocketGateway()
 export class SocketEvent {
   @WebSocketServer()
   server: Server;
 
   //connexion
-  handleConnection(client: Socket) {
+  handleConnection(client: CustomSocket) {
     console.log(`Client Connected: ${client.id}`);
   }
 
   //deconnexion
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: CustomSocket) {
     console.log(`Client disConnected: ${client.id}`);
   }
 
