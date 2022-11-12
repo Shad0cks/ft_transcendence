@@ -7,9 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FriendDTO } from 'src/dto/friend.dto';
-import { UserDTO } from 'src/dto/user.dto';
+import { UserDTO, Usersocket} from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+
+export interface UserOptions {
+  selectFriends?: boolean;
+  selectBlocked?: boolean;
+}
 
 @Injectable()
 export class UserService {
@@ -39,24 +44,37 @@ export class UserService {
     }
   }
 
-  async findOneById(id: string): Promise<UserDTO> {
-    const user = await this.userRepository.findOneBy({
-      id: parseInt(id),
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+  async createUsersocket(nickname: string,socketid: string): Promise<Usersocket> {
+
+    const usersocket = new Usersocket();
+
+    usersocket.nickname = nickname;
+    usersocket.socketid = socketid;
+    
+    return usersocket;
   }
 
-  async findOneByNickname(nickname: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({
-      nickname: nickname,
+  async findOneByNickname(
+    nickname: string,
+    options: UserOptions,
+  ): Promise<User> {
+    if (options === null) {
+      options = {};
+    }
+    const user = await this.userRepository.find({
+      where: {
+        nickname: nickname,
+      },
+      relations: {
+        friends:
+          options.selectFriends === undefined ? false : options.selectFriends,
+      },
+      take: 1,
     });
-    if (!user) {
+    if (user.length === 0) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return user[0];
   }
 
   async findOneByLogin42(nickname: string): Promise<User> {
@@ -128,53 +146,36 @@ export class UserService {
       .execute();
   }
 
-  async getFriends(user: User): Promise<User[]> {
-    return this.userRepository
-      .createQueryBuilder()
-      .relation(User, 'friends')
-      .of(user)
-      .loadMany();
-  }
-
-  async getFriendsByNickname(nickname: string): Promise<User[]> {
-    const user = await this.findOneByNickname(nickname);
-    return this.getFriends(user);
-  }
-
-  async pushNewFriend(nickname: string, newFriend: User) {
-    const user = await this.findOneByNickname(nickname);
-    user.friends = await this.getFriends(user);
-    if (
-      user.friends.find((element) => element.nickname === newFriend.nickname)
-    ) {
-      throw new BadRequestException('You are already friends');
-    }
-    user.friends.push(newFriend);
-    await this.userRepository.save(user);
-  }
-
   async addFriend(userNickname: string, friendDTO: FriendDTO): Promise<User> {
     if (userNickname === friendDTO.nickname) {
       throw new BadRequestException("You can't add yourself as friend");
     }
     try {
-      const friend = await this.findOneByNickname(friendDTO.nickname);
-      await this.pushNewFriend(userNickname, friend);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'friends')
+        .of(userNickname)
+        .add(friendDTO.nickname);
+      const friend = await this.findOneByNickname(friendDTO.nickname, null);
       return friend;
     } catch (error) {
-      if (error.status === 404) {
-        throw new NotFoundException(error.message);
+      if (error.code === '23503') {
+        // friend nickname is not in db
+        throw new NotFoundException('Friend not found');
+      }
+      if (error.code === '23505') {
+        // friend relation already exists
+        throw new ConflictException('You are already friends');
       }
       throw error;
     }
   }
 
   async deleteFriend(userNickname: string, friendDTO: FriendDTO) {
-    const user = await this.findOneByNickname(userNickname);
-    user.friends = await this.getFriends(user);
-    user.friends = user.friends.filter((friend) => {
-      return friend.nickname !== friendDTO.nickname;
-    });
-    await this.userRepository.save(user);
+    await this.userRepository
+      .createQueryBuilder()
+      .relation(User, 'friends')
+      .of(userNickname)
+      .remove(friendDTO.nickname);
   }
 }

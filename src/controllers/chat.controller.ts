@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+import { CreateChannelDTO } from 'src/dto/createChannel.dto';
 import { ChannelDTO } from 'src/dto/channel.dto';
 import { Channel } from 'src/entities/channel.entity';
 import { ChatService } from '../services/chat.service';
@@ -13,7 +14,12 @@ export class ChatController {
   }
 
   @Post('channels')
-  createChannelAction(@Body() channelDTO: ChannelDTO): Promise<ChannelDTO> {
-    return this.chatService.createChannel(channelDTO);
+  createChannelAction(
+    @Body() createChannelDTO: CreateChannelDTO,
+  ): Promise<ChannelDTO> {
+    return this.chatService.createChannel(createChannelDTO);
   }
+
+  // TODO
+  // get messages
 }

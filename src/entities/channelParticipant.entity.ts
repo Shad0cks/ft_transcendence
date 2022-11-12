@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Channel } from './channel.entity';
+import { ChannelMessage } from './channelMessage.entity';
 import { ChatRestriction } from './chatRestriction.entity';
 import { User } from './user.entity';
 
@@ -17,7 +18,7 @@ export class ChannelParticipant {
   @Column()
   isAdmin: boolean;
 
-  @ManyToOne(() => User, (user) => user.channelParticipants)
+  @ManyToOne(() => User)
   user: User;
 
   @ManyToOne(() => Channel, (channel) => channel.channelParticipants)
@@ -28,4 +29,7 @@ export class ChannelParticipant {
 
   @OneToMany(() => ChatRestriction, (chatRestriction) => chatRestriction.admin)
   chatRestrictionsDealt: ChatRestriction[];
+
+  @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.sender)
+  channelMessages: ChannelMessage[];
 }

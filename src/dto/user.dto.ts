@@ -33,6 +33,5 @@ export class UserDTO {
 
 export class Usersocket{
   nickname: string;
-  
   socketid: string;
 }

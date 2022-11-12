@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ChannelMessage } from './channelMessage.entity';
 import { ChannelParticipant } from './channelParticipant.entity';
 
-export type ChannelRestrictionType = 'public' | 'protected' | 'private';
+export type ChannelPrivacyType = 'public' | 'protected' | 'private';
 
 @Entity()
 export class Channel {
@@ -17,7 +17,7 @@ export class Channel {
     enum: ['public', 'protected', 'private'],
     default: 'public',
   })
-  restriction: ChannelRestrictionType;
+  privacy: ChannelPrivacyType;
 
   @Column({ select: false })
   password: string;
@@ -30,4 +30,7 @@ export class Channel {
 
   @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.channel)
   channelMessages: ChannelMessage[];
+
+  @Column('text', { array: true })
+  whitelist: string[];
 }

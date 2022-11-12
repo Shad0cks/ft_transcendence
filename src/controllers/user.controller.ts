@@ -20,7 +20,7 @@ export class UserController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
-    return this.userService.findOneByNickname(nickname);
+    return this.userService.findOneByNickname(nickname, null);
   }
 
   @Put('nickname')
@@ -62,7 +62,11 @@ export class UserController {
   @Get('friends')
   @UseGuards(JwtAuthGuard)
   async getFriendsAction(@Param('nickname') nickname: string) {
-    return await this.userService.getFriendsByNickname(nickname);
+    return (
+      await this.userService.findOneByNickname(nickname, {
+        selectFriends: true,
+      })
+    ).friends;
   }
 
   @Delete('friends')
@@ -71,6 +75,6 @@ export class UserController {
     @Param('nickname') nickname: string,
     @Body() friendDTO: FriendDTO,
   ) {
-    await this.userService.deleteFriend(nickname, friendDTO);
+    return await this.userService.deleteFriend(nickname, friendDTO);
   }
 }
