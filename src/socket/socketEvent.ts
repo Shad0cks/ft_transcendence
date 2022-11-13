@@ -4,7 +4,13 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+<<<<<<< HEAD
 import { Server, Socket } from 'socket.io';
+=======
+import { Server } from 'socket.io';
+import { CustomSocket } from 'src/adapters/socket.adapter';
+
+>>>>>>> bc91d09d18587863057eaf402160600038e58ef9
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { ChannelMessageDTO } from 'src/dto/channelMessage.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
@@ -18,11 +24,7 @@ import { CreateChannelDTO } from 'src/dto/createChannel.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 
 
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
+@WebSocketGateway()
 export class SocketEvent {
   @WebSocketServer()
   server: Server;
@@ -34,7 +36,11 @@ export class SocketEvent {
   ) {}
 
   //connexion
+<<<<<<< HEAD
   async handleConnection(client: Socket) {
+=======
+  handleConnection(client: CustomSocket) {
+>>>>>>> bc91d09d18587863057eaf402160600038e58ef9
     console.log(`Client Connected: ${client.id}`);
     // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
     // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id); 
@@ -45,7 +51,7 @@ export class SocketEvent {
 
   //deconnexion
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: CustomSocket) {
     console.log(`Client disConnected: ${client.id}`);
   }
 

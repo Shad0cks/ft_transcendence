@@ -95,7 +95,9 @@ function MainGame() {
 
   useEffect(() => {
     ChechLocalStorage();
-    setSocket(socketIOClient('http://localhost:8080'));
+    setSocket(
+      socketIOClient('http://localhost:8080', { withCredentials: true }),
+    );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
