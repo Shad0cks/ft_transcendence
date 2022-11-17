@@ -5,6 +5,7 @@ import { Channel } from './entities/channel.entity';
 import { ChannelMessage } from './entities/channelMessage.entity';
 import { ChannelParticipant } from './entities/channelParticipant.entity';
 import { ChatService } from './services/chat.service';
+import { SocketEvent } from './socket/socketEvent';
 
 @Module({
   imports: [
