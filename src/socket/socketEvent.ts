@@ -124,6 +124,7 @@ export class SocketEvent {
 
   // @SubscribeMessage('joinChannel')
   // async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
+  // check si le channel est privé ou protected / public
   //   await this.chatService.joinChannel(channel);
   //   const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
   //   for(const user of Userfromchannel) {
