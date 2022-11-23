@@ -89,7 +89,7 @@ export class UserController {
     @Body() friendDTO: FriendDTO,
   ): Promise<FriendDTO> {
     const speakeasy = require('speakeasy');
-    var res = speakeasy.totp.verify({
+    const res = speakeasy.totp.verify({
       secret: (await this.userService.findOneByNickname(nickname, null))
         .twofa_secret,
       encoding: 'ascii',
