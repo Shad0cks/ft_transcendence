@@ -8,6 +8,7 @@
     "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@hookform/resolvers": "^2.9.10",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.13",
     "@testing-library/jest-dom": "^5.16.5",
@@ -15,27 +16,40 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.2.2",
     "@types/node": "^18.11.9",
+    "assert": "^2.0.0",
     "bootstrap": "^5.2.2",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "https-browserify": "^1.0.0",
     "js-cookie": "^3.0.1",
     "jwt-decode": "^3.1.2",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "qrcode": "^1.5.1",
     "react": "^18.2.0",
+    "react-app-rewired": "^2.2.1",
     "react-bootstrap": "^2.6.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.39.3",
+    "react-hook-form": "^7.39.5",
     "react-icons": "^4.6.0",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.5.3",
+    "speakeasy": "^2.0.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "typescript": "^4.8.4",
-    "web-vitals": "^3.0.3"
+    "url": "^0.11.0",
+    "web-vitals": "^3.0.3",
+    "zod": "^3.19.1"
   },
-  "scripts": { 
-    "start": "react-app-rewired start", 
-    "build": "react-app-rewired build", 
-    "test": "react-app-rewired test", 
-    "eject": "react-scripts eject" 
-   },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -55,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.0",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@typescript-eslint/eslint-plugin": "^5.42.1",

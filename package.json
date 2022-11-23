@@ -43,6 +43,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.7",
     "socket.io": "^4.5.3",
+    "speakeasy": "^2.0.0",
     "typeorm": "^0.3.10"
   },
   "devDependencies": {
