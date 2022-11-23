@@ -13,8 +13,7 @@ import { SetUserNickname } from '../../services/User/setUserNickname';
 import { UserSettwofa } from '../../services/User/UserSettwofa';
 import { ChechLocalStorage } from '../../services/checkIsLog';
 import { Form } from 'react-bootstrap';
-import TwoFactorAuth from "../../components/TwoFactorAuth";
-import { setUncaughtExceptionCaptureCallback } from 'process';
+import TwoFactorAuth from '../../components/TwoFactorAuth';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -22,12 +21,11 @@ export default function MainUserProfile() {
   const [user, setUser] = useState<GetUserIt>();
   const [username, setUsername] = useState<string | null>(null);
   const [secret, setSecret] = useState({
-    otpauth_url: "",
-    ascii: "",
+    otpauth_url: '',
+    ascii: '',
   });
   const [openModal, setOpenModal] = useState(false);
   const speakeasy = require('speakeasy');
-
 
   useEffect(() => {
     ChechLocalStorage();
@@ -68,8 +66,8 @@ export default function MainUserProfile() {
     }
   }
 
-  async function generateQrCode (user_id: string) {
-    const secret = speakeasy.generateSecret({ name : user_id })
+  async function generateQrCode(user_id: string) {
+    const secret = speakeasy.generateSecret({ name: user_id });
 
     if (secret) {
       setOpenModal(true);
@@ -81,11 +79,9 @@ export default function MainUserProfile() {
         ascii: secret.ascii,
         otpauth_url: secret.otpauth_url,
       });
+    } else {
     }
-    else{
-
-    }
-  };
+  }
 
   async function updateImg(event: React.ChangeEvent<HTMLInputElement>) {
     const account = process.env.REACT_APP_AZURE_ACCOUNT_NAME;
@@ -115,98 +111,90 @@ export default function MainUserProfile() {
     }
   }
 
-  function setotp()
-  {
-    if (username && user)
-    {
-      UserSettwofa(
-        true,
-        secret.ascii,
-        user.nickname,
-        ).then((res) => {
-          if (res.ok) window.location.reload();
-        });
+  function setotp() {
+    if (username && user) {
+      UserSettwofa(true, secret.ascii, user.nickname).then((res) => {
+        if (res.ok) window.location.reload();
+      });
     }
-  };
-  
-  function unsetOTP()
-  {
-    if (username && user)
-    {
-      UserSettwofa(
-        false,
-        "none",
-        user.nickname,
-        ).then((res) => {
-          if (res.ok) window.location.reload();
-        });
+  }
+
+  function unsetOTP() {
+    if (username && user) {
+      UserSettwofa(false, 'none', user.nickname).then((res) => {
+        if (res.ok) window.location.reload();
+      });
     }
-  };
+  }
 
   return username && user ? (
     <>
-    <div>
-      <Header username={username} />
-      <div className="MainUserProfile_block">
-        <h1>Edit Profile</h1>
-        <Image
-          style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-          src={user.avatar}
-          roundedCircle
-        />
-        <InputGroup className="mb-3" style={{ width: '300px' }}>
-          <Form.Control
-            placeholder="Username"
-            aria-label="Recipient's username"
-            aria-describedby="basic-addon2"
-            defaultValue={username}
-            ref={newName}
+      <div>
+        <Header username={username} />
+        <div className="MainUserProfile_block">
+          <h1>Edit Profile</h1>
+          <Image
+            style={{ width: '150px', height: '150px', cursor: 'pointer' }}
+            src={user.avatar}
+            roundedCircle
           />
-          <Button
-            onClick={updateName}
-            variant="outline-success"
-            id="button-addon2"
-          >
-            Update
-          </Button>
-          <div style={{ marginTop: '40px' }}>
-            <label htmlFor="avatar">Change profile picture:</label>
-            <input
-              onChange={(e) => updateImg(e)}
-              style={{ marginTop: '5px' }}
-              type="file"
-              id="avatar"
-              name="myImage"
-              accept="image/png, image/jpeg"
+          <InputGroup className="mb-3" style={{ width: '300px' }}>
+            <Form.Control
+              placeholder="Username"
+              aria-label="Recipient's username"
+              aria-describedby="basic-addon2"
+              defaultValue={username}
+              ref={newName}
             />
-          </div>
-          <div>
-            {user.twofa_enabled ?
-            (<button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
-                 onClick={() => unsetOTP()}
+            <Button
+              onClick={updateName}
+              variant="outline-success"
+              id="button-addon2"
+            >
+              Update
+            </Button>
+            <div style={{ marginTop: '40px' }}>
+              <label htmlFor="avatar">Change profile picture:</label>
+              <input
+                onChange={(e) => updateImg(e)}
+                style={{ marginTop: '5px' }}
+                type="file"
+                id="avatar"
+                name="myImage"
+                accept="image/png, image/jpeg"
+              />
+            </div>
+            <div>
+              {user.twofa_enabled ? (
+                <button
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
+                  onClick={() => unsetOTP()}
                 >
-                Disable 2FA
-            </button> ):
-            (<button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
-                onClick={() => generateQrCode(user.nickname)}>
-                Setup 2FA
-            </button>)}
-          </div>
-        </InputGroup>
+                  Disable 2FA
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
+                  onClick={() => generateQrCode(user.nickname)}
+                >
+                  Setup 2FA
+                </button>
+              )}
+            </div>
+          </InputGroup>
+        </div>
       </div>
-    </div>
-      {openModal &&
-      <TwoFactorAuth
-      ascii={secret.ascii}
-        otpauth_url={secret.otpauth_url}
-        user_id={user.login42}
-        closeModal={() => setOpenModal(false)}
-        settwofa={() => setotp()}
-      />}
-  </>
+      {openModal && (
+        <TwoFactorAuth
+          ascii={secret.ascii}
+          otpauth_url={secret.otpauth_url}
+          user_id={user.login42}
+          closeModal={() => setOpenModal(false)}
+          settwofa={() => setotp()}
+        />
+      )}
+    </>
   ) : null;
 }

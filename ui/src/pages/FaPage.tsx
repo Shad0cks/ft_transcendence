@@ -1,12 +1,11 @@
 import React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Valide2Fa } from '../services/User/valide2fa';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Friend } from '../models/friend';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-
 
 export default function FaPage() {
   const [searchParams] = useSearchParams();
@@ -21,24 +20,28 @@ export default function FaPage() {
       return;
     }
     Valide2Fa(usrReq, (token.current as HTMLInputElement).value)
-    .then((res) => {
-      if (res.ok) {
-        const requete = res.text().then((e) => JSON.parse(e));
-        requete.then((e: Friend) => {
-          if (e.nickname == 'true')
-            window.location.replace('http://localhost:3000/callback/?nickname=' + usrReq + '&login42=' + logReq + '&isAuthenticated=true');
-          else
-            return;
-        });
-      } else {
-        console.log('err req', res.status);
-      }
-    })
-    .catch((err) => {
-      navigate('/');
-      console.log(err);
-    });
-    
+      .then((res) => {
+        if (res.ok) {
+          const requete = res.text().then((e) => JSON.parse(e));
+          requete.then((e: Friend) => {
+            if (e.nickname === 'true')
+              window.location.replace(
+                'http://localhost:3000/callback/?nickname=' +
+                  usrReq +
+                  '&login42=' +
+                  logReq +
+                  '&isAuthenticated=true',
+              );
+            else return;
+          });
+        } else {
+          console.log('err req', res.status);
+        }
+      })
+      .catch((err) => {
+        navigate('/');
+        console.log(err);
+      });
   };
 
   return (
@@ -51,21 +54,21 @@ export default function FaPage() {
         height: '100vh',
       }}
     >
-        <InputGroup className="mb-3" style={{ width: '300px' }}>
-          <Form.Control
-            placeholder="Authentication Code"
-            aria-label="Recipient's token"
-            aria-describedby="basic-addon2"
-            ref={token}
-          />
-          <Button
-            onClick={callLogin}
-            variant="outline-success"
-            id="button-addon2"
-          >
-            Verify
-          </Button>
-          </InputGroup>
+      <InputGroup className="mb-3" style={{ width: '300px' }}>
+        <Form.Control
+          placeholder="Authentication Code"
+          aria-label="Recipient's token"
+          aria-describedby="basic-addon2"
+          ref={token}
+        />
+        <Button
+          onClick={callLogin}
+          variant="outline-success"
+          id="button-addon2"
+        >
+          Verify
+        </Button>
+      </InputGroup>
     </div>
   );
 }

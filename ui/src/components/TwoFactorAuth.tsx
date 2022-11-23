@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from "react";
-import QRCode from "qrcode";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { object, string, TypeOf } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { FC, useEffect, useState } from 'react';
+import QRCode from 'qrcode';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { object, string, TypeOf } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const styles = {
   heading3: `text-xl font-semibold text-gray-900 p-4 border-b`,
@@ -24,7 +24,7 @@ type TwoFactorAuthProps = {
 };
 
 const twoFactorAuthSchema = object({
-  token: string().min(1, "Authentication code is required"),
+  token: string().min(1, 'Authentication code is required'),
 });
 
 type TwoFactorAuthInput = TypeOf<typeof twoFactorAuthSchema>;
@@ -37,7 +37,7 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
   settwofa,
 }) => {
   const speakeasy = require('speakeasy');
-  const [qrcodeUrl, setqrCodeUrl] = useState("");
+  const [qrcodeUrl, setqrCodeUrl] = useState('');
 
   const {
     handleSubmit,
@@ -49,15 +49,13 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
   });
 
   const verifyOtp = async (tokenIn: string) => {
-    
     var res = speakeasy.totp.verify({
       secret: ascii,
-      encoding: "ascii",
-      token: tokenIn
-    })
-    
-    if (res)
-    {
+      encoding: 'ascii',
+      token: tokenIn,
+    });
+
+    if (res) {
       window.location.reload();
       settwofa();
       closeModal();
@@ -70,10 +68,10 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
 
   useEffect(() => {
     QRCode.toDataURL(otpauth_url).then(setqrCodeUrl);
-  }, []);
+  }, [otpauth_url]);
 
   useEffect(() => {
-    setFocus("token");
+    setFocus('token');
   }, [setFocus]);
   return (
     <div
@@ -122,7 +120,7 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
             </div>
             <form onSubmit={handleSubmit(onSubmitHandler)}>
               <input
-                {...register("token")}
+                {...register('token')}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/4 p-2.5"
                 placeholder="Authentication Code"
               />

@@ -1,6 +1,8 @@
-import { createSecretKey } from "crypto";
-
-export function UserSettwofa(stat: boolean, secret:string, userNickname: string) {
+export function UserSettwofa(
+  stat: boolean,
+  secret: string,
+  userNickname: string,
+) {
   return fetch(
     process.env.REACT_APP_API_URL + '/user/' + userNickname + '/2fa/',
     {
@@ -9,7 +11,7 @@ export function UserSettwofa(stat: boolean, secret:string, userNickname: string)
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ twofa_enabled: stat , twofa_secret : secret}),
+      body: JSON.stringify({ twofa_enabled: stat, twofa_secret: secret }),
     },
   );
 }

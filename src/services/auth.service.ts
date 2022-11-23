@@ -56,16 +56,15 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload);
     response.cookie('jwt', jwt, { httpOnly: true });
-    if (!user.twofa_enabled)
-    {
-    response.redirect(
-      this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
-      );}
-      else
-      {
-        response.redirect(
-      this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
-    );}
+    if (!user.twofa_enabled) {
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
+      );
+    } else {
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+      );
+    }
   }
 
   // async valide2fa(request: any, response: Response): Promise<void> {
@@ -95,5 +94,4 @@ export class AuthService {
   //   response.cookie('jwt', jwt, { httpOnly: true });
   //   response.redirect(this.buildRedirectUrl('http://localhost:3000/', '/callback', payload),);
   // }
-
 }

@@ -122,7 +122,11 @@ export class UserService {
       .execute();
   }
 
-  async edit2fa(nickname: string, enabled: boolean, secret: string): Promise<void> {
+  async edit2fa(
+    nickname: string,
+    enabled: boolean,
+    secret: string,
+  ): Promise<void> {
     if (!enabled && enabled !== false) {
       throw new BadRequestException('enabled is missing');
     }
@@ -132,7 +136,7 @@ export class UserService {
     await this.userRepository
       .createQueryBuilder()
       .update(User)
-      .set({ twofa_enabled: enabled , twofa_secret: secret })
+      .set({ twofa_enabled: enabled, twofa_secret: secret })
       .where({
         nickname: nickname,
       })
