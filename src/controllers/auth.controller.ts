@@ -2,6 +2,7 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { Intra42AuthGuard } from 'src/guards/intra42.guard';
 import { AuthService } from 'src/services/auth.service';
+import { JwtAuthGuard } from 'src/guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,12 @@ export class AuthController {
   handleRedirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     return this.authService.logUserIn(req, res);
   }
+
+  // @Get('42/2faredirect')
+  // @UseGuards(JwtAuthGuard)
+  // handle2faRedirect(  @Param('nickname') userNickname: string) {
+  //   return this.authService.valide2fa(req, res);
+  // }
 
   @Get('logout')
   logoutAction(@Res({ passthrough: true }) res: Response): void {

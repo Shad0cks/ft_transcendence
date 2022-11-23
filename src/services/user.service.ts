@@ -29,6 +29,7 @@ export class UserService {
     user.nickname = userDTO.nickname;
     user.avatar = userDTO.avatar;
     user.twofa_enabled = userDTO.twofa_enabled;
+    user.twofa_secret = userDTO.twofa_secret;
     user.wins = userDTO.wins;
     user.losses = userDTO.losses;
     user.login42 = login42;
@@ -121,14 +122,17 @@ export class UserService {
       .execute();
   }
 
-  async edit2fa(nickname: string, enabled: boolean): Promise<void> {
+  async edit2fa(nickname: string, enabled: boolean, secret: string): Promise<void> {
     if (!enabled && enabled !== false) {
       throw new BadRequestException('enabled is missing');
+    }
+    if (!secret) {
+      throw new BadRequestException('Secret is missing');
     }
     await this.userRepository
       .createQueryBuilder()
       .update(User)
-      .set({ twofa_enabled: enabled })
+      .set({ twofa_enabled: enabled , twofa_secret: secret })
       .where({
         nickname: nickname,
       })

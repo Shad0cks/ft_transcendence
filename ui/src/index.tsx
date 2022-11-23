@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
+import FaPage from './pages/FaPage';
 import NotFound from './pages/NotFound';
 import MainGame from './pages/GamePage/MainGame';
 import './index.css';
@@ -16,6 +17,7 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />} />
+      <Route path="/2fa" element={<FaPage />} />
       <Route path="/callback" element={<App />} />
       <Route path="/chat" element={<Channel />} />
       <Route path="*" element={<NotFound />} />

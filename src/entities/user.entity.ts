@@ -5,8 +5,11 @@ export class User {
   @PrimaryColumn({ unique: true })
   nickname: string;
 
-  @Column({ select: false })
+  @Column()
   twofa_enabled: boolean;
+
+  @Column()
+  twofa_secret: string;
 
   @Column({ select: false })
   login42: string;

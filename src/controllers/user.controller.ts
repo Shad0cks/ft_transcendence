@@ -47,7 +47,7 @@ export class UserController {
     @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
   ): Promise<void> {
-    await this.userService.edit2fa(nickname, userDTO.twofa_enabled);
+    await this.userService.edit2fa(nickname, userDTO.twofa_enabled, userDTO.twofa_secret);
   }
 
   @Post('friends')
@@ -76,5 +76,22 @@ export class UserController {
     @Body() friendDTO: FriendDTO,
   ) {
     return await this.userService.deleteFriend(nickname, friendDTO);
+  }
+
+  @Post('valide2fa')
+  @UseGuards(JwtAuthGuard)
+  async CheckValide2Fa(@Param('nickname') nickname: string,
+  @Body() friendDTO: FriendDTO,): Promise<FriendDTO> {
+    const speakeasy = require('speakeasy');
+    var res = speakeasy.totp.verify({
+      secret: (await this.userService.findOneByNickname(nickname, null)).twofa_secret,
+      encoding: "ascii",
+      token: friendDTO.nickname
+    })
+    
+    if (res)
+      return { nickname : 'true'};
+    else
+      return { nickname : 'false'};
   }
 }

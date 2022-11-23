@@ -56,8 +56,44 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload);
     response.cookie('jwt', jwt, { httpOnly: true });
+    if (!user.twofa_enabled)
+    {
     response.redirect(
       this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
-    );
+      );}
+      else
+      {
+        response.redirect(
+      this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+    );}
   }
+
+  // async valide2fa(request: any, response: Response): Promise<void> {
+  //   if (typeof request.user == 'undefined') {
+  //     throw new BadRequestException();
+  //   }
+  //   // here the nickname in the DTO is the login42
+  //   const userDTO: UserDTO = request.user;
+  //   let user: User;
+
+  //   try {
+  //     user = await this.userService.findOneByLogin42(userDTO.nickname);
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       user = await this.userService.createUser(userDTO, userDTO.nickname);
+  //     } else {
+  //       throw error;
+  //     }
+  //   }
+
+  //   const payload: JwtPayload = {
+  //     nickname: user.nickname,
+  //     login42: user.login42,
+  //     isAuthenticated: true,
+  //   };
+  //   const jwt = this.jwtService.sign(payload);
+  //   response.cookie('jwt', jwt, { httpOnly: true });
+  //   response.redirect(this.buildRedirectUrl('http://localhost:3000/', '/callback', payload),);
+  // }
+
 }

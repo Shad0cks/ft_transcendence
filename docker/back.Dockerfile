@@ -6,6 +6,7 @@ COPY package.json .
 COPY package-lock.json .
 
 RUN npm install
+RUN npm install speakeasy
 COPY . .
 RUN npm run build
 
