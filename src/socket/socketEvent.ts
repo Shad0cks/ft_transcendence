@@ -25,17 +25,16 @@ import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 
-
 @WebSocketGateway()
 export class SocketEvent {
   @WebSocketServer()
   server: Server;
   Usersockets: Array<Usersocket> = [];
 
-  constructor (
+  constructor(
     private userService: UserService,
     private chatService: ChatService,
-    private connectedUser : ConnectedUsers,
+    private connectedUser: ConnectedUsers,
   ) {}
 
   //connexion
@@ -43,7 +42,7 @@ export class SocketEvent {
     console.log(`Client Connected: ${client.id}`);
     // console.log(this.connectedUser.get());
     // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
-    // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id); 
+    // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
     // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
@@ -76,7 +75,7 @@ export class SocketEvent {
   async onAddMessage(socket: CustomSocket, message: ChannelMessageDTO) {
     // const Userfromchannel: Usersocket[] = this.chatService.getuserfromchannel(message.channel);
     // for(const user of Userfromchannel) {
-      //TODO Check si le message ne parvient pas de quelqu'un bloqué.
+    //TODO Check si le message ne parvient pas de quelqu'un bloqué.
     //   await this.server.to(user.socketid).emit('messageAdded', message);
     this.chatService.registerChannelMessage(message);
     return;
@@ -84,50 +83,74 @@ export class SocketEvent {
 
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
-  async onAddMessagePrivate(socket: CustomSocket, message: PrivateMessageDTO){
-    await this.server.to(this.connectedUser.getSocketId(message.receiverNickname)).emit('messageprivateAdded');
+  async onAddMessagePrivate(socket: CustomSocket, message: PrivateMessageDTO) {
+    await this.server
+      .to(this.connectedUser.getSocketId(message.receiverNickname))
+      .emit('messageprivateAdded');
     // this.chatService.registerPrivateMessage(message);
   }
 
-
   @SubscribeMessage('createChannel')
-  async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO){
+  async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
     await this.chatService.createChannel(channel);
     this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
   }
 
   @SubscribeMessage('AddAdmin')
-  async onAddAdmin(socket: CustomSocket, admin: ChannelAdminDTO, newadmin: ChannelAdminDTO){
-    if (this.chatService.isAdmin(admin))
-      this.chatService.addAdmin(newadmin);
+  async onAddAdmin(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    newadmin: ChannelAdminDTO,
+  ) {
+    if (this.chatService.isAdmin(admin)) this.chatService.addAdmin(newadmin);
   }
 
   @SubscribeMessage('AddRestriction')
-  async onAddRestriction(socket: CustomSocket, admin: ChannelAdminDTO, restriction: ChannelRestrictionDTO){
+  async onAddRestriction(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    restriction: ChannelRestrictionDTO,
+  ) {
     if (this.chatService.isAdmin(admin))
       this.chatService.addRestriction(restriction);
   }
 
   @SubscribeMessage('AddToWhitelist')
-  async onAddToWhitelist(socket: CustomSocket, admin: ChannelAdminDTO, whitelist: EditWhitelistDTO){
+  async onAddToWhitelist(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    whitelist: EditWhitelistDTO,
+  ) {
     if (this.chatService.isAdmin(admin))
       this.chatService.addToWhitelist(whitelist);
   }
 
   @SubscribeMessage('RemoveToWhitelist')
-  async onRemoveToWhitelist(socket: CustomSocket, admin: ChannelAdminDTO, whitelist: EditWhitelistDTO){
+  async onRemoveToWhitelist(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    whitelist: EditWhitelistDTO,
+  ) {
     if (this.chatService.isAdmin(admin))
       this.chatService.addToWhitelist(whitelist);
   }
 
   @SubscribeMessage('ChangeChannelToPrivacy')
-  async onChangeChannelToPrivacy(socket: CustomSocket, admin: ChannelAdminDTO, channel: ChannelPrivacyDTO){
+  async onChangeChannelToPrivacy(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    channel: ChannelPrivacyDTO,
+  ) {
     if (this.chatService.isAdmin(admin))
       this.chatService.changeChannelPrivacy(channel);
   }
 
   @SubscribeMessage('EditChannelPassword')
-  async onEditChannelPassword(socket: CustomSocket, admin: ChannelAdminDTO, password: ChannelPasswordDTO){
+  async onEditChannelPassword(
+    socket: CustomSocket,
+    admin: ChannelAdminDTO,
+    password: ChannelPasswordDTO,
+  ) {
     if (this.chatService.isAdmin(admin))
       this.chatService.editChannelPassword(password);
   }
@@ -141,15 +164,14 @@ export class SocketEvent {
   //   const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
   //   for(const user of Userfromchannel) {
   //     await this.server.to(user.socketid).emit('joinChannel', channel.userNickname);
-  //   await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages 
+  //   await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
   // }
 
-//   @SubscribeMessage('leaveChannel')
-//   async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO){
-//     await this.chatService.leaveChannel(channel);
-//     const Userfromchannel: Usersocket[] = getuserfromchannel(channel);
-//     for(const user of Userfromchannel) {
-//       await this.server.to(user.socketid).emit('joinChannel', channel.userNickname);
-//   }
+  //   @SubscribeMessage('leaveChannel')
+  //   async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO){
+  //     await this.chatService.leaveChannel(channel);
+  //     const Userfromchannel: Usersocket[] = getuserfromchannel(channel);
+  //     for(const user of Userfromchannel) {
+  //       await this.server.to(user.socketid).emit('joinChannel', channel.userNickname);
+  //   }
 }
-

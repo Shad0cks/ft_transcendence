@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FriendDTO } from 'src/dto/friend.dto';
-import { UserDTO, Usersocket} from 'src/dto/user.dto';
+import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 
@@ -44,13 +44,15 @@ export class UserService {
     }
   }
 
-  async createUsersocket(nickname: string,socketid: string): Promise<Usersocket> {
-
+  async createUsersocket(
+    nickname: string,
+    socketid: string,
+  ): Promise<Usersocket> {
     const usersocket = new Usersocket();
 
     usersocket.nickname = nickname;
     usersocket.socketid = socketid;
-    
+
     return usersocket;
   }
 

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class PrivateMessageDTO{
+export class PrivateMessageDTO {
   @IsNotEmpty()
   @IsString()
   message: string;

@@ -32,7 +32,7 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
       EditWhitelistDTO,
       ChannelPrivacyDTO,
       ChannelPasswordDTO,
-      PrivateMessageDTO
+      PrivateMessageDTO,
     ]),
     ChatModule,
     UserModule,

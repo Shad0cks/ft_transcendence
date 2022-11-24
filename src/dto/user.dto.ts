@@ -33,7 +33,7 @@ export class UserDTO {
   losses: number;
 }
 
-export class Usersocket{
+export class Usersocket {
   nickname: string;
   socketid: string;
 }
