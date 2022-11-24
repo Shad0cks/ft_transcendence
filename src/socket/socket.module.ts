@@ -3,7 +3,7 @@ import { AuthModule } from 'src/auth.module';
 import { ChatModule } from 'src/chat.module';
 import { ChatService } from 'src/services/chat.service';
 import { UserService } from 'src/services/user.service';
-import { connectedUsers } from './connectedUsers';
+import { ConnectedUsers } from './connectedUsers';
 import { SocketEvent } from './socketEvent';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user.module';
@@ -17,6 +17,7 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
+import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 
 @Module({
   imports: [
@@ -31,10 +32,11 @@ import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
       EditWhitelistDTO,
       ChannelPrivacyDTO,
       ChannelPasswordDTO,
+      PrivateMessageDTO
     ]),
     ChatModule,
     UserModule,
   ],
-  providers: [SocketEvent, connectedUsers, UserService],
+  providers: [SocketEvent, ConnectedUsers, UserService],
 })
 export class SocketModule {}

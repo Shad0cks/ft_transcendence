@@ -11,7 +11,7 @@ import { GameObjDTO } from 'src/dto/game.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 import { Usersocket } from 'src/dto/user.dto';
-import { connectedUsers } from './connectedUsers';
+import { ConnectedUsers } from './connectedUsers';
 import { UserService } from 'src/services/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatService } from 'src/services/chat.service';
@@ -23,6 +23,7 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
+import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 
 
 @WebSocketGateway()
@@ -34,7 +35,7 @@ export class SocketEvent {
   constructor (
     private userService: UserService,
     private chatService: ChatService,
-    connectedUser : connectedUsers,
+    private connectedUser : ConnectedUsers,
   ) {}
 
   //connexion
@@ -75,10 +76,19 @@ export class SocketEvent {
   async onAddMessage(socket: CustomSocket, message: ChannelMessageDTO) {
     // const Userfromchannel: Usersocket[] = this.chatService.getuserfromchannel(message.channel);
     // for(const user of Userfromchannel) {
+      //TODO Check si le message ne parvient pas de quelqu'un bloqué.
     //   await this.server.to(user.socketid).emit('messageAdded', message);
     this.chatService.registerChannelMessage(message);
     return;
   }
+
+  //TODO Message privée.
+  @SubscribeMessage('addMessagePrivate')
+  async onAddMessagePrivate(socket: CustomSocket, message: PrivateMessageDTO){
+    await this.server.to(this.connectedUser.getSocketId(message.receiverNickname)).emit('messageprivateAdded');
+    // this.chatService.registerPrivateMessage(message);
+  }
+
 
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO){
@@ -121,6 +131,8 @@ export class SocketEvent {
     if (this.chatService.isAdmin(admin))
       this.chatService.editChannelPassword(password);
   }
+
+  //TODO Invite une game ou chat
 
   // @SubscribeMessage('joinChannel')
   // async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
