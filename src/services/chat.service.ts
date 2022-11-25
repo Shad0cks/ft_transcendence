@@ -140,9 +140,18 @@ export class ChatService {
     console.info(channelPrivacyDTO);
   }
 
+  async checkPassword(clear: string, hash: string) {
+    if (!clear) {
+      throw new BadRequestException('Missing password');
+    }
+    const authorized = await bcrypt.compare(clear, hash);
+    if (!authorized) {
+      throw new UnauthorizedException('Wrong password');
+    }
+  }
+
   async joinChannel(joinChannelDTO: JoinChannelDTO) {
     try {
-      let authorized = true;
       const participant = new ChannelParticipant();
       const channel = await this.findChannelByName(joinChannelDTO.channelName, {
         selectPassword: true,
@@ -150,16 +159,7 @@ export class ChatService {
 
       // password check
       if (channel.privacy === 'protected') {
-        if (!joinChannelDTO.password) {
-          throw new BadRequestException('Missing password');
-        }
-        authorized = await bcrypt.compare(
-          joinChannelDTO.password,
-          channel.password,
-        );
-      }
-      if (!authorized) {
-        throw new UnauthorizedException('Wrong password');
+        await this.checkPassword(joinChannelDTO.password, channel.password);
       }
 
       // populate participant object
