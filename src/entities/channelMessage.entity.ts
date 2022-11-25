@@ -22,7 +22,7 @@ export class ChannelMessage {
   )
   sender: ChannelParticipant;
 
-  @ManyToOne(() => Channel, (channel) => channel.channelMessages)
+  @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;
 
   @CreateDateColumn()

@@ -4,6 +4,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Channel } from './channel.entity';
 import { ChannelMessage } from './channelMessage.entity';
@@ -11,6 +12,7 @@ import { ChatRestriction } from './chatRestriction.entity';
 import { User } from './user.entity';
 
 @Entity()
+@Unique(['user', 'channel'])
 export class ChannelParticipant {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,7 +23,7 @@ export class ChannelParticipant {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Channel, (channel) => channel.channelParticipants)
+  @ManyToOne(() => Channel, (channel) => channel.participants)
   channel: Channel;
 
   @OneToMany(() => ChatRestriction, (chatRestriction) => chatRestriction.user)

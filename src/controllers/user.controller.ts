@@ -18,7 +18,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
     return this.userService.findOneByNickname(nickname, null);
   }
