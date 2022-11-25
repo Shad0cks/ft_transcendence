@@ -87,6 +87,7 @@ export class SocketEvent {
     await this.server
       .to(this.connectedUser.getSocketId(message.receiverNickname))
       .emit('messageprivateAdded');
+    
     // this.chatService.registerPrivateMessage(message);
   }
 
@@ -158,13 +159,13 @@ export class SocketEvent {
   //TODO Invite une game ou chat
 
   // @SubscribeMessage('joinChannel')
-  // async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
+  async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
   // check si le channel est privé ou protected / public
   //   await this.chatService.joinChannel(channel);
   //   const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
   //   for(const user of Userfromchannel) {
-  //     await this.server.to(user.socketid).emit('joinChannel', channel.userNickname);
-  //   await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
+  //     await this.server.to(user.socketid).emit('joinChannel', channel);
+    // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
   // }
 
   //   @SubscribeMessage('leaveChannel')
@@ -172,6 +173,6 @@ export class SocketEvent {
   //     await this.chatService.leaveChannel(channel);
   //     const Userfromchannel: Usersocket[] = getuserfromchannel(channel);
   //     for(const user of Userfromchannel) {
-  //       await this.server.to(user.socketid).emit('joinChannel', channel.userNickname);
+  //       await this.server.to(user.socketid).emit('leaveChannel', channel);
   //   }
 }
