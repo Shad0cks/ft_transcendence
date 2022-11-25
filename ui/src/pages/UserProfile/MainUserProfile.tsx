@@ -14,6 +14,8 @@ import { UserSettwofa } from '../../services/User/UserSettwofa';
 import { ChechLocalStorage } from '../../services/checkIsLog';
 import { Form } from 'react-bootstrap';
 import TwoFactorAuth from '../../components/TwoFactorAuth';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -38,6 +40,7 @@ export default function MainUserProfile() {
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e: GetUserIt) => {
+            console.log(e);
             setUser(e);
             setUsername(e.nickname);
           });
@@ -164,29 +167,28 @@ export default function MainUserProfile() {
                 accept="image/png, image/jpeg"
               />
             </div>
-            <div>
-              {user.twofa_enabled ? (
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
-                  onClick={() => unsetOTP()}
-                >
-                  Disable 2FA
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none"
-                  onClick={() => generateQrCode(user.nickname)}
-                >
-                  Setup 2FA
-                </button>
-              )}
-            </div>
           </InputGroup>
+          <div>
+            {user.twofa_enabled ? (
+              <button type="button" onClick={() => unsetOTP()}>
+                Disable 2FA
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => generateQrCode(user.nickname)}
+              >
+                Setup 2FA
+              </button>
+            )}
+          </div>
         </div>
       </div>
-      {openModal && (
+      <Popup
+        open={openModal}
+        closeOnDocumentClick
+        onClose={() => setOpenModal(false)}
+      >
         <TwoFactorAuth
           ascii={secret.ascii}
           otpauth_url={secret.otpauth_url}
@@ -194,7 +196,7 @@ export default function MainUserProfile() {
           closeModal={() => setOpenModal(false)}
           settwofa={() => setotp()}
         />
-      )}
+      </Popup>
     </>
   ) : null;
 }
