@@ -70,7 +70,7 @@ export default function MainUserProfile() {
   }
 
   async function generateQrCode(user_id: string) {
-    const secret = speakeasy.generateSecret({ name: "ft_transcendence" });
+    const secret = speakeasy.generateSecret({ name: 'ft_transcendence' });
 
     if (secret) {
       setOpenModal(true);
