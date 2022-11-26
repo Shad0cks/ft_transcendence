@@ -7,6 +7,8 @@ import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useNavigate } from 'react-router-dom';
 import Header from '../HomePage/Header';
+import { GetUserInfo } from '../../services/User/getUserInfo';
+import { GetUserIt } from '../../models/getUser';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -23,6 +25,7 @@ export default function Channel() {
   const navigate = useNavigate();
   const [playerClicked, setPlayerClicked] = useState<number>();
   const [username, setUsername] = useState<string | null>(null);
+  const [user, setUser] = useState<GetUserIt>();
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
@@ -35,6 +38,10 @@ export default function Channel() {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
+    else
+      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
+        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
@@ -43,7 +50,7 @@ export default function Channel() {
 
   return username ? (
     <div>
-      <Header username={username} />
+      <Header username={username} iconUser={user?.avatar} />
       <div className="btnCont">
         <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">

@@ -131,7 +131,7 @@ export default function MainUserProfile() {
   return username && user ? (
     <>
       <div>
-        <Header username={username} />
+        <Header username={username} iconUser={user?.avatar} />
         <div className="MainUserProfile_block">
           <h1>Edit Profile</h1>
           <Image

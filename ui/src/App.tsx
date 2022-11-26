@@ -5,11 +5,14 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
 import Login from './pages/Login';
 import { Button } from 'react-bootstrap';
+import { GetUserIt } from './models/getUser';
+import { GetUserInfo } from './services/User/getUserInfo';
 
 function App() {
   const [searchParams] = useSearchParams();
   const [isLog, seIsLog] = useState<boolean>();
   const [username, setUsername] = useState<string>();
+  const [user, setUser] = useState<GetUserIt>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +28,10 @@ function App() {
       setUsername(usrReq);
       localStorage.setItem('nickname', usrReq);
     }
+    if (usernameStorage !== null)
+      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
+        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -40,7 +47,7 @@ function App() {
             height: '100vh',
           }}
         >
-          <Header username={username} />
+          <Header username={user?.nickname} iconUser={user?.avatar} />
           <Button
             onClick={() => {
               navigate('/game_1');

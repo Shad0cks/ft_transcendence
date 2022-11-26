@@ -4,9 +4,16 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Image } from 'react-bootstrap';
 
-export default function Header({ username }: { username: string | undefined }) {
+export default function Header({
+  username,
+  iconUser,
+}: {
+  username: string | undefined;
+  iconUser: string | undefined;
+}) {
   const navigate = useNavigate();
   return (
     <div>
@@ -26,18 +33,23 @@ export default function Header({ username }: { username: string | undefined }) {
           <Navbar.Toggle />
           <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
             <Nav className="justify-content-end">
-              <NavDropdown title={username} id="collasible-nav-dropdown">
-                <NavDropdown.Item>
-                  <Link className="linkH" to={'/editProfile'}>
-                    Profile Edit
-                  </Link>
+              <NavDropdown
+                title={
+                  <Image
+                    style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+                    src={iconUser}
+                    roundedCircle
+                  />
+                }
+                id="collasible-nav-dropdown"
+              >
+                <NavDropdown.Item onClick={() => navigate('/editProfile')}>
+                  Profile Edit
                 </NavDropdown.Item>
-                <NavDropdown.Item>
-                  <Link className="linkH" to={'/friends'}>
-                    Friends
-                  </Link>
+                <NavDropdown.Item onClick={() => navigate('/friends')}>
+                  Friends
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">
+                <NavDropdown.Item onClick={() => navigate('/friends')}>
                   Game History
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
