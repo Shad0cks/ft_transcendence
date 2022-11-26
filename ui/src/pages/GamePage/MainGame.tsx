@@ -9,7 +9,8 @@ import socketIOClient, { Socket } from 'socket.io-client';
 import Header from '../HomePage/Header';
 import { newPlayer } from '../../models/newPlayer';
 import { useNavigate } from 'react-router-dom';
-import { ChechLocalStorage } from '../../services/checkIsLog';
+import { GetUserInfo } from '../../services/User/getUserInfo';
+import { GetUserIt } from '../../models/getUser';
 
 function MainGame() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ function MainGame() {
     player1: { taken: false, socket: undefined },
     player2: { taken: false, socket: undefined },
   });
+  const [user, setUser] = useState<GetUserIt>();
   const [socket, setSocket] = useState<Socket>();
   const [username, setUsername] = useState<string | null>(null);
   const incrementGameOp = (inc: number = 1) => {
@@ -94,13 +96,16 @@ function MainGame() {
   }, [game, socket]);
 
   useEffect(() => {
-    ChechLocalStorage();
     setSocket(
       socketIOClient('http://localhost:8080', { withCredentials: true }),
     );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
+    else
+      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
+        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {
@@ -172,7 +177,7 @@ function MainGame() {
 
   return username ? (
     <div>
-      <Header username={username} />
+      <Header username={username} iconUser={user?.avatar} />
       {setGameOp()}
     </div>
   ) : null;

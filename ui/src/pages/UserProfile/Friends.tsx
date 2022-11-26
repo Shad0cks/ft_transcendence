@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../HomePage/Header';
 import { useNavigate } from 'react-router-dom';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 import { GetFriends } from '../../services/Friends/getFriends';
 import { Button, InputGroup, Card, ButtonGroup, Form } from 'react-bootstrap';
 import { AddFriend } from '../../services/Friends/addFriend';
@@ -11,9 +10,11 @@ import { GetUserIt } from '../../models/getUser';
 import '../../css/Pages/Friends.css';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { RemoveFriend } from '../../services/Friends/removeFriend';
+import { GetUserInfo } from '../../services/User/getUserInfo';
 
 export default function Friends() {
   const navigate = useNavigate();
+  const [user, setUser] = useState<GetUserIt>();
   const newFriend = useRef(null);
   const [username, setUsername] = useState<string | null>(null);
   const [friendsList, setFriendsList] = useState<GetUserIt[]>([]);
@@ -79,10 +80,13 @@ export default function Friends() {
   }
 
   useEffect(() => {
-    ChechLocalStorage();
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
+    else
+      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
+        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      });
     GetFriends(usernameStorage!)
       .then((res) => {
         if (res.ok) {
@@ -102,7 +106,7 @@ export default function Friends() {
 
   return (
     <div>
-      <Header username={username!} />
+      <Header username={username!} iconUser={user?.avatar} />
       <div className="containerFriend">
         <InputGroup
           className="mb-3"

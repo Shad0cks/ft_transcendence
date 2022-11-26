@@ -5,10 +5,13 @@ export class User {
   @PrimaryColumn({ unique: true })
   nickname: string;
 
-  @Column({ select: false })
+  @Column()
   twofa_enabled: boolean;
 
   @Column({ select: false })
+  twofa_secret: string;
+
+  @Column({ select: false, unique: true })
   login42: string;
 
   @ManyToMany(() => User)

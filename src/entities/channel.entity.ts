@@ -24,12 +24,12 @@ export class Channel {
 
   @OneToMany(
     () => ChannelParticipant,
-    (channelParticipant) => channelParticipant.user,
+    (channelParticipant) => channelParticipant.channel,
   )
-  channelParticipants: ChannelParticipant[];
+  participants: ChannelParticipant[];
 
   @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.channel)
-  channelMessages: ChannelMessage[];
+  messages: ChannelMessage[];
 
   @Column('text', { array: true })
   whitelist: string[];

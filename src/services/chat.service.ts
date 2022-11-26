@@ -1,4 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateChannelDTO } from 'src/dto/createChannel.dto';
 import { Repository } from 'typeorm';
@@ -12,6 +18,13 @@ import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelAdminDTO } from 'src/dto/channelAdmin.dto';
 import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
+import { UserService } from './user.service';
+
+export interface ChannelOptions {
+  selectParticipants?: boolean;
+  selectMessages?: boolean;
+  selectPassword?: boolean;
+}
 
 @Injectable()
 export class ChatService {
@@ -20,11 +33,47 @@ export class ChatService {
     private channelRepository: Repository<Channel>,
     @InjectRepository(ChannelParticipant)
     private channelParticipantRepository: Repository<ChannelParticipant>,
+    private readonly userService: UserService,
   ) {}
 
   async findAll(): Promise<Channel[]> {
     const allChannels = await this.channelRepository.find();
     return allChannels;
+  }
+
+  async findChannelByName(
+    channelName: string,
+    options: ChannelOptions,
+  ): Promise<Channel> {
+    if (options === null) {
+      options = {};
+    }
+    const relations = [];
+    if (options.selectParticipants) {
+      relations.push('participants.user');
+    }
+    if (options.selectMessages) {
+      relations.push('messages');
+    }
+    const channel = await this.channelRepository.find({
+      where: {
+        name: channelName,
+      },
+      relations: relations,
+      select: {
+        id: true,
+        name: true,
+        privacy: true,
+        whitelist: true,
+        password:
+          options.selectPassword === undefined ? false : options.selectPassword,
+      },
+      take: 1,
+    });
+    if (channel.length === 0) {
+      throw new NotFoundException('Channel not found');
+    }
+    return channel[0];
   }
 
   async createChannel(createChannelDTO: CreateChannelDTO): Promise<Channel> {
@@ -34,6 +83,7 @@ export class ChatService {
       channel.name = createChannelDTO.channelName;
       channel.privacy = createChannelDTO.privacy;
       channel.password = '';
+      channel.whitelist = [];
       if (createChannelDTO.privacy === 'protected') {
         channel.password = await bcrypt.hash(createChannelDTO.password, 10);
       }
@@ -46,6 +96,14 @@ export class ChatService {
         throw new ConflictException('Channel name already exists');
       }
     }
+  }
+
+  async getParticipantsNickname(channelName: string): Promise<string[]> {
+    const channel = await this.findChannelByName(channelName, {
+      selectParticipants: true,
+    });
+    console.log(channel.participants);
+    return [];
   }
 
   async addRestriction(channelRestrictionDTO: ChannelRestrictionDTO) {
@@ -90,9 +148,52 @@ export class ChatService {
     console.info(channelPrivacyDTO);
   }
 
+  async checkPassword(clear: string, hash: string) {
+    if (!clear) {
+      throw new BadRequestException('Missing password');
+    }
+    const authorized = await bcrypt.compare(clear, hash);
+    if (!authorized) {
+      throw new UnauthorizedException('Wrong password');
+    }
+  }
+
   async joinChannel(joinChannelDTO: JoinChannelDTO) {
-    console.log('Joinning channel');
-    console.info(joinChannelDTO);
+    try {
+      const participant = new ChannelParticipant();
+      const channel = await this.findChannelByName(joinChannelDTO.channelName, {
+        selectPassword: true,
+      });
+
+      // password check
+      if (channel.privacy === 'protected') {
+        await this.checkPassword(joinChannelDTO.password, channel.password);
+      }
+
+      // populate participant object
+      participant.channel = channel;
+      participant.user = await this.userService.findOneByNickname(
+        joinChannelDTO.userNickname,
+        null,
+      );
+      participant.isAdmin = joinChannelDTO.isAdmin;
+
+      // save
+      await this.channelParticipantRepository.save(participant);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException('Channel not found');
+      }
+      if (error.code === '23505') {
+        throw new ConflictException('You are already in this channel');
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('Wrong password');
+      }
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException('Missing password');
+      }
+    }
   }
 
   async registerChannelMessage(channelMessageDTO: ChannelMessageDTO) {

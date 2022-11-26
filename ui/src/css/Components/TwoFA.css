@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+
+.popupE {
+  font-family: 'Orbitron';
+  width: 100%;
+  text-align: center;
+  color: white;
+  border: solid 1px blue;
+  background-color: #282c34;
+}
+.block2 {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.alternativ {
+  font-family: 'Verdana';
+  margin: 0 auto;
+  text-align: center;
+  scale: 0.7;
+}
+.imgQR {
+  height: fit-content;
+  width: fit-content;
+}

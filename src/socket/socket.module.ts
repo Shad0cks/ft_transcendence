@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from 'src/auth.module';
 import { ChatModule } from 'src/chat.module';
-import { ChatService } from 'src/services/chat.service';
 import { UserService } from 'src/services/user.service';
 import { ConnectedUsers } from './connectedUsers';
 import { SocketEvent } from './socketEvent';
