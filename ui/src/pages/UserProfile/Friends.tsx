@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../HomePage/Header';
 import { useNavigate } from 'react-router-dom';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 import { GetFriends } from '../../services/Friends/getFriends';
 import { Button, InputGroup, Card, ButtonGroup, Form } from 'react-bootstrap';
 import { AddFriend } from '../../services/Friends/addFriend';
@@ -79,7 +78,6 @@ export default function Friends() {
   }
 
   useEffect(() => {
-    ChechLocalStorage();
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');

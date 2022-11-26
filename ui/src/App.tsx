@@ -5,7 +5,6 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js';
 import Login from './pages/Login';
 import { Button } from 'react-bootstrap';
-import { ChechLocalStorage } from './services/checkIsLog';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -14,7 +13,6 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    ChechLocalStorage();
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
     const usernameStorage = localStorage.getItem('nickname');

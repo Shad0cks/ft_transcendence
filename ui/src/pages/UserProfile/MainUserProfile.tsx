@@ -10,7 +10,6 @@ import { GetUserInfo } from '../../services/User/getUserInfo';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { UserSetAvatar } from '../../services/User/userSetAvatar';
 import { SetUserNickname } from '../../services/User/setUserNickname';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 import { Form } from 'react-bootstrap';
 
 export default function MainUserProfile() {
@@ -20,7 +19,6 @@ export default function MainUserProfile() {
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    ChechLocalStorage();
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
