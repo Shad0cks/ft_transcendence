@@ -98,6 +98,14 @@ export class ChatService {
     }
   }
 
+  async getParticipantsNickname(channelName: string): Promise<string[]> {
+    const channel = await this.findChannelByName(channelName, {
+      selectParticipants: true,
+    });
+    console.log(channel.participants);
+    return [];
+  }
+
   async addRestriction(channelRestrictionDTO: ChannelRestrictionDTO) {
     console.log('Restricting user');
     console.info(channelRestrictionDTO);
