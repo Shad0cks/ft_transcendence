@@ -1,4 +1,4 @@
-export function Valide2Fa(userNickname: string, token: string) {
+export function Valide2Fa(userNickname: string, tokendata: string) {
   return fetch(
     process.env.REACT_APP_API_URL + '/user/' + userNickname + '/valide2fa/',
     {
@@ -7,7 +7,7 @@ export function Valide2Fa(userNickname: string, token: string) {
       },
       method: 'POST',
       credentials: 'include',
-      body: JSON.stringify({ nickname: token }),
+      body: JSON.stringify({ token: tokendata }),
     },
   );
 }

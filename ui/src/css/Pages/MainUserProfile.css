@@ -9,3 +9,10 @@
   height: 90vh;
   font-family: 'Orbitron';
 }
+.popupmain {
+  color: white;
+
+  border: solid 1px blue;
+  display: flex;
+  justify-content: center;
+}

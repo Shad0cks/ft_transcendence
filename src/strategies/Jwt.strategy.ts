@@ -34,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userService.findOneByLogin42(payload.login42);
     const requestNickname = request.params.nickname;
 
-    if (requestNickname !== user.nickname || !payload.isAuthenticated ) {
+    if (requestNickname !== user.nickname || !payload.isAuthenticated) {
       throw new UnauthorizedException();
     }
 

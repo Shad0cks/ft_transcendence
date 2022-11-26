@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FriendDTO } from 'src/dto/friend.dto';
+import { TwoFAtokenDTO } from 'src/dto/twofatoken.dto';
 import { UserDTO } from 'src/dto/user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
@@ -87,16 +88,16 @@ export class UserController {
   @UseGuards(Jwt2faGuard)
   async CheckValide2Fa(
     @Param('nickname') nickname: string,
-    @Body() friendDTO: FriendDTO,
-  ): Promise<FriendDTO> {
+    @Body() twofatokenDTO: TwoFAtokenDTO,
+  ): Promise<TwoFAtokenDTO> {
     const speakeasy = require('speakeasy');
     const res = speakeasy.totp.verify({
       secret: (await this.userService.findOneByNickname(nickname, null))
         .twofa_secret,
       encoding: 'ascii',
-      token: friendDTO.nickname,
+      token: twofatokenDTO.token,
     });
-    if (res) return { nickname: 'true' };
-    else return { nickname: 'false' };
+    if (res) return { token: 'true' };
+    else return { token: 'false' };
   }
 }

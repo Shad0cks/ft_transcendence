@@ -11,7 +11,7 @@ export interface JwtPayload {
 }
 
 @Injectable()
-export class twofaJwtStrategy extends PassportStrategy(Strategy , '2fajwt') {
+export class twofaJwtStrategy extends PassportStrategy(Strategy, '2fajwt') {
   constructor(private userService: UserService) {
     const extractJwtFromCookie = (req: Request): string => {
       let token: string = null;
@@ -32,11 +32,6 @@ export class twofaJwtStrategy extends PassportStrategy(Strategy , '2fajwt') {
 
   async validate(request: Request, payload: any): Promise<any> {
     const user = await this.userService.findOneByLogin42(payload.login42);
-    // const requestNickname = request.params.nickname;
-
-    // if (requestNickname !== user.nickname ) {
-    //   throw new UnauthorizedException();
-    // }
 
     return user;
   }
