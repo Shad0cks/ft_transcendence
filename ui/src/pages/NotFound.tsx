@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import '../css/Pages/NotFound.css';
 import Header from './HomePage/Header';
 import { useNavigate } from 'react-router-dom';
-import { ChechLocalStorage } from '../services/checkIsLog';
 
 export default function NotFound() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    ChechLocalStorage();
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');

@@ -9,7 +9,6 @@ import socketIOClient, { Socket } from 'socket.io-client';
 import Header from '../HomePage/Header';
 import { newPlayer } from '../../models/newPlayer';
 import { useNavigate } from 'react-router-dom';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 
 function MainGame() {
   const navigate = useNavigate();
@@ -94,8 +93,9 @@ function MainGame() {
   }, [game, socket]);
 
   useEffect(() => {
-    ChechLocalStorage();
-    setSocket(socketIOClient('http://localhost:8080'));
+    setSocket(
+      socketIOClient('http://localhost:8080', { withCredentials: true }),
+    );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');

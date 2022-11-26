@@ -7,7 +7,6 @@ import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useNavigate } from 'react-router-dom';
 import Header from '../HomePage/Header';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -32,7 +31,6 @@ export default function Channel() {
   }
 
   useEffect(() => {
-    ChechLocalStorage();
     setPlayerClicked(-1);
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);

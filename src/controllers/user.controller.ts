@@ -8,17 +8,18 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ReqUser } from 'src/decorators/user.decorator';
 import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
+import { User } from 'src/entities/user.entity';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
-import { Jwt2faGuard } from 'src/guards/2fajwt.guard';
 
-@Controller('user/:nickname')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get(':nickname/data')
   @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
     return this.userService.findOneByNickname(nickname, null);
@@ -27,29 +28,29 @@ export class UserController {
   @Put('nickname')
   @UseGuards(JwtAuthGuard)
   async editNicknameAction(
-    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
-  ): Promise<void> {
-    return await this.userService.editNickname(nickname, userDTO.nickname);
+    @ReqUser() user: User,
+  ): Promise<User> {
+    return await this.userService.editNickname(user, userDTO.nickname);
   }
 
   @Put('avatar')
   @UseGuards(JwtAuthGuard)
   async editAvatarAction(
-    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
-  ): Promise<void> {
-    return await this.userService.editAvatar(nickname, userDTO.avatar);
+    @ReqUser() user: User,
+  ): Promise<User> {
+    return await this.userService.editAvatar(user, userDTO.avatar);
   }
 
   @Put('2fa')
   @UseGuards(JwtAuthGuard)
   async edit2faAction(
-    @Param('nickname') nickname: string,
     @Body() userDTO: UserDTO,
-  ): Promise<void> {
+    @ReqUser() user: User,
+  ): Promise<User> {
     return await this.userService.edit2fa(
-      nickname,
+      user,
       userDTO.twofa_enabled,
       userDTO.twofa_secret,
     );
@@ -58,17 +59,17 @@ export class UserController {
   @Post('friends')
   @UseGuards(JwtAuthGuard)
   async addFriendAction(
-    @Param('nickname') userNickname: string,
     @Body() friendDTO: FriendDTO,
+    @ReqUser() user: User,
   ): Promise<UserDTO> {
-    return await this.userService.addFriend(userNickname, friendDTO);
+    return await this.userService.addFriend(user, friendDTO);
   }
 
   @Get('friends')
   @UseGuards(JwtAuthGuard)
-  async getFriendsAction(@Param('nickname') nickname: string) {
+  async getFriendsAction(@ReqUser() user: User) {
     return (
-      await this.userService.findOneByNickname(nickname, {
+      await this.userService.findOneByNickname(user.nickname, {
         selectFriends: true,
       })
     ).friends;
@@ -77,9 +78,9 @@ export class UserController {
   @Delete('friends')
   @UseGuards(JwtAuthGuard)
   async deleteFriendAction(
-    @Param('nickname') nickname: string,
     @Body() friendDTO: FriendDTO,
+    @ReqUser() user: User,
   ) {
-    return await this.userService.deleteFriend(nickname, friendDTO);
+    return await this.userService.deleteFriend(user, friendDTO);
   }
 }

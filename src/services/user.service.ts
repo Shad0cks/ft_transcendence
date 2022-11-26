@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FriendDTO } from 'src/dto/friend.dto';
-import { UserDTO } from 'src/dto/user.dto';
+import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 
@@ -45,6 +45,18 @@ export class UserService {
     }
   }
 
+  async createUsersocket(
+    nickname: string,
+    socketid: string,
+  ): Promise<Usersocket> {
+    const usersocket = new Usersocket();
+
+    usersocket.nickname = nickname;
+    usersocket.socketid = socketid;
+
+    return usersocket;
+  }
+
   async findOneByNickname(
     nickname: string,
     options: UserOptions,
@@ -68,17 +80,31 @@ export class UserService {
     return user[0];
   }
 
-  async findOneByLogin42(nickname: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({
-      login42: nickname,
+  async findOneByLogin42(login42: string): Promise<User> {
+    const user = await this.userRepository.find({
+      where: {
+        login42: login42,
+      },
+      relations: {
+        friends: true,
+      },
+      select: {
+        nickname: true,
+        login42: true,
+        avatar: true,
+        wins: true,
+        losses: true,
+        twofa_enabled: true,
+      },
+      take: 1,
     });
-    if (!user) {
+    if (user.length === 0) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return user[0];
   }
 
-  async editNickname(oldNickname: string, newNickname: string): Promise<void> {
+  async editNickname(user: User, newNickname: string): Promise<User> {
     if (!newNickname) {
       throw new BadRequestException('Nickname is missing');
     }
@@ -88,18 +114,13 @@ export class UserService {
         .update(User)
         .set({ nickname: newNickname })
         .where({
-          nickname: oldNickname,
+          login42: user.login42,
         })
         .returning('*')
         .execute();
-      if (result.affected === 0) {
-        throw new NotFoundException('User not found');
-      }
       return result.raw[0];
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
+      console.log(error);
       if (error.code === '23505') {
         // duplicate nickname
         throw new ConflictException('Nickname already exists');
@@ -107,52 +128,50 @@ export class UserService {
     }
   }
 
-  async editAvatar(nickname: string, newAvatar: string): Promise<void> {
+  async editAvatar(user: User, newAvatar: string): Promise<User> {
     if (!newAvatar) {
       throw new BadRequestException('Avatar is missing');
     }
-    await this.userRepository
+    const result = await this.userRepository
       .createQueryBuilder()
       .update(User)
       .set({ avatar: newAvatar })
       .where({
-        nickname: nickname,
+        login42: user.login42,
       })
       .returning('*')
       .execute();
+    return result.raw[0];
   }
 
-  async edit2fa(
-    nickname: string,
-    enabled: boolean,
-    secret: string,
-  ): Promise<void> {
+  async edit2fa(user: User, enabled: boolean, secret: string): Promise<User> {
     if (!enabled && enabled !== false) {
       throw new BadRequestException('enabled is missing');
     }
     if (!secret) {
       throw new BadRequestException('Secret is missing');
     }
-    await this.userRepository
+    const result = await this.userRepository
       .createQueryBuilder()
       .update(User)
       .set({ twofa_enabled: enabled, twofa_secret: secret })
       .where({
-        nickname: nickname,
+        login42: user.login42,
       })
       .returning('*')
       .execute();
+    return result.raw[0];
   }
 
-  async addFriend(userNickname: string, friendDTO: FriendDTO): Promise<User> {
-    if (userNickname === friendDTO.nickname) {
+  async addFriend(user: User, friendDTO: FriendDTO): Promise<User> {
+    if (user.nickname === friendDTO.nickname) {
       throw new BadRequestException("You can't add yourself as friend");
     }
     try {
       await this.userRepository
         .createQueryBuilder()
         .relation(User, 'friends')
-        .of(userNickname)
+        .of(user)
         .add(friendDTO.nickname);
       const friend = await this.findOneByNickname(friendDTO.nickname, null);
       return friend;
@@ -169,11 +188,11 @@ export class UserService {
     }
   }
 
-  async deleteFriend(userNickname: string, friendDTO: FriendDTO) {
+  async deleteFriend(user: User, friendDTO: FriendDTO) {
     await this.userRepository
       .createQueryBuilder()
       .relation(User, 'friends')
-      .of(userNickname)
+      .of(user)
       .remove(friendDTO.nickname);
   }
 }

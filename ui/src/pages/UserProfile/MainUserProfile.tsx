@@ -11,7 +11,6 @@ import { BlobServiceClient } from '@azure/storage-blob';
 import { UserSetAvatar } from '../../services/User/userSetAvatar';
 import { SetUserNickname } from '../../services/User/setUserNickname';
 import { UserSettwofa } from '../../services/User/UserSettwofa';
-import { ChechLocalStorage } from '../../services/checkIsLog';
 import { Form } from 'react-bootstrap';
 import TwoFactorAuth from '../../components/TwoFactorAuth';
 import Popup from 'reactjs-popup';
@@ -30,7 +29,6 @@ export default function MainUserProfile() {
   const speakeasy = require('speakeasy');
 
   useEffect(() => {
-    ChechLocalStorage();
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');

@@ -8,10 +8,10 @@ export class User {
   @Column()
   twofa_enabled: boolean;
 
-  @Column()
+  @Column({ select: false })
   twofa_secret: string;
 
-  @Column({ select: false })
+  @Column({ select: false, unique: true })
   login42: string;
 
   @ManyToMany(() => User)
