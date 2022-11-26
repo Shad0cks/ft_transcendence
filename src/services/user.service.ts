@@ -95,6 +95,7 @@ export class UserService {
         wins: true,
         losses: true,
         twofa_enabled: true,
+        twofa_secret: true,
       },
       take: 1,
     });

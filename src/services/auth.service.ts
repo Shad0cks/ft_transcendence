@@ -71,23 +71,13 @@ export class AuthService {
   }
 
   async valide2fa(
-    request: any,
+    user: User,
     response: Response,
     token: string,
   ): Promise<void> {
-    if (typeof request.user == 'undefined') {
-      throw new BadRequestException();
-    }
-    const userDTO: UserDTO = request.user;
+    const userDTO: UserDTO = user;
     userDTO.avatar =
-      'https://cdn.intra.42.fr/users/medium_' + userDTO.nickname + '.jpg';
-    let user: User;
-
-    try {
-      user = await this.userService.findOneByLogin42(userDTO.nickname);
-    } catch (error) {
-      throw error;
-    }
+      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
 
     const speakeasy = require('speakeasy');
     const res = speakeasy.totp.verify({
