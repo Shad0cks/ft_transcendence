@@ -2,7 +2,6 @@ import React from 'react';
 import { useRef } from 'react';
 import { Valide2Fa } from '../services/User/valide2fa';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Friend } from '../models/friend';
 import { TwoFAtoken } from '../models/twofatoken';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
@@ -14,7 +13,6 @@ export default function FaPage() {
   const navigate = useNavigate();
 
   const usrReq = searchParams.get('nickname');
-  const logReq = searchParams.get('login42');
 
   const callLogin = () => {
     if (!token.current || !usrReq) {
