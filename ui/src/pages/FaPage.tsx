@@ -1,8 +1,6 @@
 import React from 'react';
 import { useRef } from 'react';
-import { Valide2Fa } from '../services/User/valide2fa';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { TwoFAtoken } from '../models/twofatoken';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -18,25 +16,10 @@ export default function FaPage() {
     if (!token.current || !usrReq) {
       return;
     }
-    Valide2Fa(usrReq, (token.current as HTMLInputElement).value)
-      .then((res) => {
-        if (res.ok) {
-          const requete = res.text().then((e) => JSON.parse(e));
-          requete.then((e: TwoFAtoken) => {
-            if (e.token === 'true')
-              window.location.replace(
-                'http://localhost:8080/auth/42/2faredirect',
-              );
-            else return;
-          });
-        } else {
-          console.log('err req', res.status);
-        }
-      })
-      .catch((err) => {
-        navigate('/');
-        console.log(err);
-      });
+    window.location.replace(
+      'http://localhost:8080/auth/42/2faredirect/' +
+        (token.current as HTMLInputElement).value,
+    );
   };
 
   return (

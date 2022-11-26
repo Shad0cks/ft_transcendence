@@ -69,7 +69,11 @@ export class AuthService {
     }
   }
 
-  async valide2fa(request: any, response: Response): Promise<void> {
+  async valide2fa(
+    request: any,
+    response: Response,
+    token: string,
+  ): Promise<void> {
     if (typeof request.user == 'undefined') {
       throw new BadRequestException();
     }
@@ -84,18 +88,32 @@ export class AuthService {
       throw error;
     }
 
-    const payload: JwtPayload = {
-      nickname: user.nickname,
-      login42: user.login42,
-      isAuthenticated: true,
-    };
-    const jwt = this.jwtService.sign(payload);
-    response.cookie('jwt', jwt, { httpOnly: true });
-    console.log(
-      this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
-    );
-    response.redirect(
-      this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
-    );
+    const speakeasy = require('speakeasy');
+    const res = speakeasy.totp.verify({
+      secret: user.twofa_secret,
+      encoding: 'ascii',
+      token: token,
+    });
+    if (res) {
+      const payload: JwtPayload = {
+        nickname: user.nickname,
+        login42: user.login42,
+        isAuthenticated: true,
+      };
+      const jwt = this.jwtService.sign(payload);
+      response.cookie('jwt', jwt, { httpOnly: true });
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
+      );
+    } else {
+      const payload: JwtPayload = {
+        nickname: user.nickname,
+        login42: user.login42,
+        isAuthenticated: false,
+      };
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+      );
+    }
   }
 }

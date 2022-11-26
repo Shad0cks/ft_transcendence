@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards, Param } from '@nestjs/common';
 import { Response } from 'express';
 import { Intra42AuthGuard } from 'src/guards/intra42.guard';
 import { AuthService } from 'src/services/auth.service';
@@ -20,13 +20,14 @@ export class AuthController {
     return this.authService.logUserIn(req, res);
   }
 
-  @Get('42/2faredirect')
+  @Get('42/2faredirect/:token')
   @UseGuards(Jwt2faGuard)
   handle2faRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
+    @Param('token') token: string,
   ) {
-    return this.authService.valide2fa(req, res);
+    return this.authService.valide2fa(req, res, token);
   }
 
   @Get('logout')
