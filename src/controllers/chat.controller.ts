@@ -10,7 +10,6 @@ export class ChatController {
   @Get('channels')
   @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Channel[]> {
-    console.log('request');
     return await this.chatService.findAll();
   }
 
