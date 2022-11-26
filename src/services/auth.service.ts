@@ -37,8 +37,9 @@ export class AuthService {
     }
     // here the nickname in the DTO is the login42
     const userDTO: UserDTO = request.user;
+    // default avatar
     userDTO.avatar =
-      'https://cdn.intra.42.fr/users/medium_' + userDTO.nickname + '.jpg';
+      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
     let user: User;
 
     try {
