@@ -1,4 +1,4 @@
-export class connectedUsers {
+export class ConnectedUsers {
   private users = new Map();
 
   add(nickname: string, socketId: string) {

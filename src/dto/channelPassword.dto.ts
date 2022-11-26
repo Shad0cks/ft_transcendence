@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ChannelPasswordDTO {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  channel: string;
 
   @IsNotEmpty()
   @IsString()

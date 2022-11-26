@@ -23,6 +23,7 @@ import { AuthModule } from './auth.module';
     ChatModule,
     UserModule,
     AuthModule,
+    SocketModule,
   ],
   controllers: [],
   providers: [],

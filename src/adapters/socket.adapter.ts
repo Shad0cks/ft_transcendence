@@ -1,14 +1,14 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Socket } from 'socket.io';
 import * as jwt from 'jsonwebtoken';
-import { connectedUsers } from 'src/socket/connectedUsers';
+import { ConnectedUsers } from 'src/socket/connectedUsers';
 import { JwtPayload } from 'src/strategies/Jwt.strategy';
 
 export interface CustomSocket extends Socket {
   user: any;
 }
 
-const Clients = new connectedUsers();
+const Clients = new ConnectedUsers();
 
 function getCookieFromHeader(allCookies: string, toFind: string): string {
   return allCookies
