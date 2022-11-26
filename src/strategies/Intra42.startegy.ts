@@ -24,7 +24,7 @@ export class Intra42Strategy extends PassportStrategy(Strategy, 'intra42') {
       nickname: profile.username,
       twofa_enabled: false,
       twofa_secret: '',
-      avatar: profile._json.image.link,
+      avatar: profile._json.image_url,
       wins: 0,
       losses: 0,
     };

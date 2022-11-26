@@ -24,14 +24,15 @@ export default function FaPage() {
         if (res.ok) {
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e: Friend) => {
+            // window.location.replace(
+            //   'http://localhost:3000/callback/?nickname=' +
+            //     usrReq +
+            //     '&login42=' +
+            //     logReq +
+            //     '&isAuthenticated=true',
+            // );
             if (e.nickname === 'true')
-              window.location.replace(
-                'http://localhost:3000/callback/?nickname=' +
-                  usrReq +
-                  '&login42=' +
-                  logReq +
-                  '&isAuthenticated=true',
-              );
+              window.location.replace('http://localhost:8080/auth/42/2faredirect');
             else return;
           });
         } else {

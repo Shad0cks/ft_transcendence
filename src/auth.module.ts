@@ -5,6 +5,7 @@ import { Intra42Strategy } from './strategies/Intra42.startegy';
 import { UserModule } from './user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/Jwt.strategy';
+import { twofaJwtStrategy } from './strategies/2faJwt.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { JwtStrategy } from './strategies/Jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, Intra42Strategy, JwtStrategy],
+  providers: [AuthService, Intra42Strategy, JwtStrategy, twofaJwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

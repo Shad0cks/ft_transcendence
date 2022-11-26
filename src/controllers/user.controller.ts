@@ -12,6 +12,7 @@ import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { UserService } from '../services/user.service';
+import { Jwt2faGuard } from 'src/guards/2fajwt.guard';
 
 @Controller('user/:nickname')
 export class UserController {
@@ -83,7 +84,7 @@ export class UserController {
   }
 
   @Post('valide2fa')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(Jwt2faGuard)
   async CheckValide2Fa(
     @Param('nickname') nickname: string,
     @Body() friendDTO: FriendDTO,
