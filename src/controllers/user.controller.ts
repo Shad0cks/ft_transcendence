@@ -48,8 +48,12 @@ export class UserController {
   async edit2faAction(
     @Body() userDTO: UserDTO,
     @ReqUser() user: User,
-  ): Promise<void> {
-    await this.userService.edit2fa(user, userDTO.twofa_enabled);
+  ): Promise<User> {
+    return await this.userService.edit2fa(
+      user,
+      userDTO.twofa_enabled,
+      userDTO.twofa_secret,
+    );
   }
 
   @Post('friends')

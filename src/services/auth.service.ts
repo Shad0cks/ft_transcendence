@@ -59,8 +59,52 @@ export class AuthService {
     };
     const jwt = this.jwtService.sign(payload);
     response.cookie('jwt', jwt, { httpOnly: true });
-    response.redirect(
-      this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
-    );
+    if (!user.twofa_enabled) {
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
+      );
+    } else {
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+      );
+    }
+  }
+
+  async valide2fa(
+    user: User,
+    response: Response,
+    token: string,
+  ): Promise<void> {
+    const userDTO: UserDTO = user;
+    userDTO.avatar =
+      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
+
+    const speakeasy = require('speakeasy');
+    const res = speakeasy.totp.verify({
+      secret: user.twofa_secret,
+      encoding: 'ascii',
+      token: token,
+    });
+    if (res) {
+      const payload: JwtPayload = {
+        nickname: user.nickname,
+        login42: user.login42,
+        isAuthenticated: true,
+      };
+      const jwt = this.jwtService.sign(payload);
+      response.cookie('jwt', jwt, { httpOnly: true });
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
+      );
+    } else {
+      const payload: JwtPayload = {
+        nickname: user.nickname,
+        login42: user.login42,
+        isAuthenticated: false,
+      };
+      response.redirect(
+        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+      );
+    }
   }
 }

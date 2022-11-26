@@ -21,6 +21,11 @@ export class UserDTO {
 
   @IsOptional()
   @IsNotEmpty()
+  @IsString()
+  twofa_secret: string;
+
+  @IsOptional()
+  @IsNotEmpty()
   @IsUrl()
   avatar: string;
 
