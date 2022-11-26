@@ -10,7 +10,7 @@ import Header from '../HomePage/Header';
 import { newPlayer } from '../../models/newPlayer';
 import { useNavigate } from 'react-router-dom';
 import { ChechLocalStorage } from '../../services/checkIsLog';
- 
+
 function MainGame() {
   const navigate = useNavigate();
   const [game, setGame] = useState<GameObj>({

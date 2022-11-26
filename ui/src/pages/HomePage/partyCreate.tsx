@@ -1,45 +1,35 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { AlertColor } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Channel } from '../../models/channel';
-import { createChannel } from '../../services/Channel/createChannel';
-import TSSnackbar from '../../components/TSSnackbar';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom/dist';
-import socketIOClient, { Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import { CreateChannelDTO } from '../../models/newChannel';
 
 export default function PartyCreate({
   username,
+  socket,
 }: {
+  socket: Socket | undefined;
   username: string | undefined;
 }) {
-  const { register, watch, setValue, handleSubmit } = useForm<CreateChannelDTO>();
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<AlertColor>('success');
-  const [socket, setSocket] = useState<Socket>();
+  const { register, watch, handleSubmit } = useForm<CreateChannelDTO>();
+  //const [openSnackbar, setOpenSnackbar] = useState(false);
+  // const [snackbarMessage, setSnackbarMessage] = useState('');
+  // const [snackbarSeverity, setSnackbarSeverity] =
+  //   useState<AlertColor>('success');
 
   const channelVisiblity = watch('privacy');
-  const navigate = useNavigate();
 
-  useEffect(()=>{
-    setSocket(
-      socketIOClient('http://localhost:8080', { withCredentials: true }),
-    );
-  }, [])
-
-  const onSubmit: SubmitHandler<CreateChannelDTO> = (data: CreateChannelDTO) => {
-    data.creatorNickname = username!
+  const onSubmit: SubmitHandler<CreateChannelDTO> = (
+    data: CreateChannelDTO,
+  ) => {
+    data.creatorNickname = username!;
     console.log(data);
 
     if (socket && socket.id !== undefined) {
-      console.log("emit channel")
+      console.log('emit channel');
       socket.emit('createChannel', data);
     }
-    
+
     // createChannel(data)
     //   .then((res) => {
     //     if (res.ok) {
@@ -95,12 +85,12 @@ export default function PartyCreate({
 
         <Button type="submit">Submit</Button>
       </Form>
-      <TSSnackbar
+      {/* <TSSnackbar
         open={openSnackbar}
         setOpen={setOpenSnackbar}
         severity={snackbarSeverity}
         message={snackbarMessage}
-      />
+      /> */}
     </div>
   );
 }
