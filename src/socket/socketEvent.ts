@@ -22,6 +22,7 @@ import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
+import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 
 @WebSocketGateway()
 export class SocketEvent {
@@ -156,16 +157,20 @@ export class SocketEvent {
 
   //TODO Invite une game ou chat
 
-  // @SubscribeMessage('joinChannel')
-  // async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
-  // check si le channel est privé ou protected / public
-  //   await this.chatService.joinChannel(channel);
-  //   const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
-  //   for(const user of Userfromchannel) {
-  //     await this.server.to(user.socketid).emit('joinChannel', channel);
-  // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
-  // }
+  @SubscribeMessage('joinChannel')
+  async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO) {
+    // check si le channel est privé ou protected / public
+    await this.chatService.joinChannel(channel);
+    // const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
+    // for(const user of Userfromchannel) {
+    //   await this.server.to(user.socketid).emit('joinChannel', channel);
+    // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
+  }
 
+  @SubscribeMessage('GetUserFromChannel')
+  async onGetUserFromChannel(socket: CustomSocket, channel: string) {
+    // this.server.emit.to(socket.id).emit('GetUserFromChannel', this.chatService.getuserfromchannel(channel)
+  }
   //   @SubscribeMessage('leaveChannel')
   //   async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO){
   //     await this.chatService.leaveChannel(channel);
