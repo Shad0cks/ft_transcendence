@@ -31,7 +31,7 @@ export default function PartyManage() {
     <div>
       <Header username={username} iconUser={user?.avatar} />
       <PartyCreate username={username} socket={socket} />
-      <ListeParty socket={socket} />
+      <ListeParty socket={socket} username={username} />
     </div>
   ) : null;
 }

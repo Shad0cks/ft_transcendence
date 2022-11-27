@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
-    const usernameStorage = localStorage.getItem('nickname');
+    let usernameStorage = localStorage.getItem('nickname');
 
     if ((logReq && logReq === 'true') || usernameStorage !== null)
       seIsLog(true);
@@ -28,8 +28,9 @@ function App() {
       setUsername(usrReq);
       localStorage.setItem('nickname', usrReq);
     }
+    usernameStorage = localStorage.getItem('nickname');
     if (usernameStorage !== null)
-      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
+      GetUserInfo(usernameStorage).then((e) => {
         if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

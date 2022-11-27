@@ -4,10 +4,14 @@ export default function AvailableParty({
   name,
   password,
   id,
+  joinChannel,
+  leaveChannel,
 }: {
   name: string;
   password: boolean;
   id: string;
+  joinChannel: () => void;
+  leaveChannel: () => void;
 }) {
   return (
     <div>
@@ -19,9 +23,13 @@ export default function AvailableParty({
         />
         <div className="card-body">
           <h5 className="card-title">{name}</h5>
-
           <p className="card-text"> {password ? 'public' : 'Private Game'} </p>
-          <button className="btn btn-primary">Join</button>
+          <button className="btn btn-primary" onClick={joinChannel}>
+            Join
+          </button>
+          <button className="btn btn-danger" onClick={leaveChannel}>
+            Leave
+          </button>
         </div>
       </div>
     </div>
