@@ -10,9 +10,11 @@ import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { HistoryMatch } from '../entities/historymatch.entity';
 
 export interface UserOptions {
   selectFriends?: boolean;
+  selectMatchs?: boolean;
   selectBlocked?: boolean;
 }
 
@@ -21,6 +23,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(HistoryMatch)
+    private matchRepository: Repository<HistoryMatch>,
   ) {}
 
   async createUser(userDTO: UserDTO, login42: string): Promise<User> {
@@ -71,6 +75,8 @@ export class UserService {
       relations: {
         friends:
           options.selectFriends === undefined ? false : options.selectFriends,
+        matchs:
+          options.selectMatchs === undefined ? false : options.selectMatchs,
       },
       take: 1,
     });
@@ -87,6 +93,7 @@ export class UserService {
       },
       relations: {
         friends: true,
+        matchs: true,
       },
       select: {
         nickname: true,
@@ -187,6 +194,11 @@ export class UserService {
       }
       throw error;
     }
+  }
+
+  async addMatch(user: User, aHistoryMatch: HistoryMatch) {
+    aHistoryMatch.user = user;
+    await this.matchRepository.save(aHistoryMatch);
   }
 
   async deleteFriend(user: User, friendDTO: FriendDTO) {

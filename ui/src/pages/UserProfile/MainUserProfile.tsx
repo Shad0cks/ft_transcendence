@@ -6,7 +6,11 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Image from 'react-bootstrap/Image';
 import { GetUserIt } from '../../models/getUser';
+import { historyMatchIt } from '../../models/historyMatch';
 import { GetUserInfo } from '../../services/User/getUserInfo';
+
+import { getHistoryMatchs } from '../../services/User/getHistoryMatchs';
+
 import { BlobServiceClient } from '@azure/storage-blob';
 import { UserSetAvatar } from '../../services/User/userSetAvatar';
 import { SetUserNickname } from '../../services/User/setUserNickname';

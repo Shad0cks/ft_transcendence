@@ -83,4 +83,14 @@ export class UserController {
   ) {
     return await this.userService.deleteFriend(user, friendDTO);
   }
+
+  @Get(':nickname/matchs')
+  @UseGuards(JwtAuthGuard)
+  async getHistoryMatchs(@Param('nickname') nickname: string) {
+    return (
+      await this.userService.findOneByNickname(nickname, {
+        selectMatchs: true,
+      })
+    ).matchs;
+  }
 }

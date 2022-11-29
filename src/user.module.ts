@@ -5,6 +5,7 @@ import { ChannelMessage } from './entities/channelMessage.entity';
 import { ChannelParticipant } from './entities/channelParticipant.entity';
 import { ChatRestriction } from './entities/chatRestriction.entity';
 import { User } from './entities/user.entity';
+import { HistoryMatch } from './entities/historymatch.entity';
 import { UserService } from './services/user.service';
 
 @Module({
@@ -14,6 +15,7 @@ import { UserService } from './services/user.service';
       ChannelParticipant,
       ChannelMessage,
       ChatRestriction,
+      HistoryMatch,
     ]),
   ],
   controllers: [UserController],
