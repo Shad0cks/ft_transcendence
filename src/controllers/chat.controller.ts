@@ -4,6 +4,7 @@ import { ChatService } from '../services/chat.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { CreateChannelDTO } from 'src/dto/createChannel.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
+import { ChannelMessageDTO } from 'src/dto/channelMessage.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -31,5 +32,13 @@ export class ChatController {
   @Get('participants')
   async getParticipantsAction(@Body('channelName') channelName: string) {
     return this.chatService.getParticipantsNickname(channelName);
+  }
+
+  // TODO remove
+  @Post('message')
+  async registerChannelMessageAction(
+    @Body() channelMessageDTO: ChannelMessageDTO,
+  ) {
+    return this.chatService.registerChannelMessage(channelMessageDTO);
   }
 }

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,6 +20,7 @@ import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelAdminDTO } from 'src/dto/channelAdmin.dto';
 import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
+import { ChannelMessage } from 'src/entities/channelMessage.entity';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -33,6 +35,8 @@ export class ChatService {
     private channelRepository: Repository<Channel>,
     @InjectRepository(ChannelParticipant)
     private channelParticipantRepository: Repository<ChannelParticipant>,
+    @InjectRepository(ChannelMessage)
+    private channelMesssageRepository: Repository<ChannelMessage>,
     private readonly userService: UserService,
   ) {}
 
@@ -201,8 +205,63 @@ export class ChatService {
     }
   }
 
+  async findParticipant(userNickname: string, channelName: string) {
+    try {
+      const channel = await this.findChannelByName(channelName, {
+        selectParticipants: true,
+      });
+      const participant = channel.participants.find(
+        (element) => element.user.nickname === userNickname,
+      );
+
+      if (participant == undefined) {
+        throw new UnauthorizedException();
+      }
+
+      return participant;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('You are not in this channel');
+      }
+    }
+  }
+
+  // TODO
+  // throw ForbiddenException if the user is banned or muted
+  async assertNoRestrictions(participant: ChannelParticipant) {
+    participant;
+  }
+
   async registerChannelMessage(channelMessageDTO: ChannelMessageDTO) {
-    console.log('saving channel message in database:');
-    console.info(channelMessageDTO);
+    try {
+      const participant = await this.findParticipant(
+        channelMessageDTO.senderNickname,
+        channelMessageDTO.channelName,
+      );
+      await this.assertNoRestrictions(participant);
+      const channelMessage = new ChannelMessage();
+      const channel = await this.findChannelByName(
+        channelMessageDTO.channelName,
+        null,
+      );
+
+      channelMessage.channel = channel;
+      channelMessage.sender = participant;
+      channelMessage.message = channelMessageDTO.message;
+      await this.channelMesssageRepository.save(channelMessage);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      }
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(error.message);
+      }
+    }
   }
 }
