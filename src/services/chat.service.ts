@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,6 +20,11 @@ import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelAdminDTO } from 'src/dto/channelAdmin.dto';
 import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
+import { ChannelMessage } from 'src/entities/channelMessage.entity';
+import { User } from 'src/entities/user.entity';
+import { ChatRestriction } from 'src/entities/chatRestriction.entity';
+import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
+import { WsException } from '@nestjs/websockets';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -33,6 +39,10 @@ export class ChatService {
     private channelRepository: Repository<Channel>,
     @InjectRepository(ChannelParticipant)
     private channelParticipantRepository: Repository<ChannelParticipant>,
+    @InjectRepository(ChannelMessage)
+    private channelMessageRepository: Repository<ChannelMessage>,
+    @InjectRepository(ChatRestriction)
+    private chatRestrictionRepository: Repository<ChatRestriction>,
     private readonly userService: UserService,
   ) {}
 
@@ -187,22 +197,140 @@ export class ChatService {
       await this.channelParticipantRepository.save(participant);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException('Channel not found');
+        throw new WsException('Channel not found');
       }
       if (error.code === '23505') {
-        throw new ConflictException('You are already in this channel');
+        throw new WsException('You are already in this channel');
       }
       if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException('Wrong password');
+        throw new WsException('Wrong password');
       }
       if (error instanceof BadRequestException) {
-        throw new BadRequestException('Missing password');
+        throw new WsException('Missing password');
       }
     }
   }
 
+  async leaveChannel(leaveChannelDTO: LeaveChannelDTO) {
+    try {
+      const participant = await this.findParticipant(
+        leaveChannelDTO.userNickname,
+        leaveChannelDTO.channelName,
+      );
+      await this.channelParticipantRepository.remove(participant);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
+  }
+
+  async findParticipant(userNickname: string, channelName: string) {
+    try {
+      const channel = await this.findChannelByName(channelName, {
+        selectParticipants: true,
+      });
+      const participant = channel.participants.find(
+        (element) => element.user.nickname === userNickname,
+      );
+
+      if (participant == undefined) {
+        throw new UnauthorizedException();
+      }
+
+      delete channel.participants;
+      participant.channel = channel;
+      return participant;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('You are not in this channel');
+      }
+    }
+  }
+
+  async getActiveRestrictions(participant: ChannelParticipant) {
+    const nowDate = new Date();
+    const nowTimestamp = nowDate.toISOString();
+
+    const restrictions = await this.chatRestrictionRepository
+      .createQueryBuilder('chatRestriction')
+      .leftJoinAndSelect('chatRestriction.user', 'participant')
+      .leftJoinAndSelect('participant.user', 'user')
+      .where('user.nickname = :nickname', {
+        nickname: participant.user.nickname,
+      })
+      .andWhere('end_date > :now', { now: nowTimestamp })
+      .getMany();
+    return restrictions;
+  }
+
+  isBanned(restrictions: ChatRestriction[]) {
+    const found = restrictions.find((element) => element.restriction === 'ban');
+
+    return found != undefined;
+  }
+
+  isMuted(restrictions: ChatRestriction[]) {
+    const found = restrictions.find(
+      (element) => element.restriction === 'mute',
+    );
+
+    return found != undefined;
+  }
+
   async registerChannelMessage(channelMessageDTO: ChannelMessageDTO) {
-    console.log('saving channel message in database:');
-    console.info(channelMessageDTO);
+    try {
+      const participant = await this.findParticipant(
+        channelMessageDTO.senderNickname,
+        channelMessageDTO.channelName,
+      );
+      const restrictions = await this.getActiveRestrictions(participant);
+      if (this.isBanned(restrictions)) {
+        throw new ForbiddenException('You are banned');
+      }
+      if (this.isMuted(restrictions)) {
+        throw new ForbiddenException('You are muted');
+      }
+      const channelMessage = new ChannelMessage();
+      const channel = await this.findChannelByName(
+        channelMessageDTO.channelName,
+        null,
+      );
+
+      channelMessage.channel = channel;
+      channelMessage.sender = participant;
+      channelMessage.message = channelMessageDTO.message;
+      await this.channelMessageRepository.save(channelMessage);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
+  }
+
+  async getChannelMessages(user: User, channelName: string) {
+    try {
+      const participant = await this.findParticipant(
+        user.nickname,
+        channelName,
+      );
+      const restrictions = await this.getActiveRestrictions(participant);
+      if (this.isBanned(restrictions)) {
+        throw new ForbiddenException('You are banned');
+      }
+      const messages = await this.channelMessageRepository
+        .createQueryBuilder('channelMessages')
+        .leftJoinAndSelect('channelMessages.channel', 'channel')
+        .where('channel.name = :name', { name: channelName })
+        .orderBy('created_at', 'DESC')
+        .getMany();
+
+      for (let i = 0; i < messages.length; ++i) {
+        delete messages[i].id;
+        delete messages[i].channel;
+      }
+      return messages;
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 }
