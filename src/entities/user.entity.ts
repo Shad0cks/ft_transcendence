@@ -5,7 +5,6 @@ import {
   ManyToMany,
   PrimaryColumn,
   OneToMany,
-  JoinColumn,
 } from 'typeorm';
 import { HistoryMatch } from './historymatch.entity';
 
