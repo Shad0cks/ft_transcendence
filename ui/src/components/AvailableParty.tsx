@@ -4,10 +4,12 @@ export default function AvailableParty({
   name,
   password,
   id,
+  isIn
 }: {
   name: string;
   password: boolean;
   id: string;
+  isIn: boolean;
 }) {
   return (
     <div>
@@ -21,7 +23,12 @@ export default function AvailableParty({
           <h5 className="card-title">{name}</h5>
 
           <p className="card-text"> {password ? 'public' : 'Private Game'} </p>
+          {
+            isIn ?
           <button className="btn btn-primary">Join</button>
+          :
+          <button className="btn btn-primary">Leave</button>
+          }
         </div>
       </div>
     </div>
