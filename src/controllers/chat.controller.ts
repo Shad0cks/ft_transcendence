@@ -15,20 +15,21 @@ export class ChatController {
     return await this.chatService.findAll();
   }
 
+  // TODO remove
   @Post('channels')
   async createChannelAction(@Body() createChannelDTO: CreateChannelDTO) {
     return this.chatService.createChannel(createChannelDTO);
   }
 
+  // TODO remove
   @Post('join')
   async joinChannelAction(@Body() joinChannelDTO: JoinChannelDTO) {
     return this.chatService.joinChannel(joinChannelDTO);
   }
 
+  // TODO remove
   @Get('participants')
   async getParticipantsAction(@Body('channelName') channelName: string) {
     return this.chatService.getParticipantsNickname(channelName);
   }
-  // TODO
-  // get messages
 }
