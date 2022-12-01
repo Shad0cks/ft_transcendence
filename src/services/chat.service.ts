@@ -23,6 +23,7 @@ import { UserService } from './user.service';
 import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
 import { ChatRestriction } from 'src/entities/chatRestriction.entity';
+import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -205,6 +206,23 @@ export class ChatService {
       }
       if (error instanceof BadRequestException) {
         throw new BadRequestException('Missing password');
+      }
+    }
+  }
+
+  async leaveChannel(leaveChannelDTO: LeaveChannelDTO) {
+    try {
+      const participant = await this.findParticipant(
+        leaveChannelDTO.userNickname,
+        leaveChannelDTO.channelName,
+      );
+      await this.channelParticipantRepository.remove(participant);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
       }
     }
   }
