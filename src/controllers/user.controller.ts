@@ -19,9 +19,16 @@ import { UserService } from '../services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // TODO remove
   @Post()
   async createUserAction(@Body() userDTO: UserDTO) {
     return this.userService.createUser(userDTO, userDTO.nickname);
+  }
+
+  @Get('channels')
+  @UseGuards(JwtAuthGuard)
+  async getChannelsAction(@ReqUser() user: User) {
+    return this.userService.getChannels(user.nickname);
   }
 
   @Get(':nickname/data')
