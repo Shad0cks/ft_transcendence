@@ -40,6 +40,7 @@ export default function Header({
                     style={{ width: '50px', height: '50px', cursor: 'pointer' }}
                     src={iconUser}
                     roundedCircle
+                    alt={username}
                   />
                 }
                 id="collasible-nav-dropdown"

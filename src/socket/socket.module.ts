@@ -31,6 +31,7 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
       ChannelPrivacyDTO,
       ChannelPasswordDTO,
       PrivateMessageDTO,
+      JoinChannelDTO,
     ]),
     ChatModule,
     UserModule,
