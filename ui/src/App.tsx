@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
-    const usernameStorage = localStorage.getItem('nickname');
+    let usernameStorage = localStorage.getItem('nickname');
 
     if ((logReq && logReq === 'true') || usernameStorage !== null)
       seIsLog(true);
@@ -29,6 +29,7 @@ function App() {
       setUsername(usrReq);
       localStorage.setItem('nickname', usrReq);
     }
+    usernameStorage = localStorage.getItem('nickname');
     if (usernameStorage !== null)
       GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
         if (e.status === 401) {

@@ -22,6 +22,8 @@ import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
+import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
+import { use } from 'passport';
 
 @WebSocketGateway()
 export class SocketEvent {
@@ -71,10 +73,14 @@ export class SocketEvent {
 
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: CustomSocket, message: ChannelMessageDTO) {
-    // const Userfromchannel: Usersocket[] = this.chatService.getuserfromchannel(message.channel);
-    // for(const user of Userfromchannel) {
-    //TODO Check si le message ne parvient pas de quelqu'un bloqué.
-    //   await this.server.to(user.socketid).emit('messageAdded', message);
+    const Userfromchannel: Promise<string[]> =
+      this.chatService.getParticipantsNickname(message.channelName);
+    for (const user of await Userfromchannel) {
+      //TODO Check si le message ne parvient pas de quelqu'un bloqué.
+      await this.server
+        .to(this.connectedUser.getSocketId(user))
+        .emit('messageAdded', message);
+    }
     this.chatService.registerChannelMessage(message);
     return;
   }
@@ -92,6 +98,12 @@ export class SocketEvent {
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
     await this.chatService.createChannel(channel);
+    await this.chatService.joinChannel({
+      channelName: channel.channelName,
+      userNickname: channel.creatorNickname,
+      isAdmin: true,
+      password: channel.password,
+    });
     this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
   }
 
@@ -154,23 +166,38 @@ export class SocketEvent {
       this.chatService.editChannelPassword(password);
   }
 
-  //TODO Invite une game ou chat
+  //TODO Invite une game
 
-  // @SubscribeMessage('joinChannel')
-  // async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO){
-  // check si le channel est privé ou protected / public
-  //   await this.chatService.joinChannel(channel);
-  //   const Userfromchannel: Usersocket[] = getuserfromchannel(channel.channelName);
-  //   for(const user of Userfromchannel) {
-  //     await this.server.to(user.socketid).emit('joinChannel', channel);
-  // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
-  // }
+  @SubscribeMessage('joinChannel')
+  async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO) {
+    await this.chatService.joinChannel(channel);
+    const userfromchannel: Promise<string[]> =
+      this.chatService.getParticipantsNickname(channel.channelName);
+    for (const user of await userfromchannel) {
+      await this.server
+        .to(this.connectedUser.getSocketId(user))
+        .emit('joinChannel', channel);
+    }
+    // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
+  }
 
-  //   @SubscribeMessage('leaveChannel')
-  //   async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO){
-  //     await this.chatService.leaveChannel(channel);
-  //     const Userfromchannel: Usersocket[] = getuserfromchannel(channel);
-  //     for(const user of Userfromchannel) {
-  //       await this.server.to(user.socketid).emit('leaveChannel', channel);
-  //   }
+  @SubscribeMessage('GetUserFromChannel')
+  async onGetUserFromChannel(socket: CustomSocket, channel: string) {
+    this.server
+      .to(socket.id)
+      .emit(
+        'GetUserFromChannel',
+        this.chatService.getParticipantsNickname(channel),
+      );
+  }
+
+  @SubscribeMessage('leaveChannel')
+  async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO) {
+    //     await this.chatService.leaveChannel(channel);
+    const Userfromchannel: Promise<string[]> =
+      this.chatService.getParticipantsNickname(channel.channelName);
+    for (const user of await Userfromchannel) {
+      await this.server.to(user).emit('leaveChannel', channel);
+    }
+  }
 }

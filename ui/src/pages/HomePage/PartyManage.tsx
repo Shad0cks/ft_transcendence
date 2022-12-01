@@ -3,6 +3,7 @@ import PartyCreate from './partyCreate';
 import ListeParty from './ListeParty';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
+import socketIOClient, { Socket } from 'socket.io-client';
 import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
@@ -10,9 +11,14 @@ import { UserLogout } from '../../services/User/userDelog';
 export default function PartyManage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket>();
+
   const [user, setUser] = useState<GetUserIt>();
 
   useEffect(() => {
+    setSocket(
+      socketIOClient('http://localhost:8080', { withCredentials: true }),
+    );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
@@ -28,8 +34,8 @@ export default function PartyManage() {
   return username ? (
     <div>
       <Header username={username} iconUser={user?.avatar} />
-      <PartyCreate username={username} />
-      <ListeParty />
+      <PartyCreate username={username} socket={socket} />
+      <ListeParty socket={socket} username={username} />
     </div>
   ) : null;
 }
