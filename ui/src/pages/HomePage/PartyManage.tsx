@@ -5,6 +5,7 @@ import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
+import { UserLogout } from '../../services/User/userDelog';
 
 export default function PartyManage() {
   const navigate = useNavigate();
@@ -16,8 +17,11 @@ export default function PartyManage() {
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
     else
-      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
-        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
+        if (e.status === 401) {
+          await UserLogout();
+          navigate('/');
+        } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

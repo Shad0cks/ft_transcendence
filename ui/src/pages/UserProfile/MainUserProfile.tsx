@@ -15,6 +15,7 @@ import { Form } from 'react-bootstrap';
 import TwoFactorAuth from '../../components/TwoFactorAuth';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { UserLogout } from '../../services/User/userDelog';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -33,23 +34,19 @@ export default function MainUserProfile() {
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
 
-    GetUserInfo(usernameStorage!)
-      .then((res) => {
-        if (res.ok) {
-          const requete = res.text().then((e) => JSON.parse(e));
-          requete.then((e: GetUserIt) => {
-            console.log(e);
-            setUser(e);
-            setUsername(e.nickname);
-          });
-        } else {
-          console.log('err req', res.status);
-        }
-      })
-      .catch((err) => {
+    GetUserInfo(usernameStorage!).then(async (res) => {
+      if (res.ok) {
+        const requete = res.text().then((e) => JSON.parse(e));
+        requete.then((e: GetUserIt) => {
+          console.log(e);
+          setUser(e);
+          setUsername(e.nickname);
+        });
+      } else if (res.status === 401) {
+        await UserLogout();
         navigate('/');
-        console.log(err);
-      });
+      }
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function updateName() {
@@ -58,8 +55,11 @@ export default function MainUserProfile() {
     }
     const newValue = (newName.current as HTMLInputElement).value;
     if (user && newValue !== '') {
-      SetUserNickname(user.nickname, newValue).then((res) => {
-        if (res.ok) {
+      SetUserNickname(user.nickname, newValue).then(async (res) => {
+        if (res.status === 401) {
+          await UserLogout();
+          window.location.reload();
+        } else if (res.ok) {
           localStorage.setItem('nickname', newValue);
           window.location.reload();
         }
@@ -106,24 +106,33 @@ export default function MainUserProfile() {
       UserSetAvatar(
         `https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id.toString()}${time}${fileExt}`,
         user.nickname,
-      ).then((res) => {
-        if (res.ok) window.location.reload();
+      ).then(async (res) => {
+        if (res.status === 401) {
+          await UserLogout();
+          window.location.reload();
+        } else if (res.ok) window.location.reload();
       });
     }
   }
 
   function setotp() {
     if (username && user) {
-      UserSettwofa(true, secret.ascii, user.nickname).then((res) => {
-        if (res.ok) window.location.reload();
+      UserSettwofa(true, secret.ascii, user.nickname).then(async (res) => {
+        if (res.status === 401) {
+          await UserLogout();
+          window.location.reload();
+        } else if (res.ok) window.location.reload();
       });
     }
   }
 
   function unsetOTP() {
     if (username && user) {
-      UserSettwofa(false, 'none', user.nickname).then((res) => {
-        if (res.ok) window.location.reload();
+      UserSettwofa(false, 'none', user.nickname).then(async (res) => {
+        if (res.status === 401) {
+          await UserLogout();
+          window.location.reload();
+        } else if (res.ok) window.location.reload();
       });
     }
   }
