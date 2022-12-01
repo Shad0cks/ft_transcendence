@@ -1,7 +1,9 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { Channel } from 'src/entities/channel.entity';
 import { ChatService } from '../services/chat.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { CreateChannelDTO } from 'src/dto/createChannel.dto';
+import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -9,10 +11,25 @@ export class ChatController {
 
   @Get('channels')
   @UseGuards(JwtAuthGuard)
-  async findAll(): Promise<Channel[]> {
+  async findAllAction(): Promise<Channel[]> {
     return await this.chatService.findAll();
   }
 
-  // TODO
-  // get messages
+  // TODO remove
+  @Post('channels')
+  async createChannelAction(@Body() createChannelDTO: CreateChannelDTO) {
+    return this.chatService.createChannel(createChannelDTO);
+  }
+
+  // TODO remove
+  @Post('join')
+  async joinChannelAction(@Body() joinChannelDTO: JoinChannelDTO) {
+    return this.chatService.joinChannel(joinChannelDTO);
+  }
+
+  // TODO remove
+  @Get('participants')
+  async getParticipantsAction(@Body('channelName') channelName: string) {
+    return this.chatService.getParticipantsNickname(channelName);
+  }
 }
