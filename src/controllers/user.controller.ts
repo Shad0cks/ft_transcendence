@@ -19,6 +19,18 @@ import { UserService } from '../services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // TODO remove
+  @Post()
+  async createUserAction(@Body() userDTO: UserDTO) {
+    return this.userService.createUser(userDTO, userDTO.nickname);
+  }
+
+  @Get('channels')
+  @UseGuards(JwtAuthGuard)
+  async getChannelsAction(@ReqUser() user: User) {
+    return this.userService.getChannels(user.nickname);
+  }
+
   @Get(':nickname/data')
   @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
@@ -82,5 +94,15 @@ export class UserController {
     @ReqUser() user: User,
   ) {
     return await this.userService.deleteFriend(user, friendDTO);
+  }
+
+  @Get(':nickname/matchs')
+  @UseGuards(JwtAuthGuard)
+  async getHistoryMatchs(@Param('nickname') nickname: string) {
+    return (
+      await this.userService.findOneByNickname(nickname, {
+        selectMatchs: true,
+      })
+    ).matchs;
   }
 }

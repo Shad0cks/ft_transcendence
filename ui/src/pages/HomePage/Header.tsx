@@ -6,6 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
 import { useNavigate } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
+import { UserLogout } from '../../services/User/userDelog';
 
 export default function Header({
   username,
@@ -55,8 +56,8 @@ export default function Header({
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item
-                  onClick={() => {
-                    localStorage.removeItem('nickname');
+                  onClick={async () => {
+                    await UserLogout();
                     navigate('/');
                     window.location.reload();
                   }}

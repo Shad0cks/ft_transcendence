@@ -10,9 +10,12 @@ import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { HistoryMatch } from '../entities/historymatch.entity';
+import { ChannelParticipant } from 'src/entities/channelParticipant.entity';
 
 export interface UserOptions {
   selectFriends?: boolean;
+  selectMatchs?: boolean;
   selectBlocked?: boolean;
 }
 
@@ -21,6 +24,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(ChannelParticipant)
+    private channelParticipantsRepository: Repository<ChannelParticipant>,
+    @InjectRepository(HistoryMatch)
+    private matchRepository: Repository<HistoryMatch>,
   ) {}
 
   async createUser(userDTO: UserDTO, login42: string): Promise<User> {
@@ -71,6 +78,8 @@ export class UserService {
       relations: {
         friends:
           options.selectFriends === undefined ? false : options.selectFriends,
+        matchs:
+          options.selectMatchs === undefined ? false : options.selectMatchs,
       },
       take: 1,
     });
@@ -87,6 +96,7 @@ export class UserService {
       },
       relations: {
         friends: true,
+        matchs: true,
       },
       select: {
         nickname: true,
@@ -103,6 +113,21 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     return user[0];
+  }
+
+  async getChannels(nickname: string) {
+    const userChannelParticipants = await this.channelParticipantsRepository
+      .createQueryBuilder('channelParticipant')
+      .leftJoinAndSelect('channelParticipant.user', 'user')
+      .leftJoinAndSelect('channelParticipant.channel', 'channel')
+      .where('user.nickname = :nickname', { nickname: nickname })
+      .getMany();
+    const channels = [];
+
+    for (let i = 0; i < userChannelParticipants.length; ++i) {
+      channels.push(userChannelParticipants[i].channel);
+    }
+    return channels;
   }
 
   async editNickname(user: User, newNickname: string): Promise<User> {
@@ -187,6 +212,11 @@ export class UserService {
       }
       throw error;
     }
+  }
+
+  async addMatch(user: User, aHistoryMatch: HistoryMatch) {
+    aHistoryMatch.user = user;
+    await this.matchRepository.save(aHistoryMatch);
   }
 
   async deleteFriend(user: User, friendDTO: FriendDTO) {

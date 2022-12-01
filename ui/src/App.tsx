@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import { Button } from 'react-bootstrap';
 import { GetUserIt } from './models/getUser';
 import { GetUserInfo } from './services/User/getUserInfo';
+import { UserLogout } from './services/User/userDelog';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -30,8 +31,11 @@ function App() {
     }
     usernameStorage = localStorage.getItem('nickname');
     if (usernameStorage !== null)
-      GetUserInfo(usernameStorage).then((e) => {
-        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
+        if (e.status === 401) {
+          await UserLogout();
+          seIsLog(false);
+        } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

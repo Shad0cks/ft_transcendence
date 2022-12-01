@@ -11,6 +11,7 @@ import '../../css/Pages/Friends.css';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { RemoveFriend } from '../../services/Friends/removeFriend';
 import { GetUserInfo } from '../../services/User/getUserInfo';
+import { UserLogout } from '../../services/User/userDelog';
 
 export default function Friends() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Friends() {
     const newFriendVal = (newFriend.current as HTMLInputElement).value;
 
     AddFriend(newFriendVal, username!)
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
           setSnackbarMessage('Successfully adding new friend');
           setSnackbarSeverity('success');
@@ -39,6 +40,9 @@ export default function Friends() {
           requete.then((e) => {
             setFriendsList([...friendsList, e]);
           });
+        } else if (res.status === 401) {
+          await UserLogout();
+          navigate('/');
         } else {
           setSnackbarMessage('Error while adding friend.');
           setSnackbarSeverity('error');
@@ -60,11 +64,14 @@ export default function Friends() {
     ]);
 
     RemoveFriend(friend, username!)
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
           setSnackbarMessage('Successfully deleted friend');
           setSnackbarSeverity('success');
           setOpenSnackbar(true);
+        } else if (res.status === 401) {
+          await UserLogout();
+          navigate('/');
         } else {
           setSnackbarMessage('Error while deleting friend.');
           setSnackbarSeverity('error');
@@ -84,24 +91,23 @@ export default function Friends() {
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
     else
-      GetUserInfo(localStorage.getItem('nickname')!).then((e) => {
-        if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
+      GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
+        if (e.status === 401) {
+          await UserLogout();
+          navigate('/');
+        } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
-    GetFriends(usernameStorage!)
-      .then((res) => {
-        if (res.ok) {
-          const requete = res.text().then((e) => JSON.parse(e));
-          requete.then((e) => {
-            setFriendsList(e);
-          });
-        } else {
-          console.log('err req', res.status);
-        }
-      })
-      .catch((err) => {
+    GetFriends(usernameStorage!).then(async (res) => {
+      if (res.ok) {
+        const requete = res.text().then((e) => JSON.parse(e));
+        requete.then((e) => {
+          setFriendsList(e);
+        });
+      } else if (res.status === 401) {
+        await UserLogout();
         navigate('/');
-        console.log(err);
-      });
+      }
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

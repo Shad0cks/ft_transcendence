@@ -1,4 +1,12 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryColumn,
+  OneToMany,
+} from 'typeorm';
+import { HistoryMatch } from './historymatch.entity';
 
 @Entity()
 export class User {
@@ -17,6 +25,9 @@ export class User {
   @ManyToMany(() => User)
   @JoinTable()
   friends: User[];
+
+  @OneToMany(() => HistoryMatch, (match) => match.user)
+  matchs: HistoryMatch[];
 
   @Column()
   avatar: string;
