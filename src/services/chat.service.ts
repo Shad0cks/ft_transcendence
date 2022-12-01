@@ -185,6 +185,8 @@ export class ChatService {
         await this.checkPassword(joinChannelDTO.password, channel.password);
       }
 
+      // TODO check whitelist if private
+
       // populate participant object
       participant.channel = channel;
       participant.user = await this.userService.findOneByNickname(

@@ -26,6 +26,10 @@ export class User {
   @JoinTable()
   friends: User[];
 
+  @ManyToMany(() => User)
+  @JoinTable()
+  blocked: User[];
+
   @OneToMany(() => HistoryMatch, (match) => match.user)
   matchs: HistoryMatch[];
 

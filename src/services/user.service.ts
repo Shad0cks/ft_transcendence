@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { HistoryMatch } from '../entities/historymatch.entity';
 import { ChannelParticipant } from 'src/entities/channelParticipant.entity';
+import { BlockedDTO } from 'src/dto/blocked.dto';
 
 export interface UserOptions {
   selectFriends?: boolean;
@@ -78,6 +79,8 @@ export class UserService {
       relations: {
         friends:
           options.selectFriends === undefined ? false : options.selectFriends,
+        blocked:
+          options.selectBlocked === undefined ? false : options.selectBlocked,
         matchs:
           options.selectMatchs === undefined ? false : options.selectMatchs,
       },
@@ -225,5 +228,41 @@ export class UserService {
       .relation(User, 'friends')
       .of(user)
       .remove(friendDTO.nickname);
+  }
+
+  async blockUser(user: User, blockedDTO: BlockedDTO): Promise<User> {
+    if (user.nickname === blockedDTO.nickname) {
+      throw new BadRequestException("You can't block yourself");
+    }
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'blocked')
+        .of(user)
+        .add(blockedDTO.nickname);
+      const blockedUser = await this.findOneByNickname(
+        blockedDTO.nickname,
+        null,
+      );
+      return blockedUser;
+    } catch (error) {
+      if (error.code === '23503') {
+        // friend nickname is not in db
+        throw new NotFoundException('User not found');
+      }
+      if (error.code === '23505') {
+        // friend relation already exists
+        throw new ConflictException('You already blocked this user');
+      }
+      throw error;
+    }
+  }
+
+  async unblockUser(user: User, blockedDTO: BlockedDTO) {
+    await this.userRepository
+      .createQueryBuilder()
+      .relation(User, 'blocked')
+      .of(user)
+      .remove(blockedDTO.nickname);
   }
 }
