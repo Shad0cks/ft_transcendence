@@ -16,6 +16,7 @@ import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
+import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
       ChannelPasswordDTO,
       PrivateMessageDTO,
       JoinChannelDTO,
+      LeaveChannelDTO,
     ]),
     ChatModule,
     UserModule,

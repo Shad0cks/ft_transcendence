@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/Components/Chat.css';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import {
@@ -14,215 +14,50 @@ import {
   Sidebar,
   ConversationHeader,
   EllipsisButton,
-  AvatarGroup,
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
+import { ChannelDTO } from '../models/channel';
 
-export default function Chat() {
+export default function Chat({
+  channelList,
+  selectChannel,
+  channelSelected,
+}: {
+  channelList: ChannelDTO[];
+  selectChannel: (channelID: number) => void;
+  channelSelected: number | undefined;
+}) {
+  const [currentChannel, setCurrentChannel] = useState<ChannelDTO>();
+
+  useEffect(() => {
+    setCurrentChannel(
+      channelList.find((channel) => channel.id === channelSelected),
+    );
+  }, [selectChannel]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="chatContainer">
       <MainContainer>
         <Sidebar position="left" scrollable={false}>
           <Search placeholder="Search..." />
           <ConversationList>
-            <Conversation
-              name="Global"
-              lastSenderName="Lilly"
-              info="Yes i can do it for you"
-            >
-              <AvatarGroup size="sm" max={4}>
-                <Avatar src={'https://picsum.photos/50/50'} name="Eliot" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Akane" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Joe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Zoe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Eliot" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Akane" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Joe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Zoe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Eliot" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Akane" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Joe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Zoe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Eliot" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Akane" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Joe" />
-                <Avatar src={'https://picsum.photos/50/50'} name="Zoe" />
-              </AvatarGroup>
-            </Conversation>
-
-            <Conversation
-              name="Joe"
-              lastSenderName="Joe"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Joe"
-                status="dnd"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Emily"
-              lastSenderName="Emily"
-              info="Yes i can do it for you"
-              unreadCnt={3}
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Emily"
-                status="available"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Kai"
-              lastSenderName="Kai"
-              info="Yes i can do it for you"
-              unreadDot
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Kai"
-                status="unavailable"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Akane"
-              lastSenderName="Akane"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Akane"
-                status="eager"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Eliot"
-              lastSenderName="Eliot"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Eliot"
-                status="away"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Zoe"
-              lastSenderName="Zoe"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Zoe"
-                status="dnd"
-              />
-            </Conversation>
-
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
-            <Conversation
-              name="Patrik"
-              lastSenderName="Patrik"
-              info="Yes i can do it for you"
-            >
-              <Avatar
-                src={'https://picsum.photos/50/50'}
-                name="Patrik"
-                status="invisible"
-              />
-            </Conversation>
+            {channelList.map((elem, id) => (
+              <Conversation
+                onClick={() => selectChannel(elem.id)}
+                key={id}
+                name={elem.name}
+                lastSenderName="Emily"
+                info="Yes i can do it for you"
+                unreadCnt={3}
+                active={elem.id === channelSelected}
+              >
+                <Avatar
+                  src={'https://picsum.photos/50/50'}
+                  name={elem.name}
+                  status="available"
+                />
+              </Conversation>
+            ))}
           </ConversationList>
         </Sidebar>
 
@@ -230,7 +65,7 @@ export default function Chat() {
           <ConversationHeader>
             <Avatar src={'https://picsum.photos/50/50'} name="Zoe" />
             <ConversationHeader.Content
-              userName="Zoe"
+              userName={currentChannel?.name}
               info="Active 10 mins ago"
             />
             <ConversationHeader.Actions>
