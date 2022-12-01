@@ -19,6 +19,11 @@ import { UserService } from '../services/user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post()
+  async createUserAction(@Body() userDTO: UserDTO) {
+    return this.userService.createUser(userDTO, userDTO.nickname);
+  }
+
   @Get(':nickname/data')
   @UseGuards(JwtAuthGuard)
   async findOneAction(@Param('nickname') nickname: string): Promise<UserDTO> {
