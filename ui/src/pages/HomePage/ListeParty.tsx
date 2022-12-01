@@ -41,7 +41,7 @@ export default function ListeParty({
 
   useEffect(() => {
     getListParty().then((e) => setGames(e));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function getListParty() {
     const requete = await GetChannels();
