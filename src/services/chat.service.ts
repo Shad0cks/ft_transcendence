@@ -24,6 +24,7 @@ import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
 import { ChatRestriction } from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
+import { WsException } from '@nestjs/websockets';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -196,16 +197,16 @@ export class ChatService {
       await this.channelParticipantRepository.save(participant);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException('Channel not found');
+        throw new WsException('Channel not found');
       }
       if (error.code === '23505') {
-        throw new ConflictException('You are already in this channel');
+        throw new WsException('You are already in this channel');
       }
       if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException('Wrong password');
+        throw new WsException('Wrong password');
       }
       if (error instanceof BadRequestException) {
-        throw new BadRequestException('Missing password');
+        throw new WsException('Missing password');
       }
     }
   }
@@ -218,12 +219,7 @@ export class ChatService {
       );
       await this.channelParticipantRepository.remove(participant);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
-      if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException(error.message);
-      }
+      throw new WsException(error.message);
     }
   }
 
@@ -307,15 +303,7 @@ export class ChatService {
       channelMessage.message = channelMessageDTO.message;
       await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
-      if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException(error.message);
-      }
-      if (error instanceof ForbiddenException) {
-        throw new ForbiddenException(error.message);
-      }
+      throw new WsException(error.message);
     }
   }
 
@@ -342,15 +330,7 @@ export class ChatService {
       }
       return messages;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
-      if (error instanceof UnauthorizedException) {
-        throw new UnauthorizedException(error.message);
-      }
-      if (error instanceof ForbiddenException) {
-        throw new ForbiddenException(error.message);
-      }
+      throw new WsException(error.message);
     }
   }
 }
