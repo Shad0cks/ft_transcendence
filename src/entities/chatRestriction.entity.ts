@@ -27,5 +27,5 @@ export class ChatRestriction {
   restriction: ChannelRestrictionType;
 
   @Column({ type: 'timestamptz' })
-  end: Date;
+  end_date: Date;
 }

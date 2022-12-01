@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { Channel } from 'src/entities/channel.entity';
 import { ChatService } from '../services/chat.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
-import { CreateChannelDTO } from 'src/dto/createChannel.dto';
-import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
+import { ReqUser } from 'src/decorators/user.decorator';
+import { User } from 'src/entities/user.entity';
 
 @Controller('chat')
 export class ChatController {
@@ -15,21 +15,12 @@ export class ChatController {
     return await this.chatService.findAll();
   }
 
-  // TODO remove
-  @Post('channels')
-  async createChannelAction(@Body() createChannelDTO: CreateChannelDTO) {
-    return this.chatService.createChannel(createChannelDTO);
-  }
-
-  // TODO remove
-  @Post('join')
-  async joinChannelAction(@Body() joinChannelDTO: JoinChannelDTO) {
-    return this.chatService.joinChannel(joinChannelDTO);
-  }
-
-  // TODO remove
-  @Get('participants')
-  async getParticipantsAction(@Body('channelName') channelName: string) {
-    return this.chatService.getParticipantsNickname(channelName);
+  @Get('channels/:name/messages')
+  @UseGuards(JwtAuthGuard)
+  async getMessagesAction(
+    @ReqUser() user: User,
+    @Param('name') channelName: string,
+  ) {
+    return this.chatService.getChannelMessages(user, channelName);
   }
 }
