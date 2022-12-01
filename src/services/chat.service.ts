@@ -21,6 +21,8 @@ import { ChannelAdminDTO } from 'src/dto/channelAdmin.dto';
 import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
 import { ChannelMessage } from 'src/entities/channelMessage.entity';
+import { User } from 'src/entities/user.entity';
+import { ChatRestriction } from 'src/entities/chatRestriction.entity';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -36,7 +38,9 @@ export class ChatService {
     @InjectRepository(ChannelParticipant)
     private channelParticipantRepository: Repository<ChannelParticipant>,
     @InjectRepository(ChannelMessage)
-    private channelMesssageRepository: Repository<ChannelMessage>,
+    private channelMessageRepository: Repository<ChannelMessage>,
+    @InjectRepository(ChatRestriction)
+    private chatRestrictionRepository: Repository<ChatRestriction>,
     private readonly userService: UserService,
   ) {}
 
@@ -218,6 +222,8 @@ export class ChatService {
         throw new UnauthorizedException();
       }
 
+      delete channel.participants;
+      participant.channel = channel;
       return participant;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -229,10 +235,34 @@ export class ChatService {
     }
   }
 
-  // TODO
-  // throw ForbiddenException if the user is banned or muted
-  async assertNoRestrictions(participant: ChannelParticipant) {
-    participant;
+  async getActiveRestrictions(participant: ChannelParticipant) {
+    const nowDate = new Date();
+    const nowTimestamp = nowDate.toISOString();
+
+    const restrictions = await this.chatRestrictionRepository
+      .createQueryBuilder('chatRestriction')
+      .leftJoinAndSelect('chatRestriction.user', 'participant')
+      .leftJoinAndSelect('participant.user', 'user')
+      .where('user.nickname = :nickname', {
+        nickname: participant.user.nickname,
+      })
+      .andWhere('end_date > :now', { now: nowTimestamp })
+      .getMany();
+    return restrictions;
+  }
+
+  isBanned(restrictions: ChatRestriction[]) {
+    const found = restrictions.find((element) => element.restriction === 'ban');
+
+    return found != undefined;
+  }
+
+  isMuted(restrictions: ChatRestriction[]) {
+    const found = restrictions.find(
+      (element) => element.restriction === 'mute',
+    );
+
+    return found != undefined;
   }
 
   async registerChannelMessage(channelMessageDTO: ChannelMessageDTO) {
@@ -241,7 +271,13 @@ export class ChatService {
         channelMessageDTO.senderNickname,
         channelMessageDTO.channelName,
       );
-      await this.assertNoRestrictions(participant);
+      const restrictions = await this.getActiveRestrictions(participant);
+      if (this.isBanned(restrictions)) {
+        throw new ForbiddenException('You are banned');
+      }
+      if (this.isMuted(restrictions)) {
+        throw new ForbiddenException('You are muted');
+      }
       const channelMessage = new ChannelMessage();
       const channel = await this.findChannelByName(
         channelMessageDTO.channelName,
@@ -251,7 +287,42 @@ export class ChatService {
       channelMessage.channel = channel;
       channelMessage.sender = participant;
       channelMessage.message = channelMessageDTO.message;
-      await this.channelMesssageRepository.save(channelMessage);
+      await this.channelMessageRepository.save(channelMessage);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      }
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(error.message);
+      }
+    }
+  }
+
+  async getChannelMessages(user: User, channelName: string) {
+    try {
+      const participant = await this.findParticipant(
+        user.nickname,
+        channelName,
+      );
+      const restrictions = await this.getActiveRestrictions(participant);
+      if (this.isBanned(restrictions)) {
+        throw new ForbiddenException('You are banned');
+      }
+      const messages = await this.channelMessageRepository
+        .createQueryBuilder('channelMessages')
+        .leftJoinAndSelect('channelMessages.channel', 'channel')
+        .where('channel.name = :name', { name: channelName })
+        .orderBy('created_at', 'DESC')
+        .getMany();
+
+      for (let i = 0; i < messages.length; ++i) {
+        delete messages[i].id;
+        delete messages[i].channel;
+      }
+      return messages;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(error.message);
