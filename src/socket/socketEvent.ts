@@ -23,6 +23,7 @@ import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
+import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 
 @WebSocketGateway()
 export class SocketEvent {
@@ -182,17 +183,16 @@ export class SocketEvent {
 
   @SubscribeMessage('GetUserFromChannel')
   async onGetUserFromChannel(socket: CustomSocket, channel: string) {
-    this.server
-      .to(socket.id)
-      .emit(
-        'GetUserFromChannel',
-        this.chatService.getParticipantsNickname(channel),
-      );
+    const Userfromchannel: Promise<string[]> =
+      this.chatService.getParticipantsNickname(channel);
+    const Res = await Userfromchannel;
+    this.server.to(socket.id).emit('GetUserFromChannel', Res);
+    console.log(Res);
   }
 
   @SubscribeMessage('leaveChannel')
-  async onLeaveChannel(socket: CustomSocket, channel: JoinChannelDTO) {
-    //     await this.chatService.leaveChannel(channel);
+  async onLeaveChannel(socket: CustomSocket, channel: LeaveChannelDTO) {
+    await this.chatService.leaveChannel(channel);
     const Userfromchannel: Promise<string[]> =
       this.chatService.getParticipantsNickname(channel.channelName);
     for (const user of await Userfromchannel) {
