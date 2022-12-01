@@ -16,6 +16,7 @@ export default function ListeParty({
 }) {
   let [games, setGames] = useState<Channel[]>([]);
 
+  const navigate = useNavigate();
   socket?.on('createChannel', function () {
     getListParty().then((e) => setGames(e));
   });
