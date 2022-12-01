@@ -11,6 +11,7 @@ import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { HistoryMatch } from '../entities/historymatch.entity';
+import { ChannelParticipant } from 'src/entities/channelParticipant.entity';
 
 export interface UserOptions {
   selectFriends?: boolean;
@@ -23,6 +24,8 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(ChannelParticipant)
+    private channelParticipantsRepository: Repository<ChannelParticipant>,
     @InjectRepository(HistoryMatch)
     private matchRepository: Repository<HistoryMatch>,
   ) {}
@@ -110,6 +113,21 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     return user[0];
+  }
+
+  async getChannels(nickname: string) {
+    const userChannelParticipants = await this.channelParticipantsRepository
+      .createQueryBuilder('channelParticipant')
+      .leftJoinAndSelect('channelParticipant.user', 'user')
+      .leftJoinAndSelect('channelParticipant.channel', 'channel')
+      .where('user.nickname = :nickname', { nickname: nickname })
+      .getMany();
+    const channels = [];
+
+    for (let i = 0; i < userChannelParticipants.length; ++i) {
+      channels.push(userChannelParticipants[i].channel);
+    }
+    return channels;
   }
 
   async editNickname(user: User, newNickname: string): Promise<User> {
