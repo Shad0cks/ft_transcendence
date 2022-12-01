@@ -28,12 +28,6 @@ export default function PartyCreate({
     if (socket && socket.id !== undefined) {
       console.log('emit channel');
       socket.emit('createChannel', data);
-      // socket?.emit('joinChannel', {
-      //   channelName: data.channelName,
-      //   userNickname: username,
-      //   isAdmin: true,
-      //   password: data.password,
-      // });
     }
 
     // createChannel(data)

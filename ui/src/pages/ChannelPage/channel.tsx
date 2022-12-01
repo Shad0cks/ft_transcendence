@@ -10,6 +10,9 @@ import Header from '../HomePage/Header';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { GetUserIt } from '../../models/getUser';
 import { UserLogout } from '../../services/User/userDelog';
+import { GetInChannels } from '../../services/Channel/getInChannels';
+import { ChannelDTO } from '../../models/channel';
+import socketIOClient, { Socket } from 'socket.io-client';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -20,13 +23,16 @@ const popover = (elem: number) => (
     </Popover.Body>
   </Popover>
 );
-const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 export default function Channel() {
   const navigate = useNavigate();
   const [playerClicked, setPlayerClicked] = useState<number>();
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserIt>();
+  const [channelUsersList, setChannelUsersList] = useState<ChannelDTO[]>([]);
+  const [channelSelected, setChannelSelected] = useState<number>();
+  const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
+  const [socket, setSocket] = useState<Socket>();
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
@@ -34,7 +40,24 @@ export default function Channel() {
     else setPlayerClicked(playerClickID);
   }
 
+  function selectChannel(channelID: number) {
+    setChannelSelected(channelID);
+  }
+
+  async function getListInChannel() {
+    const requete = await GetInChannels();
+    if (requete.status === 401) {
+      await UserLogout();
+      navigate('/');
+    }
+    const txt = await requete.text();
+    return JSON.parse(txt);
+  }
+
   useEffect(() => {
+    setSocket(
+      socketIOClient('http://localhost:8080', { withCredentials: true }),
+    );
     setPlayerClicked(-1);
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
@@ -46,7 +69,32 @@ export default function Channel() {
           navigate('/');
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
+    getListInChannel().then((e) => {
+      setChannelUsersList(e);
+      setChannelSelected(e[0].id);
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    socket?.on('connect', () => {
+      socket?.on('GetUserFromChannel', (users: string[]) => {
+        console.log('usrs:', users);
+        setUsersInChannel(users);
+      });
+    });
+
+    return () => {
+      socket?.off('connect');
+      socket?.off('GetUserFromChannel');
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.emit(
+      'GetUserFromChannel',
+      channelUsersList.find((x) => x.id === channelSelected)?.name,
+    );
+  }, [channelSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
     return playerID === playerClicked;
@@ -58,7 +106,11 @@ export default function Channel() {
       <div className="btnCont">
         <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
-          <Chat />
+          <Chat
+            channelList={channelUsersList}
+            selectChannel={selectChannel}
+            channelSelected={channelSelected}
+          />
           <div
             className="playerList"
             style={
@@ -68,36 +120,38 @@ export default function Channel() {
             }
           >
             <ListGroup variant="flush">
-              {array.map((elem) => (
-                <ListGroup.Item
-                  key={elem}
-                  onClick={(e: React.MouseEvent) => clickPlayer(e, elem)}
-                  style={
-                    playerClicked === -1 || playerClicked === elem
-                      ? { cursor: 'pointer' }
-                      : { cursor: '' }
-                  }
-                >
-                  <OverlayTrigger
-                    show={needShowInfo(elem)}
-                    trigger="click"
-                    placement="bottom"
-                    overlay={popover(elem)}
-                  >
-                    <span
+              {usersInChannel.length >= 1
+                ? usersInChannel.map((elem, id) => (
+                    <ListGroup.Item
+                      key={id}
+                      onClick={(e: React.MouseEvent) => clickPlayer(e, id)}
                       style={
-                        playerClicked === elem
-                          ? { color: 'red' }
-                          : { color: 'black' }
+                        playerClicked === -1 || playerClicked === id
+                          ? { cursor: 'pointer' }
+                          : { cursor: '' }
                       }
-                      onMouseOver={(e) => e.preventDefault()}
-                      className="playerListItem"
                     >
-                      {'Player ' + elem}
-                    </span>
-                  </OverlayTrigger>
-                </ListGroup.Item>
-              ))}
+                      <OverlayTrigger
+                        show={needShowInfo(id)}
+                        trigger="click"
+                        placement="bottom"
+                        overlay={popover(id)}
+                      >
+                        <span
+                          style={
+                            playerClicked === id
+                              ? { color: 'red' }
+                              : { color: 'black' }
+                          }
+                          onMouseOver={(e) => e.preventDefault()}
+                          className="playerListItem"
+                        >
+                          {elem}
+                        </span>
+                      </OverlayTrigger>
+                    </ListGroup.Item>
+                  ))
+                : null}
             </ListGroup>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { Channel } from '../../models/channel';
+import { ChannelDTO } from '../../models/channel';
 
-export function createChannel(channel: Channel) {
+export function createChannel(channel: ChannelDTO) {
   return fetch(process.env.REACT_APP_API_URL + '/chat/channels', {
     method: 'POST',
     headers: {
