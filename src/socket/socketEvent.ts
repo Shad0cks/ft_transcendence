@@ -84,16 +84,14 @@ export class SocketEvent {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
-    // messageDTO.sent_at = messageEntity.created_at;
+    messageDTO.sent_at = messageEntity.created_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
       console.log(user);
       console.log(Clients.getSocketId(user));
       console.log(await UserBlocked);
-      if (
-        UserBlocked &&
-        !(await UserBlocked).includes(messageDTO.senderNickname)
-      ) {
+
+      if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
         this.server
           .to(Clients.getSocketId(user))
           .emit('messageAdded', messageDTO);
