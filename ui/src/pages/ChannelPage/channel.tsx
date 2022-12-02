@@ -14,6 +14,8 @@ import { GetInChannels } from '../../services/Channel/getInChannels';
 import { ChannelDTO } from '../../models/channel';
 import socketIOClient, { Socket } from 'socket.io-client';
 import { ChannelJoin } from '../../models/channelJoined';
+import { MessageGetList } from '../../models/messageGetList';
+import { GetMessages } from '../../services/Channel/getMessages';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -35,6 +37,7 @@ export default function Channel() {
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
+  const [messageList, setMessageList] = useState<MessageGetList[]>([]);
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -53,6 +56,18 @@ export default function Channel() {
   //     setUsersInfos([...usersInfos, userInfo])
   //   });
   // }
+
+  function getListMessage() {
+    const currChannel = channelUsersList.find((x) => x.id === channelSelected);
+    if (!currChannel) return;
+
+    GetMessages(currChannel.name).then(async (e) => {
+      if (e.status === 401) {
+        await UserLogout();
+        navigate('/');
+      } else if (e.ok) e.text().then((i) => setMessageList(JSON.parse(i)));
+    });
+  }
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
@@ -139,6 +154,7 @@ export default function Channel() {
       'GetUserFromChannel',
       channelUsersList.find((x) => x.id === channelSelected)?.name,
     );
+    getListMessage();
   }, [channelSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
@@ -158,6 +174,8 @@ export default function Channel() {
             channelSelected={channelSelected}
             socket={socket}
             usersInChannel={usersInfos}
+            messageList={messageList}
+            setMessageList={setMessageList}
           />
           <div
             className="playerList"
