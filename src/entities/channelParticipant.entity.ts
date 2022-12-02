@@ -2,13 +2,10 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { Channel } from './channel.entity';
-import { ChannelMessage } from './channelMessage.entity';
-import { ChatRestriction } from './chatRestriction.entity';
 import { User } from './user.entity';
 
 @Entity()
@@ -25,13 +22,4 @@ export class ChannelParticipant {
 
   @ManyToOne(() => Channel, (channel) => channel.participants)
   channel: Channel;
-
-  @OneToMany(() => ChatRestriction, (chatRestriction) => chatRestriction.user)
-  chatRestrictionsIncurred: ChatRestriction[];
-
-  @OneToMany(() => ChatRestriction, (chatRestriction) => chatRestriction.admin)
-  chatRestrictionsDealt: ChatRestriction[];
-
-  @OneToMany(() => ChannelMessage, (channelMessage) => channelMessage.sender)
-  channelMessages: ChannelMessage[];
 }

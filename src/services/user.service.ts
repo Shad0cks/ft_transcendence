@@ -102,6 +102,7 @@ export class UserService {
         matchs: true,
       },
       select: {
+        id: true,
         nickname: true,
         login42: true,
         avatar: true,

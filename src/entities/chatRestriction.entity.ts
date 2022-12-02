@@ -8,16 +8,10 @@ export class ChatRestriction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(
-    () => ChannelParticipant,
-    (channelParticipant) => channelParticipant.chatRestrictionsIncurred,
-  )
+  @ManyToOne(() => ChannelParticipant)
   user: ChannelParticipant;
 
-  @ManyToOne(
-    () => ChannelParticipant,
-    (channelParticipant) => channelParticipant.chatRestrictionsDealt,
-  )
+  @ManyToOne(() => ChannelParticipant)
   admin: ChannelParticipant;
 
   @Column({

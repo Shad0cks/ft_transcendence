@@ -3,14 +3,17 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  PrimaryColumn,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { HistoryMatch } from './historymatch.entity';
 
 @Entity()
 export class User {
-  @PrimaryColumn({ unique: true })
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ unique: true })
   nickname: string;
 
   @Column()
