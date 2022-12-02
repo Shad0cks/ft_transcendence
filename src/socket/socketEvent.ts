@@ -86,6 +86,7 @@ export class SocketEvent {
         .to(this.connectedUser.getSocketId(user))
         .emit('messageAdded', messageDTO);
     }
+    this.server.to(socket.id).emit('messageAdded', messageDTO);
     return;
   }
 
