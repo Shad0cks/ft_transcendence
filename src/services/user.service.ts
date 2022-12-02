@@ -265,4 +265,16 @@ export class UserService {
       .of(user)
       .remove(blockedDTO.nickname);
   }
+
+  async getBlockedNicknames(nickname: string): Promise<string[]> {
+    const blockedUsers = (
+      await this.findOneByNickname(nickname, { selectBlocked: true })
+    ).blocked;
+    const blockedNicknames = [];
+
+    for (let i = 0; i < blockedUsers.length; ++i) {
+      blockedNicknames.push(blockedUsers[i].nickname);
+    }
+    return blockedNicknames;
+  }
 }
