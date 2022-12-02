@@ -138,19 +138,65 @@ export class ChatService {
   }
 
   async removeFromWhitelist(editWhitelistDTO: EditWhitelistDTO) {
-    console.log('Removing user from whitelist');
-    console.info(editWhitelistDTO);
+    try {
+      // channel exist
+      const channel = await this.findChannelByName(editWhitelistDTO.channelName, {});
+
+      // user in whitelist
+      const user = await this.isWhitelist(editWhitelistDTO.channelName, editWhitelistDTO.userNickname);
+
+      // remove from
+      const index = channel.whitelist.indexOf(user, 0);
+      if (index > -1)
+        channel.whitelist.splice(index, 1);
+
+      await this.channelRepository.save(channel);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async addToWhitelist(editWhitelistDTO: EditWhitelistDTO) {
-    console.log('Adding user to whitelist');
-    console.info(editWhitelistDTO);
+    try {
+      // channel exist
+      const channel = await this.findChannelByName(editWhitelistDTO.channelName, {});
+
+      // user in whitelist
+      const user = await this.isWhitelist(editWhitelistDTO.channelName, editWhitelistDTO.userNickname);
+
+      // add to
+      channel.whitelist.push(user);
+
+      await this.channelRepository.save(channel);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async getWhitelist(channelName: string): Promise<string[]> {
-    console.log('Returning whitelist');
-    console.info(channelName);
-    return [];
+    try {
+      const channel = await this.findChannelByName(channelName, {});
+
+      return channel.whitelist;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+    }
+  }
+
+  async isWhitelist(channelName: string, userlogin: string) {
+    if (!userlogin) {
+      throw new BadRequestException('Missing user name');
+    }
+    const channel = await this.findChannelByName(channelName, {});
+    const user = channel.whitelist.find(
+      (element) => element === userlogin,
+    );
+    if (!user) {
+      throw new UnauthorizedException('Not whitelisted');
+    }
+    return user;
   }
 
   async editChannelPassword(channelPasswordDTO: ChannelPasswordDTO) {
@@ -183,6 +229,10 @@ export class ChatService {
       // password check
       if (channel.privacy === 'protected') {
         await this.checkPassword(joinChannelDTO.password, channel.password);
+      }
+      // whitelist check
+      if (channel.privacy === 'private') {
+        await this.isWhitelist(joinChannelDTO.channelName, participant.user.login42);
       }
 
       // populate participant object

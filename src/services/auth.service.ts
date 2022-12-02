@@ -103,7 +103,7 @@ export class AuthService {
         isAuthenticated: false,
       };
       response.redirect(
-        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload),
+        this.buildRedirectUrl('http://localhost:3000', '/2fa', payload) + '&error=true',
       );
     }
   }
