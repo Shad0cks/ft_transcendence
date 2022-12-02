@@ -13,6 +13,7 @@ import { UserLogout } from '../../services/User/userDelog';
 import { GetInChannels } from '../../services/Channel/getInChannels';
 import { ChannelDTO } from '../../models/channel';
 import socketIOClient, { Socket } from 'socket.io-client';
+import { ChannelJoin } from '../../models/channelJoined';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -33,6 +34,25 @@ export default function Channel() {
   const [channelSelected, setChannelSelected] = useState<number>();
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket>();
+  const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
+
+  // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
+
+  // async function getUsersInfoChannel(channelID: number)
+  // {
+  //   channelUsersList[channelID].forEach(async (user) => {
+
+  //     let userInfo = await GetUserInfo(user).then(async (e) => {
+  //       if (e.ok)
+  //       {
+  //         const res = await e.text();
+  //         return JSON.parse(res);
+  //       }
+  //       return undefined;
+  //     })
+  //     setUsersInfos([...usersInfos, userInfo])
+  //   });
+  // }
 
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
@@ -54,6 +74,20 @@ export default function Channel() {
     return JSON.parse(txt);
   }
 
+  function getUsersInfoChat(users: string[]) {
+    setUsersInfos([]);
+    users.forEach(async (user) => {
+      let userInfo = await GetUserInfo(user).then(async (e) => {
+        if (e.ok) {
+          const res = await e.text();
+          return JSON.parse(res);
+        }
+        return undefined;
+      });
+      setUsersInfos([...usersInfos, userInfo]);
+    });
+  }
+
   useEffect(() => {
     setSocket(
       socketIOClient('http://localhost:8080', { withCredentials: true }),
@@ -69,17 +103,28 @@ export default function Channel() {
           navigate('/');
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
+
     getListInChannel().then((e) => {
       setChannelUsersList(e);
-      setChannelSelected(e[0].id);
+      if (e[0]) setChannelSelected(e[0].id);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     socket?.on('connect', () => {
       socket?.on('GetUserFromChannel', (users: string[]) => {
-        console.log('usrs:', users);
-        setUsersInChannel(users);
+        const listWithoutSelf = users.filter((user) => user !== username);
+        setUsersInChannel(listWithoutSelf);
+        getUsersInfoChat(listWithoutSelf);
+      });
+
+      socket?.on('joinChannel', function (e: ChannelJoin) {
+        if (e.userNickname !== username)
+          setUsersInChannel((usersInChannel) => [
+            ...usersInChannel,
+            e.userNickname,
+          ]);
+        setUsersInChannel(usersInChannel.filter((user) => user !== username));
       });
     });
 
@@ -87,7 +132,7 @@ export default function Channel() {
       socket?.off('connect');
       socket?.off('GetUserFromChannel');
     };
-  }, [socket]);
+  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     socket?.emit(
@@ -107,9 +152,12 @@ export default function Channel() {
         <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
           <Chat
+            SelfUser={user!}
             channelList={channelUsersList}
             selectChannel={selectChannel}
             channelSelected={channelSelected}
+            socket={socket}
+            usersInChannel={usersInfos}
           />
           <div
             className="playerList"
