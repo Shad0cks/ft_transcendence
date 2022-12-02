@@ -140,15 +140,20 @@ export class ChatService {
   async removeFromWhitelist(editWhitelistDTO: EditWhitelistDTO) {
     try {
       // channel exist
-      const channel = await this.findChannelByName(editWhitelistDTO.channelName, {});
+      const channel = await this.findChannelByName(
+        editWhitelistDTO.channelName,
+        {},
+      );
 
       // user in whitelist
-      const user = await this.isWhitelist(editWhitelistDTO.channelName, editWhitelistDTO.userNickname);
+      const user = await this.isWhitelist(
+        editWhitelistDTO.channelName,
+        editWhitelistDTO.userNickname,
+      );
 
       // remove from
       const index = channel.whitelist.indexOf(user, 0);
-      if (index > -1)
-        channel.whitelist.splice(index, 1);
+      if (index > -1) channel.whitelist.splice(index, 1);
 
       await this.channelRepository.save(channel);
     } catch (error) {
@@ -159,13 +164,13 @@ export class ChatService {
   async addToWhitelist(editWhitelistDTO: EditWhitelistDTO) {
     try {
       // channel exist
-      const channel = await this.findChannelByName(editWhitelistDTO.channelName, {});
-
-      // user in whitelist
-      const user = await this.isWhitelist(editWhitelistDTO.channelName, editWhitelistDTO.userNickname);
+      const channel = await this.findChannelByName(
+        editWhitelistDTO.channelName,
+        {},
+      );
 
       // add to
-      channel.whitelist.push(user);
+      channel.whitelist.push(editWhitelistDTO.userNickname);
 
       await this.channelRepository.save(channel);
     } catch (error) {
@@ -190,9 +195,7 @@ export class ChatService {
       throw new BadRequestException('Missing user name');
     }
     const channel = await this.findChannelByName(channelName, {});
-    const user = channel.whitelist.find(
-      (element) => element === userlogin,
-    );
+    const user = channel.whitelist.find((element) => element === userlogin);
     if (!user) {
       throw new UnauthorizedException('Not whitelisted');
     }
@@ -232,7 +235,10 @@ export class ChatService {
       }
       // whitelist check
       if (channel.privacy === 'private') {
-        await this.isWhitelist(joinChannelDTO.channelName, participant.user.login42);
+        await this.isWhitelist(
+          joinChannelDTO.channelName,
+          participant.user.login42,
+        );
       }
 
       // populate participant object
