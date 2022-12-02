@@ -185,8 +185,6 @@ export class ChatService {
         await this.checkPassword(joinChannelDTO.password, channel.password);
       }
 
-      // TODO check whitelist if private
-
       // populate participant object
       participant.channel = channel;
       participant.user = await this.userService.findOneByNickname(
@@ -303,7 +301,7 @@ export class ChatService {
       channelMessage.channel = channel;
       channelMessage.sender = participant;
       channelMessage.message = channelMessageDTO.message;
-      return await this.channelMessageRepository.save(channelMessage);
+      await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
       throw new WsException(error.message);
     }

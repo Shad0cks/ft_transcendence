@@ -24,6 +24,11 @@ import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
+import { Clients } from 'src/adapters/socket.adapter';
+import { use } from 'passport';
+import { find } from 'rxjs';
+import { compare } from 'bcrypt';
+import e from 'express';
 
 @WebSocketGateway()
 export class SocketEvent {
@@ -79,14 +84,21 @@ export class SocketEvent {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
-    messageDTO.sent_at = messageEntity.created_at;
+    // messageDTO.sent_at = messageEntity.created_at;
     for (const user of Userfromchannel) {
-      //TODO Check si le message ne parvient pas de quelqu'un bloqué.
-      this.server
-        .to(this.connectedUser.getSocketId(user))
-        .emit('messageAdded', messageDTO);
+      const UserBlocked = this.userService.getBlockedNicknames(user);
+      console.log(user);
+      console.log(Clients.getSocketId(user));
+      console.log(await UserBlocked);
+      if (
+        UserBlocked &&
+        !(await UserBlocked).includes(messageDTO.senderNickname)
+      ) {
+        this.server
+          .to(Clients.getSocketId(user))
+          .emit('messageAdded', messageDTO);
+      }
     }
-    this.server.to(socket.id).emit('messageAdded', messageDTO);
     return;
   }
 
@@ -94,7 +106,7 @@ export class SocketEvent {
   @SubscribeMessage('addMessagePrivate')
   async onAddMessagePrivate(socket: CustomSocket, message: PrivateMessageDTO) {
     await this.server
-      .to(this.connectedUser.getSocketId(message.receiverNickname))
+      .to(Clients.getSocketId(message.receiverNickname))
       .emit('messageprivateAdded');
 
     // this.chatService.registerPrivateMessage(message);
@@ -180,7 +192,7 @@ export class SocketEvent {
       this.chatService.getParticipantsNickname(channel.channelName);
     for (const user of await userfromchannel) {
       await this.server
-        .to(this.connectedUser.getSocketId(user))
+        .to(Clients.getSocketId(user))
         .emit('joinChannel', channel);
     }
     // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
