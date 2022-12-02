@@ -198,12 +198,12 @@ export class UserService {
       throw new BadRequestException("You can't add yourself as friend");
     }
     try {
+      const friend = await this.findOneByNickname(friendDTO.nickname, null);
       await this.userRepository
         .createQueryBuilder()
         .relation(User, 'friends')
         .of(user)
-        .add(friendDTO.nickname);
-      const friend = await this.findOneByNickname(friendDTO.nickname, null);
+        .add(friend);
       return friend;
     } catch (error) {
       if (error.code === '23503') {
@@ -224,11 +224,18 @@ export class UserService {
   }
 
   async deleteFriend(user: User, friendDTO: FriendDTO) {
-    await this.userRepository
-      .createQueryBuilder()
-      .relation(User, 'friends')
-      .of(user)
-      .remove(friendDTO.nickname);
+    try {
+      const friend = await this.findOneByNickname(friendDTO.nickname, null);
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'friends')
+        .of(user)
+        .remove(friend);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException('Friend not found');
+      }
+    }
   }
 
   async blockUser(user: User, blockedDTO: BlockedDTO): Promise<User> {
