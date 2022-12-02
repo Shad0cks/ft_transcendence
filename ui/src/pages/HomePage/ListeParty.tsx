@@ -88,11 +88,12 @@ export default function ListeParty({
       <h2 className="ListeParty_title">Available Channels: </h2>
       <div className="ListeParty_list">
         {channel.map((e: ChannelDTO, i: number) => {
-          return e.restriction !== 'private' ? (
+          console.log(e);
+          return e.privacy !== 'private' ? (
             <AvailableParty
               key={i}
               name={e.name}
-              password={e.restriction === 'public'}
+              password={e.privacy === 'public'}
               id={e.id.toString()}
               isIn={inChannel.find((x) => x.id === e.id) !== undefined}
               joinChannel={() => joinChannel(e)}

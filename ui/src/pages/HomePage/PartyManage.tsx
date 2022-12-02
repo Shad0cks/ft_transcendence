@@ -7,6 +7,7 @@ import socketIOClient, { Socket } from 'socket.io-client';
 import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
+import { Button } from 'react-bootstrap';
 
 export default function PartyManage() {
   const navigate = useNavigate();
@@ -32,10 +33,34 @@ export default function PartyManage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return username ? (
-    <div>
+    <div style={{ fontFamily: 'Orbitron' }}>
       <Header username={username} iconUser={user?.avatar} />
       <PartyCreate username={username} socket={socket} />
       <ListeParty socket={socket} username={username} />
+      <div
+        style={{
+          backgroundColor: '#282c34 ',
+          position: 'fixed',
+          width: '100%',
+          height: '80px',
+          bottom: 0,
+          boxShadow: '0px 0 10px rgba(0, 0, 0, 0.8)',
+        }}
+      >
+        <Button
+          style={{
+            position: 'relative',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%,-50%)',
+          }}
+          variant="success"
+          id="button-addon"
+          onClick={() => navigate('/chat')}
+        >
+          Back to channels
+        </Button>
+      </div>
     </div>
   ) : null;
 }

@@ -1,6 +1,6 @@
 export type ChannelDTO = {
   id: number;
   name: string;
-  restriction: string;
+  privacy: string;
   password: string;
 };
