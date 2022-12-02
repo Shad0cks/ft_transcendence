@@ -241,6 +241,8 @@ export class ChatService {
         );
       }
 
+      // TODO check whitelist if private
+
       // populate participant object
       participant.channel = channel;
       participant.user = await this.userService.findOneByNickname(
@@ -357,7 +359,7 @@ export class ChatService {
       channelMessage.channel = channel;
       channelMessage.sender = participant;
       channelMessage.message = channelMessageDTO.message;
-      await this.channelMessageRepository.save(channelMessage);
+      return await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
       throw new WsException(error.message);
     }

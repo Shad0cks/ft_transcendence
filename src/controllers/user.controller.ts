@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ReqUser } from 'src/decorators/user.decorator';
+import { BlockedDTO } from 'src/dto/blocked.dto';
 import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
 import { User } from 'src/entities/user.entity';
@@ -88,6 +89,34 @@ export class UserController {
     @ReqUser() user: User,
   ) {
     return await this.userService.deleteFriend(user, friendDTO);
+  }
+
+  @Post('blocked')
+  @UseGuards(JwtAuthGuard)
+  async blockUserAction(
+    @Body() blockedDTO: BlockedDTO,
+    @ReqUser() user: User,
+  ): Promise<User> {
+    return await this.userService.blockUser(user, blockedDTO);
+  }
+
+  @Get('blocked')
+  @UseGuards(JwtAuthGuard)
+  async getBlockedAction(@ReqUser() user: User) {
+    return (
+      await this.userService.findOneByNickname(user.nickname, {
+        selectBlocked: true,
+      })
+    ).blocked;
+  }
+
+  @Delete('blocked')
+  @UseGuards(JwtAuthGuard)
+  async unblockUserAction(
+    @Body() blockedDTO: BlockedDTO,
+    @ReqUser() user: User,
+  ) {
+    return await this.userService.unblockUser(user, blockedDTO);
   }
 
   @Get(':nickname/matchs')

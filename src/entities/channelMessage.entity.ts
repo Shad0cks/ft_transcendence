@@ -16,10 +16,7 @@ export class ChannelMessage {
   @Column()
   message: string;
 
-  @ManyToOne(
-    () => ChannelParticipant,
-    (channelParticipant) => channelParticipant.channelMessages,
-  )
+  @ManyToOne(() => ChannelParticipant)
   sender: ChannelParticipant;
 
   @ManyToOne(() => Channel, (channel) => channel.messages)
