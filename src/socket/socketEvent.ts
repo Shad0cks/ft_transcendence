@@ -82,7 +82,7 @@ export class SocketEvent {
     );
     // messageDTO.sent_at = messageEntity.created_at;
     for (const user of Userfromchannel) {
-      const UserBlocked = this.userService.getBlockedNicknames(user);◘
+      const UserBlocked = this.userService.getBlockedNicknames(user);
       if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
         this.server
           .to(Clients.getSocketId(user))
