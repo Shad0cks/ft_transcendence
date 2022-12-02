@@ -25,10 +25,6 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
-import { use } from 'passport';
-import { find } from 'rxjs';
-import { compare } from 'bcrypt';
-import e from 'express';
 
 @WebSocketGateway()
 export class SocketEvent {
@@ -84,13 +80,9 @@ export class SocketEvent {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
-    messageDTO.sent_at = messageEntity.created_at;
+    // messageDTO.sent_at = messageEntity.created_at;
     for (const user of Userfromchannel) {
-      const UserBlocked = this.userService.getBlockedNicknames(user);
-      console.log(user);
-      console.log(Clients.getSocketId(user));
-      console.log(await UserBlocked);
-
+      const UserBlocked = this.userService.getBlockedNicknames(user);◘
       if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
         this.server
           .to(Clients.getSocketId(user))
