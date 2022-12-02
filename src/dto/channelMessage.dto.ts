@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ChannelMessageDTO {
   @IsNotEmpty()
@@ -12,4 +12,7 @@ export class ChannelMessageDTO {
   @IsNotEmpty()
   @IsString()
   senderNickname: string;
+
+  @IsOptional()
+  sent_at: Date;
 }

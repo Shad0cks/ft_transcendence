@@ -72,16 +72,20 @@ export class SocketEvent {
   }
 
   @SubscribeMessage('addMessage')
-  async onAddMessage(socket: CustomSocket, message: ChannelMessageDTO) {
-    const Userfromchannel: Promise<string[]> =
-      this.chatService.getParticipantsNickname(message.channelName);
-    for (const user of await Userfromchannel) {
+  async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
+    const Userfromchannel = await this.chatService.getParticipantsNickname(
+      messageDTO.channelName,
+    );
+    const messageEntity = await this.chatService.registerChannelMessage(
+      messageDTO,
+    );
+    messageDTO.sent_at = messageEntity.created_at;
+    for (const user of Userfromchannel) {
       //TODO Check si le message ne parvient pas de quelqu'un bloqué.
-      await this.server
+      this.server
         .to(this.connectedUser.getSocketId(user))
-        .emit('messageAdded', message);
+        .emit('messageAdded', messageDTO);
     }
-    this.chatService.registerChannelMessage(message);
     return;
   }
 
