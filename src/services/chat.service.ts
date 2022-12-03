@@ -465,15 +465,21 @@ export class ChatService {
         sent_at: 'ASC',
       },
     });
-    const messages = [];
+    console.log(rawMessages);
+    const result = new Map();
     for (let i = 0; i < rawMessages.length; ++i) {
-      messages.push({
+      if (result[rawMessages[i].sender.nickname] === undefined) {
+        result[rawMessages[i].sender.nickname] = {};
+        result[rawMessages[i].sender.nickname].author =
+          rawMessages[i].sender.nickname;
+        result[rawMessages[i].sender.nickname].messages = [];
+      }
+      result[rawMessages[i].sender.nickname].messages.push({
         sent_at: rawMessages[i].sent_at,
         message: rawMessages[i].message,
-        author: rawMessages[i].sender.nickname,
       });
     }
-    return messages;
+    return result;
   }
 
   async getDirectMessagesFromUser(user: User, senderNickname: string) {

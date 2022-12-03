@@ -21,13 +21,13 @@ export class ChatController {
     @ReqUser() user: User,
     @Param('name') channelName: string,
   ) {
-    return this.chatService.getChannelMessages(user, channelName);
+    return await this.chatService.getChannelMessages(user, channelName);
   }
 
   @Get('direct_messages')
   @UseGuards(JwtAuthGuard)
   async getDirectMessagesAction(@ReqUser() user: User) {
-    return this.chatService.getDirectMessages(user);
+    return await this.chatService.getDirectMessages(user);
   }
 
   @Get('direct_messages/:senderNickname')
@@ -36,6 +36,9 @@ export class ChatController {
     @ReqUser() user: User,
     @Param('senderNickname') senderNickname: string,
   ) {
-    return this.chatService.getDirectMessagesFromUser(user, senderNickname);
+    return await this.chatService.getDirectMessagesFromUser(
+      user,
+      senderNickname,
+    );
   }
 }
