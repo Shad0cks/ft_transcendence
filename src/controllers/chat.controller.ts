@@ -17,10 +17,25 @@ export class ChatController {
 
   @Get('channels/:name/messages')
   @UseGuards(JwtAuthGuard)
-  async getMessagesAction(
+  async getChannelMessagesAction(
     @ReqUser() user: User,
     @Param('name') channelName: string,
   ) {
     return this.chatService.getChannelMessages(user, channelName);
+  }
+
+  @Get('direct_messages')
+  @UseGuards(JwtAuthGuard)
+  async getDirectMessagesAction(@ReqUser() user: User) {
+    return this.chatService.getDirectMessages(user);
+  }
+
+  @Get('direct_messages/:senderNickname')
+  @UseGuards(JwtAuthGuard)
+  async getDirectMessagesFromUserAction(
+    @ReqUser() user: User,
+    @Param('senderNickname') senderNickname: string,
+  ) {
+    return this.chatService.getDirectMessagesFromUser(user, senderNickname);
   }
 }
