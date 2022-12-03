@@ -15,6 +15,7 @@ export default function FaPage() {
     if (!token.current || !usrReq) {
       return;
     }
+    // TODO case empty token
     window.location.replace(
       'http://localhost:8080/auth/42/2faredirect/' +
         (token.current as HTMLInputElement).value,
