@@ -28,6 +28,8 @@ import {
 } from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { WsException } from '@nestjs/websockets';
+import { DirectMessage } from 'src/entities/directMessage.entity';
+import { DirectMessageDTO } from 'src/dto/directMessage.dto';
 
 export interface ChannelOptions {
   selectParticipants?: boolean;
@@ -44,6 +46,8 @@ export class ChatService {
     private channelParticipantRepository: Repository<ChannelParticipant>,
     @InjectRepository(ChannelMessage)
     private channelMessageRepository: Repository<ChannelMessage>,
+    @InjectRepository(DirectMessage)
+    private directMessageRepository: Repository<DirectMessage>,
     @InjectRepository(ChatRestriction)
     private chatRestrictionRepository: Repository<ChatRestriction>,
     private readonly userService: UserService,
@@ -439,6 +443,29 @@ export class ChatService {
     }
   }
 
+  async registerDirectMessage(directMessageDTO: DirectMessageDTO) {
+    try {
+      const message = new DirectMessage();
+      const sender = await this.userService.findOneByNickname(
+        directMessageDTO.senderNickname,
+        null,
+      );
+      const receiver = await this.userService.findOneByNickname(
+        directMessageDTO.receiverNickname,
+        null,
+      );
+
+      message.message = directMessageDTO.message;
+      message.sender = sender;
+      message.receiver = receiver;
+      return await this.directMessageRepository.save(message);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+    }
+  }
+
   async getChannelMessages(user: User, channelName: string) {
     try {
       const participant = await this.findParticipant(
@@ -476,5 +503,66 @@ export class ChatService {
     } catch (error) {
       throw new WsException(error.message);
     }
+  }
+
+  async getDirectMessages(user: User) {
+    const rawMessages = await this.directMessageRepository.find({
+      relations: ['sender'],
+      where: {
+        receiver: user,
+      },
+      select: {
+        sender: {
+          nickname: true,
+        },
+      },
+      order: {
+        sent_at: 'ASC',
+      },
+    });
+    console.log(rawMessages);
+    const result = new Map();
+    for (let i = 0; i < rawMessages.length; ++i) {
+      if (result[rawMessages[i].sender.nickname] === undefined) {
+        result[rawMessages[i].sender.nickname] = {};
+        result[rawMessages[i].sender.nickname].author =
+          rawMessages[i].sender.nickname;
+        result[rawMessages[i].sender.nickname].messages = [];
+      }
+      result[rawMessages[i].sender.nickname].messages.push({
+        sent_at: rawMessages[i].sent_at,
+        message: rawMessages[i].message,
+      });
+    }
+    return result;
+  }
+
+  async getDirectMessagesFromUser(user: User, senderNickname: string) {
+    const rawMessages = await this.directMessageRepository.find({
+      relations: ['sender'],
+      where: {
+        receiver: user,
+        sender: {
+          nickname: senderNickname,
+        },
+      },
+      select: {
+        sender: {
+          nickname: true,
+        },
+      },
+      order: {
+        sent_at: 'ASC',
+      },
+    });
+    const messages = [];
+    for (let i = 0; i < rawMessages.length; ++i) {
+      messages.push({
+        sent_at: rawMessages[i].sent_at,
+        message: rawMessages[i].message,
+        author: rawMessages[i].sender.nickname,
+      });
+    }
+    return messages;
   }
 }

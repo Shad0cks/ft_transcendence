@@ -21,6 +21,11 @@ export class GameGateway {
     // TODO CreateGame
     // this.server.to(Clients.getSocketId(player1)).emit('GameStart', Game);
     // this.server.to(Clients.getSocketId(player2)).emit('GameStart', Game);
+
+    // fixing style
+    socket;
+    player1;
+    player2;
   }
 
   @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {

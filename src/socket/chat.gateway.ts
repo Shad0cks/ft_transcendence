@@ -1,15 +1,10 @@
 import {
-  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { CustomSocket } from 'src/adapters/socket.adapter';
-import { ballDTO } from 'src/dto/ballGame.dto';
-import { GameObjDTO } from 'src/dto/game.dto';
-import { newPlayerDTO } from 'src/dto/newPlayer.dto';
-import { PlayerDTO } from 'src/dto/player.dto';
 import { ConnectedUsers } from './connectedUsers';
 import { UserService } from 'src/services/user.service';
 import { ChatService } from 'src/services/chat.service';
