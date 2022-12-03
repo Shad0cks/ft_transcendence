@@ -80,7 +80,7 @@ export class SocketEvent {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
-    // messageDTO.sent_at = messageEntity.created_at;
+    messageDTO.sent_at = messageEntity.sent_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
       if (!(await UserBlocked).includes(messageDTO.senderNickname)) {

@@ -433,7 +433,7 @@ export class ChatService {
       channelMessage.channel = channel;
       channelMessage.sender = participant;
       channelMessage.message = channelMessageDTO.message;
-      await this.channelMessageRepository.save(channelMessage);
+      return await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
       throw new WsException(error.message);
     }
@@ -449,16 +449,28 @@ export class ChatService {
       if (this.isBanned(restrictions)) {
         throw new ForbiddenException('You are banned');
       }
-      const messages = await this.channelMessageRepository
-        .createQueryBuilder('channelMessages')
-        .leftJoinAndSelect('channelMessages.channel', 'channel')
-        .where('channel.name = :name', { name: channelName })
-        .orderBy('created_at', 'DESC')
-        .getMany();
-
-      for (let i = 0; i < messages.length; ++i) {
-        delete messages[i].id;
-        delete messages[i].channel;
+      const rawMessages = await this.channelMessageRepository.find({
+        relations: ['sender.user'],
+        where: {
+          channel: {
+            name: channelName,
+          },
+        },
+        select: {
+          sent_at: true,
+          message: true,
+        },
+        order: {
+          sent_at: 'ASC',
+        },
+      });
+      const messages = [];
+      for (let i = 0; i < rawMessages.length; ++i) {
+        messages.push({
+          sent_at: rawMessages[i].sent_at,
+          message: rawMessages[i].message,
+          author: rawMessages[i].sender.user.nickname,
+        });
       }
       return messages;
     } catch (error) {
