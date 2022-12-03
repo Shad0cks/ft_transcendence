@@ -150,7 +150,7 @@ export class ChatService {
         channelAdminDTO.userNickname,
         channelAdminDTO.channelName,
       );
-      
+
       // retrun isAdmin stat
       return participant.isAdmin;
     } catch (error) {
