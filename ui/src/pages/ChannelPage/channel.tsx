@@ -16,6 +16,8 @@ import socketIOClient, { Socket } from 'socket.io-client';
 import { ChannelJoin } from '../../models/channelJoined';
 import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
+import { GetDM } from '../../services/Channel/getDM';
+import { DMsDTO } from '../../models/DMsDTO';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -38,6 +40,8 @@ export default function Channel() {
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
+  const [dmsList, setDmsList] = useState();
+
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -89,6 +93,17 @@ export default function Channel() {
     return JSON.parse(txt);
   }
 
+  function getDMs()
+  {
+    GetDM().then(async (e) => {
+      if (e.status === 401) {
+        await UserLogout();
+        navigate('/');
+      } else if (e.ok) e.text().then((i) => setDmsList(JSON.parse(i)));
+    });
+    
+  }
+  console.log(dmsList);
   function getUsersInfoChat(users: string[]) {
     setUsersInfos([]);
     users.forEach(async (user) => {
@@ -123,6 +138,7 @@ export default function Channel() {
       setChannelUsersList(e);
       if (e[0]) setChannelSelected(e[0].id);
     });
+    getDMs();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
