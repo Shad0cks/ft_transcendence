@@ -16,7 +16,6 @@ import socketIOClient, { Socket } from 'socket.io-client';
 import { ChannelJoin } from '../../models/channelJoined';
 import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
-import { MessageSend } from '../../models/messageSend';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -38,7 +37,7 @@ export default function Channel() {
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
-  const [messageList, setMessageList] = useState<MessageSend[]>([]);
+  const [messageList, setMessageList] = useState<MessageGetList[]>([]);
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -57,18 +56,6 @@ export default function Channel() {
   //     setUsersInfos([...usersInfos, userInfo])
   //   });
   // }
-
-  function setLastMessage(message: MessageSend, channelName: string)
-  {
-    const newUsers = channelUsersList.map(i => ({ ...i }));
-    const copy = channelUsersList.map(object => ({ ...object}));
-
-    console.log(copy)
-    newUsers.find((x) => x.name === channelName)!.lastMessage = message;
-
-    setChannelUsersList(newUsers);
-
-  }
 
   function getListMessage() {
     const currChannel = channelUsersList.find((x) => x.id === channelSelected);
@@ -170,15 +157,6 @@ export default function Channel() {
     getListMessage();
   }, [channelSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-
-    const currchannel = channelUsersList.find((x) => x.id === channelSelected)?.name
-
-    if (currchannel)
-      setLastMessage(messageList[0], currchannel)
-
-  }, [messageList])
-
   function needShowInfo(playerID: number): boolean {
     return playerID === playerClicked;
   }
@@ -198,7 +176,6 @@ export default function Channel() {
             usersInChannel={usersInfos}
             messageList={messageList}
             setMessageList={setMessageList}
-            setLastMessage={setLastMessage}
           />
           <div
             className="playerList"

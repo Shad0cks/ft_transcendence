@@ -32,7 +32,6 @@ export default function Chat({
   usersInChannel,
   messageList,
   setMessageList,
-  setLastMessage
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelDTO[];
@@ -40,9 +39,8 @@ export default function Chat({
   channelSelected: number | undefined;
   socket: Socket | undefined;
   usersInChannel: GetUserIt[];
-  messageList: MessageSend[];
-  setMessageList: React.Dispatch<React.SetStateAction<MessageSend[]>>;
-  setLastMessage: (message: MessageSend, channelName: string) => void;
+  messageList: MessageGetList[];
+  setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelDTO>();
 
@@ -73,10 +71,9 @@ export default function Chat({
   useEffect(() => {
     socket?.on('connect', () => {
       socket?.on('messageAdded', function (e: MessageSend) {
-        setLastMessage(e, e.channelName)
         setMessageList((prev) => [
           ...prev,
-          { senderNickname: e.senderNickname, message: e.message, sent_at: e.sent_at, channelName: "" },
+          { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
         ]);
       });
     });
@@ -105,8 +102,8 @@ export default function Chat({
                 onClick={() => selectChannel(elem.id)}
                 key={id}
                 name={elem.name}
-                lastSenderName={elem.lastMessage ? elem.lastMessage.senderNickname : "Click to refresh"}
-                info={elem.lastMessage ? elem.lastMessage.message : null}
+                lastSenderName="Emily"
+                info="Yes i can do it for you"
                 unreadCnt={3}
                 active={elem.id === channelSelected}
               >
@@ -160,15 +157,15 @@ export default function Chat({
                 model={{
                   message: e.message,
                   sentTime: getTime(e.sent_at),
-                  sender: e.senderNickname,
+                  sender: e.author,
                   direction:
-                    e.senderNickname === SelfUser.nickname ? 'incoming' : 'outgoing',
+                    e.author === SelfUser.nickname ? 'incoming' : 'outgoing',
                   position: 'first',
                 }}
               >
-                <Avatar src={getAvatar(e.senderNickname)} name={e.senderNickname} />
+                <Avatar src={getAvatar(e.author)} name={e.author} />
                 <Message.Header
-                  sender={e.senderNickname}
+                  sender={e.author}
                   sentTime={getTime(e.sent_at)}
                 />
               </Message>
