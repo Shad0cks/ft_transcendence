@@ -19,6 +19,7 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
+import { DirectMessageDTO } from 'src/dto/directMessage.dto';
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -70,12 +71,18 @@ export class ChatGateway {
 
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
-  async onAddMessagePrivate(socket: CustomSocket, message: PrivateMessageDTO) {
-    await this.server
-      .to(Clients.getSocketId(message.receiverNickname))
-      .emit('messageprivateAdded');
-
-    // this.chatService.registerPrivateMessage(message);
+  async onAddMessagePrivate(socket: CustomSocket, message: DirectMessageDTO) {
+    const messageEntity = await this.chatService.registerDirectMessage(message);
+    message.sent_at = messageEntity.sent_at;
+    const UserBlocked = this.userService.getBlockedNicknames(
+      message.receiverNickname,
+    );
+    if (!(await UserBlocked).includes(message.senderNickname)) {
+      await this.server
+        .to(Clients.getSocketId(message.receiverNickname))
+        .emit('messageprivateAdded');
+    }
+    this.server.to(socket.id).emit('messageprivateAdded', message);
   }
 
   @SubscribeMessage('createChannel')

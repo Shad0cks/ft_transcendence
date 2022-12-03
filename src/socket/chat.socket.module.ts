@@ -17,6 +17,7 @@ import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { ChatGateway } from './chat.gateway';
+import { DirectMessageDTO } from 'src/dto/directMessage.dto';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ChatGateway } from './chat.gateway';
       PrivateMessageDTO,
       JoinChannelDTO,
       LeaveChannelDTO,
+      DirectMessageDTO,
     ]),
     ChatModule,
     UserModule,
