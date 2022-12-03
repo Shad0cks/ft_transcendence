@@ -378,7 +378,7 @@ export class ChatService {
       channelMessage.channel = channel;
       channelMessage.sender = participant;
       channelMessage.message = channelMessageDTO.message;
-      await this.channelMessageRepository.save(channelMessage);
+      return await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
       throw new WsException(error.message);
     }
