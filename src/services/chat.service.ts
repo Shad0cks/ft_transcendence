@@ -22,7 +22,7 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
 import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
-import { ChatRestriction } from 'src/entities/chatRestriction.entity';
+import { ChatRestriction , ChannelRestrictionType } from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { WsException } from '@nestjs/websockets';
 
@@ -122,8 +122,34 @@ export class ChatService {
   }
 
   async addRestriction(channelRestrictionDTO: ChannelRestrictionDTO) {
-    console.log('Restricting user');
-    console.info(channelRestrictionDTO);
+    try {
+      const restriction = new ChatRestriction;
+
+      // verify admin is in channel and admin
+      const adminParticipant = await this.findParticipant(
+        channelRestrictionDTO.adminNickname,
+        channelRestrictionDTO.channelName,
+      );
+      restriction.admin = adminParticipant;
+  
+      restriction.end_date = channelRestrictionDTO.end;
+  
+      if(channelRestrictionDTO.restriction as ChannelRestrictionType)
+        restriction.restriction = channelRestrictionDTO.restriction as ChannelRestrictionType;
+      else
+        throw new UnauthorizedException('Not valide restriction type');
+    
+      // verify user is in channel
+      const userParticipant = await this.findParticipant(
+        channelRestrictionDTO.userNickname,
+        channelRestrictionDTO.channelName,
+      );
+      restriction.user = userParticipant;
+
+      await this.chatRestrictionRepository.save(restriction);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async addAdmin(channelAdminDTO: ChannelAdminDTO) {
@@ -224,13 +250,41 @@ export class ChatService {
   }
 
   async editChannelPassword(channelPasswordDTO: ChannelPasswordDTO) {
-    console.log('Editing channel password');
-    console.info(channelPasswordDTO);
+    try {
+      // channel exist
+      const channel = await this.findChannelByName(
+        channelPasswordDTO.channel,
+        {},
+      );
+
+      // set new password
+      channel.password = channelPasswordDTO.password;
+
+      // save
+      await this.channelRepository.save(channel);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async changeChannelPrivacy(channelPrivacyDTO: ChannelPrivacyDTO) {
-    console.log('Changing channel privacy');
-    console.info(channelPrivacyDTO);
+    try {
+      // channel exist
+      const channel = await this.findChannelByName(
+        channelPrivacyDTO.name,
+        {},
+      );
+
+      // set new privacy and password if protected
+      channel.privacy = channelPrivacyDTO.privacy;
+      if (channelPrivacyDTO.privacy === "protected")
+        channel.password = channelPrivacyDTO.password
+
+      // save
+      await this.channelRepository.save(channel);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async checkPassword(clear: string, hash: string) {
