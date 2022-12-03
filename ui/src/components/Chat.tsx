@@ -44,7 +44,6 @@ export default function Chat({
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelDTO>();
 
-  console.log(messageList);
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
     if (user) return user.avatar;
@@ -102,9 +101,8 @@ export default function Chat({
                 onClick={() => selectChannel(elem.id)}
                 key={id}
                 name={elem.name}
-                lastSenderName="Emily"
-                info="Yes i can do it for you"
-                unreadCnt={3}
+                lastSenderName="Type"
+                info="Channel"
                 active={elem.id === channelSelected}
               >
                 {/* <Avatar
@@ -149,7 +147,6 @@ export default function Chat({
           </ConversationHeader>
 
           <MessageList
-            typingIndicator={<TypingIndicator content="Eliot is typing" />}
           >
             {messageList.map((e, id) => (
               <Message
