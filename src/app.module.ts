@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatModule } from './chat.module';
 import { UserModule } from './user.module';
-import { SocketModule } from './socket/socket.module';
 import { AuthModule } from './auth.module';
+import { ChatSocketModule } from './socket/chat.socket.module';
+import { ChatModule } from './chat.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    SocketModule,
+    ChatSocketModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -20,10 +20,10 @@ import { AuthModule } from './auth.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    ChatModule,
     UserModule,
     AuthModule,
-    SocketModule,
+    ChatModule,
+    ChatSocketModule,
   ],
   controllers: [],
   providers: [],

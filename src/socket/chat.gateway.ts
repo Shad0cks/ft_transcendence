@@ -10,7 +10,6 @@ import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
-import { Usersocket } from 'src/dto/user.dto';
 import { ConnectedUsers } from './connectedUsers';
 import { UserService } from 'src/services/user.service';
 import { ChatService } from 'src/services/chat.service';
@@ -27,10 +26,9 @@ import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 
 @WebSocketGateway()
-export class SocketEvent {
+export class ChatGateway {
   @WebSocketServer()
   server: Server;
-  Usersockets: Array<Usersocket> = [];
 
   constructor(
     private userService: UserService,
@@ -53,23 +51,6 @@ export class SocketEvent {
 
   handleDisconnect(client: CustomSocket) {
     console.log(`Client disConnected: ${client.id}`);
-  }
-
-  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
-    this.server.emit('playermove', data);
-  }
-
-  @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
-    if (data === null) return;
-    this.server.emit('gameOption', data);
-  }
-
-  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
-    this.server.emit('ballPos', data);
-  }
-
-  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
-    this.server.emit('newPlayer', data);
   }
 
   @SubscribeMessage('addMessage')
@@ -174,6 +155,17 @@ export class SocketEvent {
   }
 
   //TODO Invite une game
+
+  @SubscribeMessage('InvitationGame')
+  async OnInvitationGame(
+    socket: CustomSocket,
+    InvitationSender: string,
+    InvitationReceiver: string,
+  ) {
+    this.server
+      .to(Clients.getSocketId(InvitationReceiver))
+      .emit('InvitationGame', InvitationSender);
+  }
 
   @SubscribeMessage('joinChannel')
   async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO) {

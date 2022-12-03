@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ChatModule } from 'src/chat.module';
 import { UserService } from 'src/services/user.service';
 import { ConnectedUsers } from './connectedUsers';
-import { SocketEvent } from './socketEvent';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user.module';
 import { ChannelAdminDTO } from 'src/dto/channelAdmin.dto';
@@ -17,6 +16,7 @@ import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
 import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -38,6 +38,6 @@ import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
     ChatModule,
     UserModule,
   ],
-  providers: [SocketEvent, ConnectedUsers, UserService],
+  providers: [ChatGateway, ConnectedUsers, UserService],
 })
-export class SocketModule {}
+export class ChatSocketModule {}
