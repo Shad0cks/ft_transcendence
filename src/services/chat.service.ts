@@ -127,14 +127,35 @@ export class ChatService {
   }
 
   async addAdmin(channelAdminDTO: ChannelAdminDTO) {
-    console.log('Adding admin to channel');
-    console.info(channelAdminDTO);
+    try {
+      // try get user in channel
+      const participant = await this.findParticipant(
+        channelAdminDTO.userNickname,
+        channelAdminDTO.channelName,
+      );
+      // set admin
+      participant.isAdmin = true;
+
+      // save
+      await this.channelParticipantRepository.save(participant);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async isAdmin(channelAdminDTO: ChannelAdminDTO): Promise<boolean> {
-    console.log('Checking if user is admin in channel');
-    console.info(channelAdminDTO);
-    return false;
+    try {
+      // try get user in channel
+      const participant = await this.findParticipant(
+        channelAdminDTO.userNickname,
+        channelAdminDTO.channelName,
+      );
+      
+      // retrun isAdmin stat
+      return participant.isAdmin;
+    } catch (error) {
+      throw new WsException(error.message);
+    }
   }
 
   async removeFromWhitelist(editWhitelistDTO: EditWhitelistDTO) {
@@ -240,8 +261,6 @@ export class ChatService {
           participant.user.login42,
         );
       }
-
-      // TODO check whitelist if private
 
       // populate participant object
       participant.channel = channel;
