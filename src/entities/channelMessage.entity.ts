@@ -23,5 +23,5 @@ export class ChannelMessage {
   channel: Channel;
 
   @CreateDateColumn()
-  created_at: Date;
+  sent_at: Date;
 }
