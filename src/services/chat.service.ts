@@ -22,7 +22,10 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
 import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
-import { ChatRestriction , ChannelRestrictionType } from 'src/entities/chatRestriction.entity';
+import {
+  ChatRestriction,
+  ChannelRestrictionType,
+} from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { WsException } from '@nestjs/websockets';
 
@@ -123,7 +126,7 @@ export class ChatService {
 
   async addRestriction(channelRestrictionDTO: ChannelRestrictionDTO) {
     try {
-      const restriction = new ChatRestriction;
+      const restriction = new ChatRestriction();
 
       // verify admin is in channel and admin
       const adminParticipant = await this.findParticipant(
@@ -131,14 +134,14 @@ export class ChatService {
         channelRestrictionDTO.channelName,
       );
       restriction.admin = adminParticipant;
-  
+
       restriction.end_date = channelRestrictionDTO.end;
-  
-      if(channelRestrictionDTO.restriction as ChannelRestrictionType)
-        restriction.restriction = channelRestrictionDTO.restriction as ChannelRestrictionType;
-      else
-        throw new UnauthorizedException('Not valide restriction type');
-    
+
+      if (channelRestrictionDTO.restriction as ChannelRestrictionType)
+        restriction.restriction =
+          channelRestrictionDTO.restriction as ChannelRestrictionType;
+      else throw new UnauthorizedException('Not valide restriction type');
+
       // verify user is in channel
       const userParticipant = await this.findParticipant(
         channelRestrictionDTO.userNickname,
@@ -252,13 +255,12 @@ export class ChatService {
   async editChannelPassword(channelPasswordDTO: ChannelPasswordDTO) {
     try {
       // channel exist
-      const channel = await this.findChannelByName(
-        channelPasswordDTO.channel,
-        {},
-      );
+      const channel = await this.findChannelByName(channelPasswordDTO.channel, {
+        selectPassword: true,
+      });
 
       // set new password
-      channel.password = channelPasswordDTO.password;
+      channel.password = await bcrypt.hash(channelPasswordDTO.password, 10);
 
       // save
       await this.channelRepository.save(channel);
@@ -270,15 +272,14 @@ export class ChatService {
   async changeChannelPrivacy(channelPrivacyDTO: ChannelPrivacyDTO) {
     try {
       // channel exist
-      const channel = await this.findChannelByName(
-        channelPrivacyDTO.name,
-        {},
-      );
+      const channel = await this.findChannelByName(channelPrivacyDTO.name, {
+        selectPassword: true,
+      });
 
       // set new privacy and password if protected
       channel.privacy = channelPrivacyDTO.privacy;
-      if (channelPrivacyDTO.privacy === "protected")
-        channel.password = channelPrivacyDTO.password
+      if (channelPrivacyDTO.privacy === 'protected')
+        channel.password = await bcrypt.hash(channelPrivacyDTO.password, 10);
 
       // save
       await this.channelRepository.save(channel);
@@ -312,7 +313,7 @@ export class ChatService {
       if (channel.privacy === 'private') {
         await this.isWhitelist(
           joinChannelDTO.channelName,
-          participant.user.login42,
+          participant.user.nickname,
         );
       }
 
