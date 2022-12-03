@@ -21,9 +21,6 @@ import { ChannelDTO } from '../models/channel';
 import { Socket } from 'socket.io-client';
 import { GetUserIt } from '../models/getUser';
 import { MessageGetList } from '../models/messageGetList';
-import { GetMessages } from '../services/Channel/getMessages';
-import { UserLogout } from '../services/User/userDelog';
-import { useNavigate } from 'react-router-dom';
 import { MessageSend } from '../models/messageSend';
 
 export default function Chat({
@@ -33,6 +30,8 @@ export default function Chat({
   channelSelected,
   socket,
   usersInChannel,
+  messageList,
+  setMessageList,
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelDTO[];
@@ -40,22 +39,12 @@ export default function Chat({
   channelSelected: number | undefined;
   socket: Socket | undefined;
   usersInChannel: GetUserIt[];
+  messageList: MessageGetList[];
+  setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelDTO>();
-  const [messageList, setMessageList] = useState<MessageGetList[]>([]);
-  const navigate = useNavigate();
 
-  function getListMessage() {
-    if (!channelSelected) return;
-
-    GetMessages(channelSelected).then(async (e) => {
-      if (e.status === 401) {
-        await UserLogout();
-        navigate('/');
-      } else if (e.ok) e.text().then((i) => setMessageList(JSON.parse(i)));
-    });
-  }
-
+  console.log(messageList);
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
     if (user) return user.avatar;
@@ -64,7 +53,6 @@ export default function Chat({
   }
 
   function sendMessage(e: string) {
-    console.log('message send', e);
     socket?.emit('addMessage', {
       message: e,
       channelName: currentChannel?.name,
@@ -73,7 +61,6 @@ export default function Chat({
   }
 
   function getTime(time: string) {
-    console.log(time);
     return new Date(time).toLocaleTimeString('fr-FR', {
       timeStyle: 'short',
       hour12: false,
@@ -95,13 +82,12 @@ export default function Chat({
       socket?.off('connect');
       socket?.off('messageAdded');
     };
-  }, [socket]);
+  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCurrentChannel(
       channelList.find((channel) => channel.id === channelSelected),
     );
-    getListMessage();
   }, [selectChannel]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
