@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Channel } from './channel.entity';
-import { ChannelParticipant } from './channelParticipant.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class ChannelMessage {
@@ -16,8 +16,8 @@ export class ChannelMessage {
   @Column()
   message: string;
 
-  @ManyToOne(() => ChannelParticipant)
-  sender: ChannelParticipant;
+  @ManyToOne(() => User)
+  sender: User;
 
   @ManyToOne(() => Channel, (channel) => channel.messages)
   channel: Channel;

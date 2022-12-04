@@ -435,7 +435,7 @@ export class ChatService {
       );
 
       channelMessage.channel = channel;
-      channelMessage.sender = participant;
+      channelMessage.sender = participant.user;
       channelMessage.message = channelMessageDTO.message;
       return await this.channelMessageRepository.save(channelMessage);
     } catch (error) {
@@ -477,7 +477,7 @@ export class ChatService {
         throw new ForbiddenException('You are banned');
       }
       const rawMessages = await this.channelMessageRepository.find({
-        relations: ['sender.user'],
+        relations: ['sender'],
         where: {
           channel: {
             name: channelName,
@@ -496,7 +496,7 @@ export class ChatService {
         messages.push({
           sent_at: rawMessages[i].sent_at,
           message: rawMessages[i].message,
-          author: rawMessages[i].sender.user.nickname,
+          author: rawMessages[i].sender.nickname,
         });
       }
       return messages;
@@ -520,7 +520,6 @@ export class ChatService {
         sent_at: 'ASC',
       },
     });
-    console.log(rawMessages);
     const result = new Map();
     for (let i = 0; i < rawMessages.length; ++i) {
       if (result[rawMessages[i].sender.nickname] === undefined) {
@@ -564,5 +563,36 @@ export class ChatService {
       });
     }
     return messages;
+  }
+
+  async getChannelAdminsNicknames(user: User, channelName: string) {
+    try {
+      // assert that the channel exists
+      // and the user is in it
+      await this.findParticipant(user.nickname, channelName);
+      const rawAdmins = await this.channelParticipantRepository.find({
+        where: {
+          channel: {
+            name: channelName,
+          },
+          isAdmin: true,
+        },
+        relations: ['user'],
+        select: {
+          user: {
+            nickname: true,
+          },
+        },
+      });
+      const admins = [];
+      for (let i = 0; i < rawAdmins.length; ++i) {
+        admins.push({
+          nickname: rawAdmins[i].user.nickname,
+        });
+      }
+      return admins;
+    } catch (error) {
+      return error;
+    }
   }
 }

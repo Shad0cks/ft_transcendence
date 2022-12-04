@@ -41,4 +41,13 @@ export class ChatController {
       senderNickname,
     );
   }
+
+  @Get('channels/:channelName/admins')
+  @UseGuards(JwtAuthGuard)
+  async getChannelAdminsNicknamesAction(
+    @ReqUser() user: User,
+    @Param('channelName') channelName: string,
+  ) {
+    return await this.chatService.getChannelAdminsNicknames(user, channelName);
+  }
 }
