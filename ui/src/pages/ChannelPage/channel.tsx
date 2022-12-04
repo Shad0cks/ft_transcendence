@@ -22,6 +22,16 @@ import { GetMPsList } from '../../services/Channel/getMPsList';
 import { GetAdmins } from '../../services/Channel/getAdmis';
 import { AiTwotoneCrown } from 'react-icons/ai';
 
+const popover = (elem: number) => (
+  <Popover id="popover-basic">
+    <Popover.Header as="h3">Player name</Popover.Header>
+    <Popover.Body>
+      <Button variant="success">Game</Button>{' '}
+      <Button variant="primary">DM</Button>
+    </Popover.Body>
+  </Popover>
+);
+
 export default function Channel() {
   const navigate = useNavigate();
   const [playerClicked, setPlayerClicked] = useState<number>();
@@ -59,7 +69,7 @@ export default function Channel() {
     const isAdminUser = isUserAmin(player);
     return (
       <Popover id="popover-basic">
-        <Popover.Header as="h3">Player Name</Popover.Header>
+        <Popover.Header as="h3">{player}</Popover.Header>
         <Popover.Body>
           <Button variant="success">Game</Button>{' '}
           <Button variant="primary" onClick={() => AddChannelDM(player)}>
