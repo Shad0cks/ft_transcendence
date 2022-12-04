@@ -1,7 +1,4 @@
-export function UserSettwofa(
-  stat: boolean,
-  secret: string
-) {
+export function UserSettwofa(stat: boolean, secret: string) {
   return fetch(process.env.REACT_APP_API_URL + '/user/2fa/', {
     method: 'PUT',
     headers: {
