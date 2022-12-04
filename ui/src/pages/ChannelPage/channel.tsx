@@ -17,7 +17,7 @@ import { ChannelJoin } from '../../models/channelJoined';
 import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
 import { GetDM } from '../../services/Channel/getDM';
-import { DMsDTO } from '../../models/DMsDTO';
+import { ChannelType } from '../../models/channelType';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -34,14 +34,12 @@ export default function Channel() {
   const [playerClicked, setPlayerClicked] = useState<number>();
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserIt>();
-  const [channelUsersList, setChannelUsersList] = useState<ChannelDTO[]>([]);
+  const [channelUsersList, setChannelUsersList] = useState<ChannelType[]>([]);
   const [channelSelected, setChannelSelected] = useState<number>();
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
-  const [dmsList, setDmsList] = useState();
-
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -65,7 +63,7 @@ export default function Channel() {
     const currChannel = channelUsersList.find((x) => x.id === channelSelected);
     if (!currChannel) return;
 
-    GetMessages(currChannel.name).then(async (e) => {
+    GetMessages(currChannel.channelBase.name).then(async (e) => {
       if (e.status === 401) {
         await UserLogout();
         navigate('/');
@@ -93,17 +91,23 @@ export default function Channel() {
     return JSON.parse(txt);
   }
 
-  function getDMs()
-  {
-    GetDM().then(async (e) => {
-      if (e.status === 401) {
-        await UserLogout();
-        navigate('/');
-      } else if (e.ok) e.text().then((i) => setDmsList(JSON.parse(i)));
-    });
-    
+  function addMPMessage(author: string, message: string, date: string) {
+    const newUsers = [...channelUsersList];
+    newUsers
+      .find((x) => x.id === channelSelected)
+      ?.mpMessage.push({ author: author, sent_at: date, message: message });
+    setChannelUsersList(newUsers);
   }
-  console.log(dmsList);
+
+  async function getDMs() {
+    const requete = await GetDM();
+    if (requete.status === 401) {
+      await UserLogout();
+      navigate('/');
+    }
+    const txt = await requete.text();
+    return JSON.parse(txt);
+  }
   function getUsersInfoChat(users: string[]) {
     setUsersInfos([]);
     users.forEach(async (user) => {
@@ -133,12 +137,43 @@ export default function Channel() {
           navigate('/');
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
+    (async () => {
+      await getDMs().then(async (map) => {
+        Object.keys(map).forEach((key: string, id: number) => {
+          console.log(map[key].messages);
+          setChannelUsersList((prev) => [
+            ...prev,
+            {
+              id: id,
+              channelBase: {
+                name: key,
+                id: id,
+                privacy: '(null)',
+                password: '(null)',
+              },
+              type: 'mp',
+              mpMessage: map[key].messages,
+            },
+          ]);
+        });
+      });
 
-    getListInChannel().then((e) => {
-      setChannelUsersList(e);
-      if (e[0]) setChannelSelected(e[0].id);
-    });
-    getDMs();
+      const tmpLen = channelUsersList.length + 1;
+      await getListInChannel().then((e) => {
+        e.map((elem: ChannelDTO, id: number) =>
+          setChannelUsersList((prev) => [
+            ...prev,
+            {
+              id: id + tmpLen,
+              channelBase: elem,
+              type: 'channel',
+              mpMessage: [],
+            },
+          ]),
+        );
+        if (e[0]) setChannelSelected(e[0].id);
+      });
+    })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -166,11 +201,21 @@ export default function Channel() {
   }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    socket?.emit(
-      'GetUserFromChannel',
-      channelUsersList.find((x) => x.id === channelSelected)?.name,
+    const currentChannel = channelUsersList.find(
+      (x) => x.id === channelSelected,
     );
-    getListMessage();
+    if (currentChannel?.type === 'channel') {
+      socket?.emit(
+        'GetUserFromChannel',
+        channelUsersList.find((x) => x.id === channelSelected)?.channelBase
+          .name,
+      );
+      getListMessage();
+    } else if (currentChannel?.type === 'mp') {
+      setMessageList([]);
+      setUsersInChannel([currentChannel.channelBase.name]);
+      getUsersInfoChat([currentChannel.channelBase.name]);
+    }
   }, [channelSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function needShowInfo(playerID: number): boolean {
@@ -192,6 +237,7 @@ export default function Channel() {
             usersInChannel={usersInfos}
             messageList={messageList}
             setMessageList={setMessageList}
+            addMPMessage={addMPMessage}
           />
           <div
             className="playerList"

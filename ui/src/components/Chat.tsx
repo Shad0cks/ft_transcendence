@@ -14,14 +14,14 @@ import {
   Sidebar,
   ConversationHeader,
   EllipsisButton,
-  TypingIndicator,
   AvatarGroup,
 } from '@chatscope/chat-ui-kit-react';
-import { ChannelDTO } from '../models/channel';
 import { Socket } from 'socket.io-client';
 import { GetUserIt } from '../models/getUser';
 import { MessageGetList } from '../models/messageGetList';
 import { MessageSend } from '../models/messageSend';
+import { ChannelType } from '../models/channelType';
+import { PrivateMessageDTO } from '../models/privateMessageDTO';
 
 export default function Chat({
   SelfUser,
@@ -32,17 +32,19 @@ export default function Chat({
   usersInChannel,
   messageList,
   setMessageList,
+  addMPMessage,
 }: {
   SelfUser: GetUserIt;
-  channelList: ChannelDTO[];
+  channelList: ChannelType[];
   selectChannel: (channelID: number) => void;
   channelSelected: number | undefined;
   socket: Socket | undefined;
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
+  addMPMessage: (author: string, message: string, date: string) => void;
 }) {
-  const [currentChannel, setCurrentChannel] = useState<ChannelDTO>();
+  const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
@@ -52,11 +54,20 @@ export default function Chat({
   }
 
   function sendMessage(e: string) {
-    socket?.emit('addMessage', {
-      message: e,
-      channelName: currentChannel?.name,
-      senderNickname: SelfUser.nickname,
-    });
+    if (currentChannel?.type === 'channel')
+      socket?.emit('addMessage', {
+        message: e,
+        channelName: currentChannel?.channelBase.name,
+        senderNickname: SelfUser.nickname,
+      });
+    else {
+      console.log('send');
+      socket?.emit('PrivateMessageDTO', {
+        message: e,
+        receiverNickname: currentChannel?.channelBase.name,
+        senderNickname: SelfUser.nickname,
+      });
+    }
   }
 
   function getTime(time: string) {
@@ -75,8 +86,12 @@ export default function Chat({
           { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
         ]);
       });
-    });
 
+      socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
+        console.log('receive');
+        addMPMessage(e.senderNickname, e.message, e.sent_at);
+      });
+    });
     return () => {
       socket?.off('connect');
       socket?.off('messageAdded');
@@ -100,9 +115,9 @@ export default function Chat({
               <Conversation
                 onClick={() => selectChannel(elem.id)}
                 key={id}
-                name={elem.name}
+                name={elem.channelBase.name}
                 lastSenderName="Type"
-                info="Channel"
+                info={elem.type === 'channel' ? 'Channel' : 'Private Message'}
                 active={elem.id === channelSelected}
               >
                 {/* <Avatar
@@ -138,35 +153,64 @@ export default function Chat({
             )}
 
             <ConversationHeader.Content
-              userName={currentChannel?.name}
-              info="Channel"
+              userName={currentChannel?.channelBase.name}
+              info={
+                currentChannel?.type === 'channel'
+                  ? 'Channel'
+                  : 'Private Message'
+              }
             />
             <ConversationHeader.Actions>
               <EllipsisButton orientation="vertical" />
             </ConversationHeader.Actions>
           </ConversationHeader>
 
-          <MessageList
-          >
-            {messageList.map((e, id) => (
-              <Message
-                key={id}
-                model={{
-                  message: e.message,
-                  sentTime: getTime(e.sent_at),
-                  sender: e.author,
-                  direction:
-                    e.author === SelfUser.nickname ? 'incoming' : 'outgoing',
-                  position: 'first',
-                }}
-              >
-                <Avatar src={getAvatar(e.author)} name={e.author} />
-                <Message.Header
-                  sender={e.author}
-                  sentTime={getTime(e.sent_at)}
-                />
-              </Message>
-            ))}
+          <MessageList>
+            {currentChannel?.type === 'channel'
+              ? messageList.map((e, id) => (
+                  <Message
+                    key={id}
+                    model={{
+                      message: e.message,
+                      sentTime: getTime(e.sent_at),
+                      sender: e.author,
+                      direction:
+                        e.author === SelfUser.nickname
+                          ? 'incoming'
+                          : 'outgoing',
+                      position: 'first',
+                    }}
+                  >
+                    <Avatar src={getAvatar(e.author)} name={e.author} />
+                    <Message.Header
+                      sender={e.author}
+                      sentTime={getTime(e.sent_at)}
+                    />
+                  </Message>
+                ))
+              : currentChannel?.mpMessage?.map(
+                  (e: MessageGetList, id: number) => (
+                    <Message
+                      key={id}
+                      model={{
+                        message: e.message,
+                        sentTime: getTime(e.sent_at),
+                        sender: currentChannel.channelBase.name,
+                        direction:
+                          e.author === SelfUser.nickname
+                            ? 'incoming'
+                            : 'outgoing',
+                        position: 'first',
+                      }}
+                    >
+                      <Avatar src={getAvatar(e.author)} name={e.author} />
+                      <Message.Header
+                        sender={e.author}
+                        sentTime={getTime(e.sent_at)}
+                      />
+                    </Message>
+                  ),
+                )}
           </MessageList>
           <MessageInput
             placeholder="Type message here"
