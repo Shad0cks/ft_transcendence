@@ -102,13 +102,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('AddAdmin')
-  async onAddAdmin(
-    socket: CustomSocket,
-    admin: ChannelAdminDTO,
-    newadmin: ChannelAdminDTO,
-  ) {
-    if (this.chatService.isAdmin(admin)) this.chatService.addAdmin(newadmin);
+  async onAddAdmin(socket: CustomSocket, newadmin: ChannelAdminDTO) {
+    this.chatService.addAdmin(newadmin);
   }
+
   blockedUsers;
   @SubscribeMessage('AddRestriction')
   async onAddRestriction(
