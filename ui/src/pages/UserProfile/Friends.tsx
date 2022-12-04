@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Header from '../HomePage/Header';
+import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
 import { GetFriends } from '../../services/Friends/getFriends';
 import { Button, InputGroup, Card, ButtonGroup, Form } from 'react-bootstrap';

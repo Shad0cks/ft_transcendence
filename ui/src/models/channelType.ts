@@ -3,7 +3,7 @@ import { MessageGetList } from './messageGetList';
 
 export type ChannelType = {
   channelBase: ChannelDTO;
-  id: number;
+  id: string;
   type: string;
   mpMessage: MessageGetList[];
 };

@@ -36,13 +36,13 @@ export default function Chat({
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
-  selectChannel: (channelID: number) => void;
-  channelSelected: number | undefined;
+  selectChannel: (channelID: string) => void;
+  channelSelected: string | undefined;
   socket: Socket | undefined;
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
-  addMPMessage: (author: string, message: string, date: string) => void;
+  addMPMessage: (e: PrivateMessageDTO) => void;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
@@ -61,8 +61,7 @@ export default function Chat({
         senderNickname: SelfUser.nickname,
       });
     else {
-      console.log('send');
-      socket?.emit('PrivateMessageDTO', {
+      socket?.emit('addMessagePrivate', {
         message: e,
         receiverNickname: currentChannel?.channelBase.name,
         senderNickname: SelfUser.nickname,
@@ -88,8 +87,8 @@ export default function Chat({
       });
 
       socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-        console.log('receive');
-        addMPMessage(e.senderNickname, e.message, e.sent_at);
+        console.log(e);
+        addMPMessage(e);
       });
     });
     return () => {
@@ -113,7 +112,7 @@ export default function Chat({
           <ConversationList>
             {channelList.map((elem, id) => (
               <Conversation
-                onClick={() => selectChannel(elem.id)}
+                onClick={() => selectChannel(elem.channelBase.name + elem.type)}
                 key={id}
                 name={elem.channelBase.name}
                 lastSenderName="Type"
