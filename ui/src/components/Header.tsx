@@ -1,12 +1,12 @@
 import React from 'react';
-import '../../css/Pages/Header.css';
+import '../css/Components/Header.css';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
 import { useNavigate } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
-import { UserLogout } from '../../services/User/userDelog';
+import { UserLogout } from '../services/User/userDelog';
 
 export default function Header({
   username,

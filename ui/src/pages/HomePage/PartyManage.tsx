@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PartyCreate from './partyCreate';
 import ListeParty from './ListeParty';
-import Header from './Header';
+import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
 import socketIOClient, { Socket } from 'socket.io-client';
 import { GetUserIt } from '../../models/getUser';

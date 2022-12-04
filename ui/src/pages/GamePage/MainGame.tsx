@@ -6,7 +6,7 @@ import GameModChoose from './GameModChoose';
 import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
 import socketIOClient, { Socket } from 'socket.io-client';
-import Header from '../HomePage/Header';
+import Header from '../../components/Header';
 import { newPlayer } from '../../models/newPlayer';
 import { useNavigate } from 'react-router-dom';
 import { GetUserInfo } from '../../services/User/getUserInfo';

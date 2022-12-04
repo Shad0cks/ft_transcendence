@@ -6,7 +6,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useNavigate } from 'react-router-dom';
-import Header from '../HomePage/Header';
+import Header from '../../components/Header';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { GetUserIt } from '../../models/getUser';
 import { UserLogout } from '../../services/User/userDelog';
