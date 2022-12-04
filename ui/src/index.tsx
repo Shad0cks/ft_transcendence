@@ -9,6 +9,7 @@ import PartyManage from './pages/HomePage/PartyManage';
 import Channel from './pages/ChannelPage/channel';
 import MainUserProfile from './pages/UserProfile/MainUserProfile';
 import Friends from './pages/UserProfile/Friends';
+import SearchUser from './pages/SearchPage/searchPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -25,6 +26,7 @@ root.render(
       <Route path="/channelManager" element={<PartyManage />} />
       <Route path="/editProfile" element={<MainUserProfile />} />
       <Route path="/friends" element={<Friends />} />
+      <Route path="/search" element={<SearchUser />} />
     </Routes>
   </BrowserRouter>,
 );

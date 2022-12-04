@@ -51,8 +51,8 @@ export default function Header({
                 <NavDropdown.Item onClick={() => navigate('/friends')}>
                   Friends
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate('/friends')}>
-                  Game History
+                <NavDropdown.Item onClick={() => navigate('/search')}>
+                  Search a user
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item
