@@ -285,4 +285,9 @@ export class UserService {
     }
     return blockedNicknames;
   }
+
+  async isIgnored(userNickname: string, otherUserNickname: string) {
+    const blocklist = await this.getBlockedNicknames(userNickname);
+    return blocklist.includes(otherUserNickname);
+  }
 }

@@ -550,6 +550,13 @@ export class ChatService {
     for (let i = 0; i < rawMessages.length; ++i) {
       const interlocutor = this.findInterlocutor(rawMessages[i], user.nickname);
       const isNewConversation = result[interlocutor] === undefined;
+      const isIgnored = await this.userService.isIgnored(
+        user.nickname,
+        interlocutor,
+      );
+      if (isIgnored) {
+        continue;
+      }
       if (isNewConversation) {
         result[interlocutor] = {};
         result[interlocutor].messages = [];
@@ -561,35 +568,6 @@ export class ChatService {
       });
     }
     return result;
-  }
-
-  async getDirectMessagesFromUser(user: User, senderNickname: string) {
-    const rawMessages = await this.directMessageRepository.find({
-      relations: ['sender'],
-      where: {
-        receiver: user,
-        sender: {
-          nickname: senderNickname,
-        },
-      },
-      select: {
-        sender: {
-          nickname: true,
-        },
-      },
-      order: {
-        sent_at: 'ASC',
-      },
-    });
-    const messages = [];
-    for (let i = 0; i < rawMessages.length; ++i) {
-      messages.push({
-        sent_at: rawMessages[i].sent_at,
-        message: rawMessages[i].message,
-        author: rawMessages[i].sender.nickname,
-      });
-    }
-    return messages;
   }
 
   async getChannelAdminsNicknames(user: User, channelName: string) {

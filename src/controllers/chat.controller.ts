@@ -30,18 +30,6 @@ export class ChatController {
     return await this.chatService.getDirectMessages(user);
   }
 
-  @Get('direct_messages/:senderNickname')
-  @UseGuards(JwtAuthGuard)
-  async getDirectMessagesFromUserAction(
-    @ReqUser() user: User,
-    @Param('senderNickname') senderNickname: string,
-  ) {
-    return await this.chatService.getDirectMessagesFromUser(
-      user,
-      senderNickname,
-    );
-  }
-
   @Get('channels/:channelName/admins')
   @UseGuards(JwtAuthGuard)
   async getChannelAdminsNicknamesAction(
