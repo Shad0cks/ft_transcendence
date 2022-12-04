@@ -32,7 +32,6 @@ export default function Chat({
   usersInChannel,
   messageList,
   setMessageList,
-  addMPMessage,
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
@@ -42,7 +41,6 @@ export default function Chat({
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
-  addMPMessage: (e: PrivateMessageDTO) => void;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
@@ -61,6 +59,7 @@ export default function Chat({
         senderNickname: SelfUser.nickname,
       });
     else {
+
       socket?.emit('addMessagePrivate', {
         message: e,
         receiverNickname: currentChannel?.channelBase.name,
@@ -76,7 +75,7 @@ export default function Chat({
       timeZone: 'Europe/Bucharest',
     });
   }
-
+  
   useEffect(() => {
     socket?.on('connect', () => {
       socket?.on('messageAdded', function (e: MessageSend) {
@@ -85,10 +84,11 @@ export default function Chat({
           { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
         ]);
       });
-
       socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-        console.log(e);
-        addMPMessage(e);
+        setMessageList((prev) => [
+          ...prev,
+          { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
+        ]);
       });
     });
     return () => {
@@ -165,8 +165,8 @@ export default function Chat({
           </ConversationHeader>
 
           <MessageList>
-            {currentChannel?.type === 'channel'
-              ? messageList.map((e, id) => (
+            {
+              messageList.map((e, id) => (
                   <Message
                     key={id}
                     model={{
@@ -187,29 +187,7 @@ export default function Chat({
                     />
                   </Message>
                 ))
-              : currentChannel?.mpMessage?.map(
-                  (e: MessageGetList, id: number) => (
-                    <Message
-                      key={id}
-                      model={{
-                        message: e.message,
-                        sentTime: getTime(e.sent_at),
-                        sender: currentChannel.channelBase.name,
-                        direction:
-                          e.author === SelfUser.nickname
-                            ? 'incoming'
-                            : 'outgoing',
-                        position: 'first',
-                      }}
-                    >
-                      <Avatar src={getAvatar(e.author)} name={e.author} />
-                      <Message.Header
-                        sender={e.author}
-                        sentTime={getTime(e.sent_at)}
-                      />
-                    </Message>
-                  ),
-                )}
+             }
           </MessageList>
           <MessageInput
             placeholder="Type message here"

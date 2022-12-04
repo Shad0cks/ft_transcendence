@@ -18,7 +18,7 @@ import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
 import { GetDM } from '../../services/Channel/getDM';
 import { ChannelType } from '../../models/channelType';
-import { PrivateMessageDTO } from '../../models/privateMessageDTO';
+import { GetMPsList } from '../../services/Channel/getMPsList';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -72,6 +72,67 @@ export default function Channel() {
     });
   }
 
+  function getListMpslocal() {
+    const currChannel = channelUsersList.find((x) => x.id === channelSelected);
+    if (!currChannel) return;
+
+    GetMPsList(currChannel.channelBase.name).then(async (e) => {
+      if (e.status === 401) {
+        await UserLogout();
+        navigate('/');
+      } else if (e.ok) e.text().then((i) => setMessageList(JSON.parse(i)));
+    });
+  }
+
+  async function getAllChannels()
+  {
+    let tmpSelected = false;
+    await getDMs().then(async (map) => {
+      Object.keys(map).forEach((key: string, id: number) => {
+        if (id === 0)
+        {
+            tmpSelected = true
+            setChannelSelected(key + 'mp');
+        }
+        setChannelUsersList((prev) => [
+          ...prev,
+          {
+            id: key + 'mp',
+            channelBase: {
+              name: key,
+              id: id,
+              privacy: '(null)',
+              password: '(null)',
+            },
+            type: 'mp',
+            mpMessage: map[key].messages,
+          },
+        ]);
+      });
+    });
+
+    await getListInChannel().then((e) => {
+
+      e.map((elem: ChannelDTO, id: number) =>
+      {
+        if (id === 0 && !tmpSelected)
+          setChannelSelected(elem.name + 'channel');
+          return(
+        setChannelUsersList((prev) => [
+          ...prev,
+          {
+            id: elem.name + 'channel',
+            channelBase: elem,
+            type: 'channel',
+            mpMessage: [],
+          },
+        ]
+        ))
+    }
+    );
+    });
+  }
+
   function clickPlayer(e: React.MouseEvent, playerClickID: number) {
     e.preventDefault();
     if (playerClickID === playerClicked) setPlayerClicked(-1);
@@ -91,16 +152,7 @@ export default function Channel() {
     const txt = await requete.text();
     return JSON.parse(txt);
   }
-  console.log(channelUsersList);
-
-  function addMPMessage(e: PrivateMessageDTO) {
-    // const newUsers = [...channelUsersList];
-    // newUsers
-    //   .find((x) => x.id === channelSelected)
-    //   ?.mpMessage.push({ author: author, sent_at: date, message: message });
-    // setChannelUsersList(newUsers);
-  }
-
+  
   async function getDMs() {
     const requete = await GetDM();
     if (requete.status === 401) {
@@ -140,40 +192,7 @@ export default function Channel() {
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
     (async () => {
-      await getDMs().then(async (map) => {
-        Object.keys(map).forEach((key: string, id: number) => {
-          console.log(map[key].messages);
-          setChannelUsersList((prev) => [
-            ...prev,
-            {
-              id: key + 'mp',
-              channelBase: {
-                name: key,
-                id: id,
-                privacy: '(null)',
-                password: '(null)',
-              },
-              type: 'mp',
-              mpMessage: map[key].messages,
-            },
-          ]);
-        });
-      });
-
-      await getListInChannel().then((e) => {
-        e.map((elem: ChannelDTO, id: number) =>
-          setChannelUsersList((prev) => [
-            ...prev,
-            {
-              id: elem.name + 'channel',
-              channelBase: elem,
-              type: 'channel',
-              mpMessage: [],
-            },
-          ]),
-        );
-        if (e[0]) setChannelSelected(e[0].id);
-      });
+      await getAllChannels();
     })();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -197,6 +216,7 @@ export default function Channel() {
 
     return () => {
       socket?.off('connect');
+      socket?.off('messageprivateAdded');
       socket?.off('GetUserFromChannel');
     };
   }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -206,6 +226,7 @@ export default function Channel() {
       (x) => x.id === channelSelected,
     );
     if (currentChannel?.type === 'channel') {
+
       socket?.emit(
         'GetUserFromChannel',
         channelUsersList.find((x) => x.id === channelSelected)?.channelBase
@@ -213,7 +234,7 @@ export default function Channel() {
       );
       getListMessage();
     } else if (currentChannel?.type === 'mp') {
-      setMessageList([]);
+      getListMpslocal();
       setUsersInChannel([currentChannel.channelBase.name]);
       getUsersInfoChat([currentChannel.channelBase.name]);
     }
@@ -238,7 +259,6 @@ export default function Channel() {
             usersInChannel={usersInfos}
             messageList={messageList}
             setMessageList={setMessageList}
-            addMPMessage={addMPMessage}
           />
           <div
             className="playerList"
