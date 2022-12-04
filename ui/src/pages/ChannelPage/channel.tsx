@@ -19,16 +19,8 @@ import { GetMessages } from '../../services/Channel/getMessages';
 import { GetDM } from '../../services/Channel/getDM';
 import { ChannelType } from '../../models/channelType';
 import { GetMPsList } from '../../services/Channel/getMPsList';
-
-const popover = (elem: number) => (
-  <Popover id="popover-basic">
-    <Popover.Header as="h3">Player Name</Popover.Header>
-    <Popover.Body>
-      <Button variant="success">Game</Button>{' '}
-      <Button variant="primary">DM</Button>
-    </Popover.Body>
-  </Popover>
-);
+import { GetAdmins } from '../../services/Channel/getAdmis';
+import { AiTwotoneCrown } from 'react-icons/ai';
 
 export default function Channel() {
   const navigate = useNavigate();
@@ -41,6 +33,7 @@ export default function Channel() {
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
+  const [admins, setAdmins] = useState<{ nickname: string }[]>();
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -59,6 +52,38 @@ export default function Channel() {
   //     setUsersInfos([...usersInfos, userInfo])
   //   });
   // }
+
+  const popover = (player: string) => {
+    const currChannel = channelUsersList.find((x) => x.id === channelSelected);
+    if (!currChannel) return <></>;
+    const isAdminUser = isUserAmin(player);
+    return (
+      <Popover id="popover-basic">
+        <Popover.Header as="h3">Player Name</Popover.Header>
+        <Popover.Body>
+          <Button variant="success">Game</Button>{' '}
+          <Button variant="primary" onClick={() => AddChannelDM(player)}>
+            DM
+          </Button>{' '}
+          <Button variant="danger">ban</Button>{' '}
+          <Button variant="primary">mute</Button>{' '}
+          {!isAdminUser ? (
+            <Button
+              variant="primary"
+              onClick={() => {
+                socket?.emit('AddAdmin', {
+                  userNickname: player,
+                  channelName: currChannel.channelBase.name,
+                });
+              }}
+            >
+              Set Admin
+            </Button>
+          ) : null}
+        </Popover.Body>
+      </Popover>
+    );
+  };
 
   function getListMessage() {
     const currChannel = channelUsersList.find((x) => x.id === channelSelected);
@@ -84,8 +109,32 @@ export default function Channel() {
     });
   }
 
+  function AddChannelDM(target: string) {
+    const targetChannel = channelUsersList.find(
+      (x) => x.channelBase.name === target && x.type === 'mp',
+    );
+    if (!targetChannel) {
+      setChannelUsersList((prev) => [
+        ...prev,
+        {
+          id: target + 'mp',
+          channelBase: {
+            name: target,
+            id: prev.length + 1,
+            privacy: '(null)',
+            password: '(null)',
+          },
+          type: 'mp',
+          mpMessage: [],
+        },
+      ]);
+    }
+    setChannelSelected(target + 'mp');
+  }
+
   async function getAllChannels() {
     let tmpSelected = false;
+    setChannelUsersList([]);
     await getDMs().then(async (map) => {
       Object.keys(map).forEach((key: string, id: number) => {
         if (id === 0) {
@@ -164,8 +213,22 @@ export default function Channel() {
         }
         return undefined;
       });
-      setUsersInfos([...usersInfos, userInfo]);
+      setUsersInfos((prev) => [...prev, userInfo]);
     });
+  }
+
+  function getAdminListChannel(channel: string) {
+    GetAdmins(channel).then(async (e) => {
+      if (e.status === 401) {
+        await UserLogout();
+        navigate('/');
+      } else if (e.ok) e.text().then((i) => setAdmins(JSON.parse(i)));
+    });
+  }
+
+  function isUserAmin(name: string) {
+    if (admins && admins.find((x) => x.nickname === name)) return true;
+    else return false;
   }
 
   useEffect(() => {
@@ -189,29 +252,35 @@ export default function Channel() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    socket?.on('connect', () => {
-      socket?.on('GetUserFromChannel', (users: string[]) => {
-        const listWithoutSelf = users.filter((user) => user !== username);
-        setUsersInChannel(listWithoutSelf);
-        getUsersInfoChat(listWithoutSelf);
-      });
+    socket?.on('GetUserFromChannel', (users: string[]) => {
+      const listWithoutSelf = users.filter((user) => user !== username);
+      setUsersInChannel(listWithoutSelf);
+      getUsersInfoChat(listWithoutSelf);
+    });
 
-      socket?.on('joinChannel', function (e: ChannelJoin) {
-        if (e.userNickname !== username)
-          setUsersInChannel((usersInChannel) => [
-            ...usersInChannel,
-            e.userNickname,
-          ]);
-        setUsersInChannel(usersInChannel.filter((user) => user !== username));
-      });
+    socket?.on('joinChannel', function (e: ChannelJoin) {
+      if (e.userNickname !== username)
+        setUsersInChannel((usersInChannel) => [
+          ...usersInChannel,
+          e.userNickname,
+        ]);
+      setUsersInChannel(usersInChannel.filter((user) => user !== username));
+    });
+
+    socket?.on('NewAdmin', function (e) {
+      const currChannel = channelUsersList.find(
+        (x) => x.id === channelSelected,
+      );
+
+      if (currChannel?.channelBase.name === e.channelName)
+        getAdminListChannel(e.channelName);
     });
 
     return () => {
-      socket?.off('connect');
-      socket?.off('messageprivateAdded');
       socket?.off('GetUserFromChannel');
+      socket?.off('NewAdmin');
     };
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [socket, channelUsersList]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const currentChannel = channelUsersList.find(
@@ -224,7 +293,9 @@ export default function Channel() {
           .name,
       );
       getListMessage();
+      getAdminListChannel(currentChannel.channelBase.name);
     } else if (currentChannel?.type === 'mp') {
+      setAdmins(undefined);
       getListMpslocal();
       setUsersInChannel([currentChannel.channelBase.name]);
       getUsersInfoChat([currentChannel.channelBase.name]);
@@ -250,6 +321,7 @@ export default function Channel() {
             usersInChannel={usersInfos}
             messageList={messageList}
             setMessageList={setMessageList}
+            refreshChannel={getAllChannels}
           />
           <div
             className="playerList"
@@ -260,6 +332,7 @@ export default function Channel() {
             }
           >
             <ListGroup variant="flush">
+              <ListGroup.Item>User in Channel :</ListGroup.Item>
               {usersInChannel.length >= 1
                 ? usersInChannel.map((elem, id) => (
                     <ListGroup.Item
@@ -275,7 +348,7 @@ export default function Channel() {
                         show={needShowInfo(id)}
                         trigger="click"
                         placement="bottom"
-                        overlay={popover(id)}
+                        overlay={popover(elem)}
                       >
                         <span
                           style={
@@ -286,7 +359,7 @@ export default function Channel() {
                           onMouseOver={(e) => e.preventDefault()}
                           className="playerListItem"
                         >
-                          {elem}
+                          {elem} {isUserAmin(elem) ? <AiTwotoneCrown /> : null}
                         </span>
                       </OverlayTrigger>
                     </ListGroup.Item>

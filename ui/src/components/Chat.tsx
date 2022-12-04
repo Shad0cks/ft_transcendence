@@ -32,6 +32,7 @@ export default function Chat({
   usersInChannel,
   messageList,
   setMessageList,
+  refreshChannel,
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
@@ -41,6 +42,7 @@ export default function Chat({
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
+  refreshChannel: () => Promise<void>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
@@ -66,7 +68,6 @@ export default function Chat({
       });
     }
   }
-
   function getTime(time: string) {
     return new Date(time).toLocaleTimeString('fr-FR', {
       timeStyle: 'short',
@@ -76,25 +77,28 @@ export default function Chat({
   }
 
   useEffect(() => {
-    socket?.on('connect', () => {
-      socket?.on('messageAdded', function (e: MessageSend) {
-        setMessageList((prev) => [
-          ...prev,
-          { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
-        ]);
-      });
-      socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-        setMessageList((prev) => [
-          ...prev,
-          { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
-        ]);
-      });
+    socket?.on('messageAdded', function (e: MessageSend) {
+      if (e.channelName !== currentChannel?.channelBase.name) return;
+      setMessageList((prev) => [
+        ...prev,
+        { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
+      ]);
+    });
+    socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
+      // if (!channelList.find(x => (x.channelBase.name === e.senderNickname && x.type === "mp")))
+      //   refreshChannel()
+      // if (e.senderNickname !== currentChannel?.id)
+      //   return;
+      setMessageList((prev) => [
+        ...prev,
+        { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
+      ]);
     });
     return () => {
-      socket?.off('connect');
       socket?.off('messageAdded');
+      socket?.off('messageprivateAdded');
     };
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [socket, currentChannel, channelList]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCurrentChannel(
@@ -145,7 +149,7 @@ export default function Chat({
             ) : (
               <AvatarGroup size="sm" max={4}>
                 {usersInChannel.map((e) => (
-                  <Avatar src={e.avatar} name="group" />
+                  <Avatar src={e.avatar} name={e.nickname} />
                 ))}
               </AvatarGroup>
             )}
