@@ -49,9 +49,7 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
     });
 
     if (res) {
-      window.location.reload();
       settwofa();
-      closeModal();
     }
   };
 

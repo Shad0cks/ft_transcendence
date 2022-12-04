@@ -52,10 +52,7 @@ export class UserController {
 
   @Put('2fa')
   @UseGuards(JwtAuthGuard)
-  async edit2faAction(
-    @Body() userDTO: UserDTO,
-    @ReqUser() user: User,
-  ): Promise<User> {
+  async edit2faAction(@Body() userDTO: UserDTO, @ReqUser() user: User) {
     return await this.userService.edit2fa(
       user,
       userDTO.twofa_enabled,

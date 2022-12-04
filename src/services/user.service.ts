@@ -173,7 +173,7 @@ export class UserService {
     return result.raw[0];
   }
 
-  async edit2fa(user: User, enabled: boolean, secret: string): Promise<User> {
+  async edit2fa(user: User, enabled: boolean, secret: string) {
     if (!enabled && enabled !== false) {
       throw new BadRequestException('enabled is missing');
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../css/Pages/MainUserProfile.css';
 import { useNavigate } from 'react-router-dom';
-import Header from '../HomePage/Header';
+import Header from '../../components/Header';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Image from 'react-bootstrap/Image';
@@ -116,8 +116,8 @@ export default function MainUserProfile() {
   }
 
   function setotp() {
-    if (username && user) {
-      UserSettwofa(true, secret.ascii, user.nickname).then(async (res) => {
+    if (username && user && secret.ascii) {
+      UserSettwofa(true, secret.ascii).then(async (res) => {
         if (res.status === 401) {
           await UserLogout();
           window.location.reload();
@@ -128,7 +128,7 @@ export default function MainUserProfile() {
 
   function unsetOTP() {
     if (username && user) {
-      UserSettwofa(false, 'none', user.nickname).then(async (res) => {
+      UserSettwofa(false, 'none').then(async (res) => {
         if (res.status === 401) {
           await UserLogout();
           window.location.reload();

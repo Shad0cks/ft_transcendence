@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../css/Pages/NotFound.css';
-import Header from './HomePage/Header';
+import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 import { GetUserIt } from '../models/getUser';
 import { GetUserInfo } from '../services/User/getUserInfo';
