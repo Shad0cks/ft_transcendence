@@ -150,7 +150,6 @@ export class UserService {
         .execute();
       return result.raw[0];
     } catch (error) {
-      console.log(error);
       if (error.code === '23505') {
         // duplicate nickname
         throw new ConflictException('Nickname already exists');
@@ -284,5 +283,10 @@ export class UserService {
       blockedNicknames.push(blockedUsers[i].nickname);
     }
     return blockedNicknames;
+  }
+
+  async isIgnored(userNickname: string, otherUserNickname: string) {
+    const blocklist = await this.getBlockedNicknames(userNickname);
+    return blocklist.includes(otherUserNickname);
   }
 }

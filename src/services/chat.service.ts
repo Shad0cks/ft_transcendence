@@ -505,14 +505,40 @@ export class ChatService {
     }
   }
 
+  findInterlocutor(message: DirectMessage, nickname: string): string {
+    const senderNickname = message.sender.nickname;
+    const receiverNickname = message.receiver.nickname;
+    if (senderNickname === receiverNickname) {
+      return senderNickname;
+    }
+    if (senderNickname !== nickname) {
+      return senderNickname;
+    }
+    return receiverNickname;
+  }
+
   async getDirectMessages(user: User) {
     const rawMessages = await this.directMessageRepository.find({
-      relations: ['sender'],
-      where: {
-        receiver: user,
-      },
+      relations: ['sender', 'receiver'],
+      where: [
+        {
+          receiver: {
+            nickname: user.nickname,
+          },
+        },
+        {
+          sender: {
+            nickname: user.nickname,
+          },
+        },
+      ],
       select: {
+        message: true,
+        sent_at: true,
         sender: {
+          nickname: true,
+        },
+        receiver: {
           nickname: true,
         },
       },
@@ -522,47 +548,26 @@ export class ChatService {
     });
     const result = new Map();
     for (let i = 0; i < rawMessages.length; ++i) {
-      if (result[rawMessages[i].sender.nickname] === undefined) {
-        result[rawMessages[i].sender.nickname] = {};
-        result[rawMessages[i].sender.nickname].author =
-          rawMessages[i].sender.nickname;
-        result[rawMessages[i].sender.nickname].messages = [];
+      const interlocutor = this.findInterlocutor(rawMessages[i], user.nickname);
+      const isNewConversation = result[interlocutor] === undefined;
+      const isIgnored = await this.userService.isIgnored(
+        user.nickname,
+        interlocutor,
+      );
+      if (isIgnored) {
+        continue;
       }
-      result[rawMessages[i].sender.nickname].messages.push({
+      if (isNewConversation) {
+        result[interlocutor] = {};
+        result[interlocutor].messages = [];
+      }
+      result[interlocutor].messages.push({
+        author: rawMessages[i].sender.nickname,
         sent_at: rawMessages[i].sent_at,
         message: rawMessages[i].message,
       });
     }
     return result;
-  }
-
-  async getDirectMessagesFromUser(user: User, senderNickname: string) {
-    const rawMessages = await this.directMessageRepository.find({
-      relations: ['sender'],
-      where: {
-        receiver: user,
-        sender: {
-          nickname: senderNickname,
-        },
-      },
-      select: {
-        sender: {
-          nickname: true,
-        },
-      },
-      order: {
-        sent_at: 'ASC',
-      },
-    });
-    const messages = [];
-    for (let i = 0; i < rawMessages.length; ++i) {
-      messages.push({
-        sent_at: rawMessages[i].sent_at,
-        message: rawMessages[i].message,
-        author: rawMessages[i].sender.nickname,
-      });
-    }
-    return messages;
   }
 
   async getChannelAdminsNicknames(user: User, channelName: string) {

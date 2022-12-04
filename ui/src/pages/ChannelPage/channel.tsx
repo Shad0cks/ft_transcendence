@@ -158,7 +158,7 @@ export default function Channel() {
         });
       });
 
-      const tmpLen = channelUsersList.length + 1;
+      const tmpLen = channelUsersList.length + 10;
       await getListInChannel().then((e) => {
         e.map((elem: ChannelDTO, id: number) =>
           setChannelUsersList((prev) => [
