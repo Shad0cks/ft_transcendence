@@ -55,7 +55,7 @@ export class UserController {
   async edit2faAction(
     @Body() userDTO: UserDTO,
     @ReqUser() user: User,
-  ): Promise<User> {
+  ){
     return await this.userService.edit2fa(
       user,
       userDTO.twofa_enabled,
