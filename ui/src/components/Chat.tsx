@@ -59,7 +59,6 @@ export default function Chat({
         senderNickname: SelfUser.nickname,
       });
     else {
-
       socket?.emit('addMessagePrivate', {
         message: e,
         receiverNickname: currentChannel?.channelBase.name,
@@ -75,7 +74,7 @@ export default function Chat({
       timeZone: 'Europe/Bucharest',
     });
   }
-  
+
   useEffect(() => {
     socket?.on('connect', () => {
       socket?.on('messageAdded', function (e: MessageSend) {
@@ -165,29 +164,25 @@ export default function Chat({
           </ConversationHeader>
 
           <MessageList>
-            {
-              messageList.map((e, id) => (
-                  <Message
-                    key={id}
-                    model={{
-                      message: e.message,
-                      sentTime: getTime(e.sent_at),
-                      sender: e.author,
-                      direction:
-                        e.author === SelfUser.nickname
-                          ? 'incoming'
-                          : 'outgoing',
-                      position: 'first',
-                    }}
-                  >
-                    <Avatar src={getAvatar(e.author)} name={e.author} />
-                    <Message.Header
-                      sender={e.author}
-                      sentTime={getTime(e.sent_at)}
-                    />
-                  </Message>
-                ))
-             }
+            {messageList.map((e, id) => (
+              <Message
+                key={id}
+                model={{
+                  message: e.message,
+                  sentTime: getTime(e.sent_at),
+                  sender: e.author,
+                  direction:
+                    e.author === SelfUser.nickname ? 'incoming' : 'outgoing',
+                  position: 'first',
+                }}
+              >
+                <Avatar src={getAvatar(e.author)} name={e.author} />
+                <Message.Header
+                  sender={e.author}
+                  sentTime={getTime(e.sent_at)}
+                />
+              </Message>
+            ))}
           </MessageList>
           <MessageInput
             placeholder="Type message here"

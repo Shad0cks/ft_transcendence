@@ -84,15 +84,13 @@ export default function Channel() {
     });
   }
 
-  async function getAllChannels()
-  {
+  async function getAllChannels() {
     let tmpSelected = false;
     await getDMs().then(async (map) => {
       Object.keys(map).forEach((key: string, id: number) => {
-        if (id === 0)
-        {
-            tmpSelected = true
-            setChannelSelected(key + 'mp');
+        if (id === 0) {
+          tmpSelected = true;
+          setChannelSelected(key + 'mp');
         }
         setChannelUsersList((prev) => [
           ...prev,
@@ -112,13 +110,9 @@ export default function Channel() {
     });
 
     await getListInChannel().then((e) => {
-
-      e.map((elem: ChannelDTO, id: number) =>
-      {
-        if (id === 0 && !tmpSelected)
-          setChannelSelected(elem.name + 'channel');
-          return(
-        setChannelUsersList((prev) => [
+      e.map((elem: ChannelDTO, id: number) => {
+        if (id === 0 && !tmpSelected) setChannelSelected(elem.name + 'channel');
+        return setChannelUsersList((prev) => [
           ...prev,
           {
             id: elem.name + 'channel',
@@ -126,10 +120,8 @@ export default function Channel() {
             type: 'channel',
             mpMessage: [],
           },
-        ]
-        ))
-    }
-    );
+        ]);
+      });
     });
   }
 
@@ -152,7 +144,7 @@ export default function Channel() {
     const txt = await requete.text();
     return JSON.parse(txt);
   }
-  
+
   async function getDMs() {
     const requete = await GetDM();
     if (requete.status === 401) {
@@ -226,7 +218,6 @@ export default function Channel() {
       (x) => x.id === channelSelected,
     );
     if (currentChannel?.type === 'channel') {
-
       socket?.emit(
         'GetUserFromChannel',
         channelUsersList.find((x) => x.id === channelSelected)?.channelBase
