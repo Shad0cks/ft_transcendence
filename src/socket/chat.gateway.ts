@@ -73,19 +73,23 @@ export class ChatGateway {
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
   async onAddMessagePrivate(socket: CustomSocket, message: DirectMessageDTO) {
-    const blockedUsers = await this.userService.getBlockedNicknames(
-      message.receiverNickname,
-    );
-    if (!(await blockedUsers).includes(message.senderNickname)) {
-      const messageEntity = await this.chatService.registerDirectMessage(
-        message,
+    try {
+      const blockedUsers = await this.userService.getBlockedNicknames(
+        message.receiverNickname,
       );
-      message.sent_at = messageEntity.sent_at;
-      this.server
-        .to(Clients.getSocketId(message.receiverNickname))
-        .emit('messageprivateAdded', message);
-    } else {
-      this.server.to(socket.id).emit('messageprivateAdded', message);
+      if (!(await blockedUsers).includes(message.senderNickname)) {
+        const messageEntity = await this.chatService.registerDirectMessage(
+          message,
+        );
+        message.sent_at = messageEntity.sent_at;
+        this.server
+          .to(Clients.getSocketId(message.receiverNickname))
+          .emit('messageprivateAdded', message);
+      } else {
+        this.server.to(socket.id).emit('messageprivateAdded', message);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
