@@ -42,7 +42,7 @@ export default function Chat({
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
-  addMPMessage: (author: string, message: string, date: string) => void;
+  addMPMessage: (e:PrivateMessageDTO) => void;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
@@ -61,8 +61,7 @@ export default function Chat({
         senderNickname: SelfUser.nickname,
       });
     else {
-      console.log('send');
-      socket?.emit('PrivateMessageDTO', {
+      socket?.emit('addMessagePrivate', {
         message: e,
         receiverNickname: currentChannel?.channelBase.name,
         senderNickname: SelfUser.nickname,
@@ -88,8 +87,9 @@ export default function Chat({
       });
 
       socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-        console.log('receive');
-        addMPMessage(e.senderNickname, e.message, e.sent_at);
+        console.log(e);
+        addMPMessage(e);
+
       });
     });
     return () => {

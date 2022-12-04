@@ -18,6 +18,7 @@ import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
 import { GetDM } from '../../services/Channel/getDM';
 import { ChannelType } from '../../models/channelType';
+import { PrivateMessageDTO } from '../../models/privateMessageDTO';
 
 const popover = (elem: number) => (
   <Popover id="popover-basic">
@@ -90,13 +91,15 @@ export default function Channel() {
     const txt = await requete.text();
     return JSON.parse(txt);
   }
+  console.log(channelUsersList)
 
-  function addMPMessage(author: string, message: string, date: string) {
-    const newUsers = [...channelUsersList];
-    newUsers
-      .find((x) => x.id === channelSelected)
-      ?.mpMessage.push({ author: author, sent_at: date, message: message });
-    setChannelUsersList(newUsers);
+  function addMPMessage(e: PrivateMessageDTO) {
+
+    // const newUsers = [...channelUsersList];
+    // newUsers
+    //   .find((x) => x.id === channelSelected)
+    //   ?.mpMessage.push({ author: author, sent_at: date, message: message });
+    // setChannelUsersList(newUsers);
   }
 
   async function getDMs() {
@@ -178,6 +181,7 @@ export default function Channel() {
 
   useEffect(() => {
     socket?.on('connect', () => {
+
       socket?.on('GetUserFromChannel', (users: string[]) => {
         const listWithoutSelf = users.filter((user) => user !== username);
         setUsersInChannel(listWithoutSelf);
