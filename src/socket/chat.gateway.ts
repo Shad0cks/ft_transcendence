@@ -74,17 +74,15 @@ export class ChatGateway {
     const blockedUsers = await this.userService.getBlockedNicknames(
       message.receiverNickname,
     );
-    if (!blockedUsers.includes(message.senderNickname)) {
+    if (!(await blockedUsers).includes(message.senderNickname)) {
       const messageEntity = await this.chatService.registerDirectMessage(
         message,
       );
       message.sent_at = messageEntity.sent_at;
       this.server
         .to(Clients.getSocketId(message.receiverNickname))
-        .to(socket.id)
         .emit('messageprivateAdded', message);
     } else {
-      message.message = 'This user ignores your messages';
       this.server.to(socket.id).emit('messageprivateAdded', message);
     }
   }
@@ -109,7 +107,7 @@ export class ChatGateway {
   ) {
     if (this.chatService.isAdmin(admin)) this.chatService.addAdmin(newadmin);
   }
-
+  blockedUsers;
   @SubscribeMessage('AddRestriction')
   async onAddRestriction(
     socket: CustomSocket,
@@ -192,7 +190,7 @@ export class ChatGateway {
       this.chatService.getParticipantsNickname(channel);
     const Res = await Userfromchannel;
     this.server.to(socket.id).emit('GetUserFromChannel', Res);
-    console.log(Res);
+    // console.log(Res);
   }
 
   @SubscribeMessage('leaveChannel')
