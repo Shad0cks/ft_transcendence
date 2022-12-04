@@ -65,9 +65,37 @@ export default function Channel() {
           <Button variant="primary" onClick={() => AddChannelDM(player)}>
             DM
           </Button>{' '}
-          <Button variant="danger">ban</Button>{' '}
-          <Button variant="primary">mute</Button>{' '}
-          {!isAdminUser ? (
+          <Button
+            variant="primary"
+            onClick={() => {
+              socket?.emit('AddRestriction', {
+                userNickname: player,
+                adminNickname: user?.nickname,
+                channelName: currChannel.channelBase.name,
+                restriction: 'mute',
+                end: '2023-12-04 18:07:18.363',
+              });
+            }}
+          >
+            mute
+          </Button>{' '}
+          {currChannel.type === 'channel' ? (
+            <Button
+              variant="danger"
+              onClick={() => {
+                socket?.emit('AddRestriction', {
+                  userNickname: player,
+                  adminNickname: user?.nickname,
+                  channelName: currChannel.channelBase.name,
+                  restriction: 'ban',
+                  end: '2023-12-04 18:07:18.363',
+                });
+              }}
+            >
+              ban
+            </Button>
+          ) : null}{' '}
+          {!isAdminUser && currChannel.type === 'channel' ? (
             <Button
               variant="primary"
               onClick={() => {

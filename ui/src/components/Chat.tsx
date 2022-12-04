@@ -85,20 +85,21 @@ export default function Chat({
       ]);
     });
     socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-      // if (!channelList.find(x => (x.channelBase.name === e.senderNickname && x.type === "mp")))
-      //   refreshChannel()
-      // if (e.senderNickname !== currentChannel?.id)
-      //   return;
-      setMessageList((prev) => [
-        ...prev,
-        { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
-      ]);
+      if (
+        e.senderNickname === SelfUser.nickname ||
+        currentChannel?.id === e.senderNickname + 'mp'
+      ) {
+        setMessageList((prev) => [
+          ...prev,
+          { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
+        ]);
+      } else if (!channelList.find((x) => x.channelBase.name === e.senderNickname && x.type === 'mp')) refreshChannel();
     });
     return () => {
       socket?.off('messageAdded');
       socket?.off('messageprivateAdded');
     };
-  }, [socket, currentChannel, channelList]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [socket, currentChannel, channelList, SelfUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCurrentChannel(
