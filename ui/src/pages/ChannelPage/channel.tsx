@@ -36,7 +36,7 @@ export default function Channel() {
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserIt>();
   const [channelUsersList, setChannelUsersList] = useState<ChannelType[]>([]);
-  const [channelSelected, setChannelSelected] = useState<number>();
+  const [channelSelected, setChannelSelected] = useState<string>();
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
   const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
@@ -78,7 +78,7 @@ export default function Channel() {
     else setPlayerClicked(playerClickID);
   }
 
-  function selectChannel(channelID: number) {
+  function selectChannel(channelID: string) {
     setChannelSelected(channelID);
   }
 
@@ -91,10 +91,9 @@ export default function Channel() {
     const txt = await requete.text();
     return JSON.parse(txt);
   }
-  console.log(channelUsersList)
+  console.log(channelUsersList);
 
   function addMPMessage(e: PrivateMessageDTO) {
-
     // const newUsers = [...channelUsersList];
     // newUsers
     //   .find((x) => x.id === channelSelected)
@@ -147,7 +146,7 @@ export default function Channel() {
           setChannelUsersList((prev) => [
             ...prev,
             {
-              id: id,
+              id: key + 'mp',
               channelBase: {
                 name: key,
                 id: id,
@@ -161,13 +160,12 @@ export default function Channel() {
         });
       });
 
-      const tmpLen = channelUsersList.length + 10;
       await getListInChannel().then((e) => {
         e.map((elem: ChannelDTO, id: number) =>
           setChannelUsersList((prev) => [
             ...prev,
             {
-              id: id + tmpLen,
+              id: elem.name + 'channel',
               channelBase: elem,
               type: 'channel',
               mpMessage: [],
@@ -181,7 +179,6 @@ export default function Channel() {
 
   useEffect(() => {
     socket?.on('connect', () => {
-
       socket?.on('GetUserFromChannel', (users: string[]) => {
         const listWithoutSelf = users.filter((user) => user !== username);
         setUsersInChannel(listWithoutSelf);
