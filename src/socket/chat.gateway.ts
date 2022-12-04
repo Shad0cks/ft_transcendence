@@ -104,57 +104,47 @@ export class ChatGateway {
   @SubscribeMessage('AddAdmin')
   async onAddAdmin(socket: CustomSocket, newadmin: ChannelAdminDTO) {
     this.chatService.addAdmin(newadmin);
+    const Userfromchannel = await this.chatService.getParticipantsNickname(
+      newadmin.channelName,
+    );
+
+    for (const user of Userfromchannel) {
+      this.server.to(Clients.getSocketId(user)).emit('NewAdmin');
+    }
   }
 
-  blockedUsers;
   @SubscribeMessage('AddRestriction')
   async onAddRestriction(
     socket: CustomSocket,
-    admin: ChannelAdminDTO,
     restriction: ChannelRestrictionDTO,
   ) {
-    if (this.chatService.isAdmin(admin))
-      this.chatService.addRestriction(restriction);
+    this.chatService.addRestriction(restriction);
   }
 
   @SubscribeMessage('AddToWhitelist')
-  async onAddToWhitelist(
-    socket: CustomSocket,
-    admin: ChannelAdminDTO,
-    whitelist: EditWhitelistDTO,
-  ) {
-    if (this.chatService.isAdmin(admin))
-      this.chatService.addToWhitelist(whitelist);
+  async onAddToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
+    this.chatService.addToWhitelist(whitelist);
   }
 
   @SubscribeMessage('RemoveToWhitelist')
-  async onRemoveToWhitelist(
-    socket: CustomSocket,
-    admin: ChannelAdminDTO,
-    whitelist: EditWhitelistDTO,
-  ) {
-    if (this.chatService.isAdmin(admin))
-      this.chatService.addToWhitelist(whitelist);
+  async onRemoveToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
+    this.chatService.addToWhitelist(whitelist);
   }
 
   @SubscribeMessage('ChangeChannelToPrivacy')
   async onChangeChannelToPrivacy(
     socket: CustomSocket,
-    admin: ChannelAdminDTO,
     channel: ChannelPrivacyDTO,
   ) {
-    if (this.chatService.isAdmin(admin))
-      this.chatService.changeChannelPrivacy(channel);
+    this.chatService.changeChannelPrivacy(channel);
   }
 
   @SubscribeMessage('EditChannelPassword')
   async onEditChannelPassword(
     socket: CustomSocket,
-    admin: ChannelAdminDTO,
     password: ChannelPasswordDTO,
   ) {
-    if (this.chatService.isAdmin(admin))
-      this.chatService.editChannelPassword(password);
+    this.chatService.editChannelPassword(password);
   }
 
   //TODO Invite une game
