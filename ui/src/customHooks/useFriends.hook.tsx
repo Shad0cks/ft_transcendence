@@ -1,31 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GetUserIt } from '../models/getUser';
-import { GetUserInfo } from '../services/User/getUserInfo';
+import { GetFriends } from '../services/Friends/getFriends';
 import { disconnect } from '../services/User/userDelog';
 
-export default function useLoggedUser() {
+export default function useFriends(nickname: string) {
   const navigate = useNavigate();
-  const loggedUser = useRef<GetUserIt | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const nickname = localStorage.getItem('nickname');
+  const friendList = useRef<GetUserIt[]>([]);
 
-  if (nickname === null) {
-    disconnect(navigate);
-  }
   useEffect(() => {
-    GetUserInfo(nickname!).then(async (e) => {
+    GetFriends(nickname).then(async (e) => {
       if (e.status === 401) {
         disconnect(navigate);
       } else if (e.ok) {
-        loggedUser.current = await e.json();
+        friendList.current = await e.json();
 
-        if (!loggedUser.current) {
+        if (!friendList.current) {
           disconnect(navigate);
         }
         setIsLoading(false);
       }
     });
   });
-  return { user: loggedUser.current, isLoading: isLoading };
+  return { friendList: friendList.current, isLoading: isLoading };
 }
