@@ -33,19 +33,21 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    console.log(`Client Connected: ${client.id}`);
+    //console.log(`Client Connected: ${client.id}`);
     // console.log(this.connectedUser.get());
     // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
     // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
     // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
+    client;
   }
 
   //deconnexion
 
   handleDisconnect(client: CustomSocket) {
-    console.log(`Client disConnected: ${client.id}`);
+    //console.log(`Client disConnected: ${client.id}`);
+    client;
   }
 
   @SubscribeMessage('addMessage')
@@ -192,7 +194,7 @@ export class ChatGateway {
       this.chatService.getParticipantsNickname(channel);
     const Res = await Userfromchannel;
     this.server.to(socket.id).emit('GetUserFromChannel', Res);
-    console.log(Res);
+    //console.log(Res);
   }
 
   @SubscribeMessage('leaveChannel')

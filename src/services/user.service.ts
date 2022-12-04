@@ -150,7 +150,6 @@ export class UserService {
         .execute();
       return result.raw[0];
     } catch (error) {
-      console.log(error);
       if (error.code === '23505') {
         // duplicate nickname
         throw new ConflictException('Nickname already exists');
