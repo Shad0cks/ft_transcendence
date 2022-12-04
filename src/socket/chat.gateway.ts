@@ -111,9 +111,8 @@ export class ChatGateway {
     const Userfromchannel = await this.chatService.getParticipantsNickname(
       newadmin.channelName,
     );
-
     for (const user of Userfromchannel) {
-      this.server.to(Clients.getSocketId(user)).emit('NewAdmin');
+      this.server.to(Clients.getSocketId(user)).emit('NewAdmin', newadmin);
     }
   }
 
