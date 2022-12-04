@@ -15,7 +15,6 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { EditWhitelistDTO } from 'src/dto/editWhitelist.dto';
 import { ChannelPrivacyDTO } from 'src/dto/channelPrivacy.dto';
 import { ChannelPasswordDTO } from 'src/dto/channelPassword.dto';
-import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
@@ -72,17 +71,22 @@ export class ChatGateway {
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
   async onAddMessagePrivate(socket: CustomSocket, message: DirectMessageDTO) {
-    const messageEntity = await this.chatService.registerDirectMessage(message);
-    message.sent_at = messageEntity.sent_at;
-    const UserBlocked = this.userService.getBlockedNicknames(
+    const blockedUsers = await this.userService.getBlockedNicknames(
       message.receiverNickname,
     );
-    if (!(await UserBlocked).includes(message.senderNickname)) {
-      await this.server
+    if (!blockedUsers.includes(message.senderNickname)) {
+      const messageEntity = await this.chatService.registerDirectMessage(
+        message,
+      );
+      message.sent_at = messageEntity.sent_at;
+      this.server
         .to(Clients.getSocketId(message.receiverNickname))
-        .emit('messageprivateAdded');
+        .to(socket.id)
+        .emit('messageprivateAdded', message);
+    } else {
+      message.message = 'This user ignores your messages';
+      this.server.to(socket.id).emit('messageprivateAdded', message);
     }
-    this.server.to(socket.id).emit('messageprivateAdded', message);
   }
 
   @SubscribeMessage('createChannel')
