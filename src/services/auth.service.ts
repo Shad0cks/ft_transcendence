@@ -31,22 +31,42 @@ export class AuthService {
     return res;
   }
 
-  async logUserIn(request: any, response: Response): Promise<void> {
+  async logUserIn(
+    request: any,
+    response: Response,
+    registered: boolean,
+  ): Promise<void> {
     if (typeof request.user == 'undefined') {
       throw new BadRequestException();
     }
     // here the nickname in the DTO is the login42
     const userDTO: UserDTO = request.user;
     // default avatar
-    userDTO.avatar =
-      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
+    if (!userDTO.avatar || userDTO.avatar === 'default')
+      userDTO.avatar =
+        'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
     let user: User;
 
     try {
       user = await this.userService.findOneByLogin42(userDTO.nickname);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        user = await this.userService.createUser(userDTO, userDTO.nickname);
+        if (registered) {
+          const login42 = userDTO.nickname;
+          userDTO.nickname = userDTO.twofa_secret;
+          userDTO.twofa_secret = '';
+          user = await this.userService.createUser(userDTO, login42);
+        } else {
+          const payload: JwtPayload = {
+            nickname: '',
+            login42: userDTO.nickname,
+            isAuthenticated: false,
+          };
+          const jwt = this.jwtService.sign(payload);
+          response.cookie('jwt', jwt, { httpOnly: true });
+          response.redirect('http://localhost:3000/register');
+          return;
+        }
       } else {
         throw error;
       }

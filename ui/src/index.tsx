@@ -9,6 +9,7 @@ import PartyManage from './pages/HomePage/PartyManage';
 import Channel from './pages/ChannelPage/channel';
 import MainUserProfile from './pages/UserProfile/MainUserProfile';
 import Friends from './pages/UserProfile/Friends';
+import Register from './pages/Register';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -18,6 +19,7 @@ root.render(
     <Routes>
       <Route path="/" element={<App />} />
       <Route path="/2fa" element={<FaPage />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/callback" element={<App />} />
       <Route path="/chat" element={<Channel />} />
       <Route path="*" element={<NotFound />} />
