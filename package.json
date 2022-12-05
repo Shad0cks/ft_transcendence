@@ -44,7 +44,7 @@
     "rxjs": "^7.5.7",
     "speakeasy": "^2.0.0",
     "socket.io": "^4.5.4",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.11"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.5",
