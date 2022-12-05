@@ -7,17 +7,21 @@ import { ChannelDTO } from '../../models/channel';
 import { GetChannels } from '../../services/Channel/getChannels';
 import { GetInChannels } from '../../services/Channel/getInChannels';
 import { UserLogout } from '../../services/User/userDelog';
+import { GetUserAdmin } from '../../services/User/getUserAdmin';
 
 export default function ListeParty({
   socket,
   username,
+  editParty,
 }: {
   socket: Socket | undefined;
   username: string;
+  editParty: (e: ChannelDTO) => void;
 }) {
   const navigate = useNavigate();
   let [channel, setChannel] = useState<ChannelDTO[]>([]);
   let [inChannel, setInChannel] = useState<ChannelDTO[]>([]);
+  const [admins, setAdmins] = useState<{ channelname: string }[]>();
 
   const joinChannel = (e: ChannelDTO) => {
     socket?.emit('joinChannel', {
@@ -28,6 +32,15 @@ export default function ListeParty({
     });
     setInChannel((inChannel) => [...inChannel, e]);
   };
+
+  function getAdminListChannel() {
+    GetUserAdmin().then(async (e) => {
+      if (e.status === 401) {
+        await UserLogout();
+        navigate('/');
+      } else if (e.ok) e.text().then((i) => setAdmins(JSON.parse(i)));
+    });
+  }
 
   const leaveChannel = (e: ChannelDTO) => {
     socket?.emit('leaveChannel', {
@@ -45,18 +58,20 @@ export default function ListeParty({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    socket?.on('connect', () => {
-      socket?.on('createChannel', function () {
-        getListChannel().then((e) => setChannel(e));
-        getListInChannel().then((e) => setInChannel(e));
-      });
+    socket?.on('createChannel', function () {
+      getListChannel().then((e) => setChannel(e));
+      getListInChannel().then((e) => setInChannel(e));
     });
 
+    socket?.on('channelEdited', function () {
+      getListChannel().then((e) => setChannel(e));
+      getListInChannel().then((e) => setInChannel(e));
+    });
     return () => {
       socket?.off('connect');
       socket?.off('createChannel');
     };
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [socket, channel]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function getListChannel() {
     const requete = await GetChannels();
@@ -81,6 +96,7 @@ export default function ListeParty({
   useEffect(() => {
     getListChannel().then((e) => setChannel(e));
     getListInChannel().then((e) => setInChannel(e));
+    getAdminListChannel();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -98,6 +114,10 @@ export default function ListeParty({
               isIn={inChannel.find((x) => x.id === e.id) !== undefined}
               joinChannel={() => joinChannel(e)}
               leaveChannel={() => leaveChannel(e)}
+              editChannel={() => editParty(e)}
+              isAdmin={
+                admins?.find((x) => x.channelname === e.name) !== undefined
+              }
             />
           ) : null;
         })}
