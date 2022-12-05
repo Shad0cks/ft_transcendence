@@ -1,19 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '../css/Pages/MainUserProfile.css';
-import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Image from 'react-bootstrap/Image';
-import { GetUserIt } from '../models/getUser';
-import { GetUserInfo } from '../services/User/getUserInfo';
 import { BlobServiceClient } from '@azure/storage-blob';
-import { UserSetAvatar } from '../services/User/userSetAvatar';
-import { SetUserNickname } from '../services/User/setUserNickname';
-import { UserSettwofa } from '../services/User/UserSettwofa';
 import { Form } from 'react-bootstrap';
 import 'reactjs-popup/dist/index.css';
-import { UserLogout } from '../services/User/userDelog';
 
 export default function Register() {
   //const navigate = useNavigate();
@@ -25,7 +17,7 @@ export default function Register() {
       return;
     }
     const nickname = (newName.current as HTMLInputElement).value;
-    const sendavatar = avatar != undefined ? avatar : 'default';
+    const sendavatar = avatar !== undefined ? avatar : 'default';
 
     if (nickname !== '' && sendavatar !== '') {
       window.location.replace(
