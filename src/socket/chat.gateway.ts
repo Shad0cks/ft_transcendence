@@ -139,6 +139,12 @@ export class ChatGateway {
     channel: ChannelPrivacyDTO,
   ) {
     this.chatService.changeChannelPrivacy(channel);
+    const Userfromchannel = await this.chatService.getParticipantsNickname(
+      channel.name,
+    );
+    for (const user of Userfromchannel) {
+      this.server.to(Clients.getSocketId(user)).emit('channelEdited');
+    }
   }
 
   @SubscribeMessage('EditChannelPassword')
