@@ -47,4 +47,10 @@ export class ChatController {
   ) {
     return await this.chatService.getChannelAdminsNicknames(user, channelName);
   }
+
+  @Get('channels/imAdmin')
+  @UseGuards(JwtAuthGuard)
+  async getChannelsWhereIsAdminAction(@ReqUser() user: User) {
+    return await this.chatService.getChannelsWhereIsAdmin(user);
+  }
 }

@@ -645,4 +645,20 @@ export class ChatService {
       return error;
     }
   }
+
+  async getChannelsWhereIsAdmin(user: User) {
+    const userChannelParticipants = await this.channelParticipantRepository
+      .createQueryBuilder('channelParticipant')
+      .leftJoinAndSelect('channelParticipant.user', 'user')
+      .leftJoinAndSelect('channelParticipant.channel', 'channel')
+      .where('user.nickname = :nickname', { nickname: user.nickname })
+      .andWhere('channelParticipant.isAdmin = true')
+      .getMany();
+    const channelsName = [];
+
+    for (let i = 0; i < userChannelParticipants.length; ++i) {
+      channelsName.push(userChannelParticipants[i].channel.name);
+    }
+    return channelsName;
+  }
 }
