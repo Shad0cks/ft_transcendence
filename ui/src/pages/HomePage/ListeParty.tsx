@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import AvailableParty from '../../components/AvailableParty';
@@ -8,6 +8,8 @@ import { GetChannels } from '../../services/Channel/getChannels';
 import { GetInChannels } from '../../services/Channel/getInChannels';
 import { UserLogout } from '../../services/User/userDelog';
 import { GetUserAdmin } from '../../services/User/getUserAdmin';
+import Popup from 'reactjs-popup';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 
 export default function ListeParty({
   socket,
@@ -22,15 +24,35 @@ export default function ListeParty({
   let [channel, setChannel] = useState<ChannelDTO[]>([]);
   let [inChannel, setInChannel] = useState<ChannelDTO[]>([]);
   const [admins, setAdmins] = useState<{ channelname: string }[]>();
+  const joinPassword = useRef(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [joinWithPassSave, SetJoinWithPassSave] = useState<ChannelDTO>();
 
-  const joinChannel = (e: ChannelDTO) => {
+  const joinWithPass = () => {
+    if (!joinWithPassSave || !joinPassword.current) return;
+    const pass = (joinPassword.current as HTMLInputElement).value;
+
     socket?.emit('joinChannel', {
-      channelName: e.name,
+      channelName: joinWithPassSave.name,
       userNickname: username,
       isAdmin: false,
-      password: e.password,
+      password: pass,
     });
-    setInChannel((inChannel) => [...inChannel, e]);
+    setOpenModal(false);
+  };
+
+  const joinChannel = (e: ChannelDTO) => {
+    if (e.privacy === 'protected') {
+      SetJoinWithPassSave(e);
+      setOpenModal(true);
+    } else {
+      socket?.emit('joinChannel', {
+        channelName: e.name,
+        userNickname: username,
+        isAdmin: false,
+        password: e.password,
+      });
+    }
   };
 
   function getAdminListChannel() {
@@ -66,6 +88,11 @@ export default function ListeParty({
     socket?.on('channelEdited', function () {
       getListChannel().then((e) => setChannel(e));
       getListInChannel().then((e) => setInChannel(e));
+    });
+
+    socket?.on('joinChannel', function (e) {
+      if (e.userNickname === username)
+        getListInChannel().then((e) => setInChannel(e));
     });
     return () => {
       socket?.off('connect');
@@ -104,7 +131,6 @@ export default function ListeParty({
       <h2 className="ListeParty_title">Available Channels: </h2>
       <div className="ListeParty_list">
         {channel.map((e: ChannelDTO, i: number) => {
-          console.log(e);
           return e.privacy !== 'private' ? (
             <AvailableParty
               key={i}
@@ -122,6 +148,40 @@ export default function ListeParty({
           ) : null;
         })}
       </div>
+      <Popup
+        open={openModal}
+        closeOnDocumentClick
+        onClose={() => setOpenModal(false)}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100px',
+            backgroundColor: '#282c34',
+          }}
+        >
+          <div>
+            <InputGroup className="mb-3" style={{ width: '300px' }}>
+              <Form.Control
+                id="imput"
+                placeholder="Channel Password"
+                aria-label="Recipient's token"
+                aria-describedby="basic-addon2"
+                ref={joinPassword}
+              />
+              <Button
+                variant="outline-success"
+                id="button-addon2"
+                onClick={() => joinWithPass()}
+              >
+                Join
+              </Button>
+            </InputGroup>
+          </div>
+        </div>
+      </Popup>
     </div>
   );
 }
