@@ -32,7 +32,7 @@ export default function Chat({
   usersInChannel,
   messageList,
   setMessageList,
-  addMPMessage,
+  refreshChannel,
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
@@ -42,7 +42,7 @@ export default function Chat({
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
-  addMPMessage: (e: PrivateMessageDTO) => void;
+  refreshChannel: () => Promise<void>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
 
@@ -68,7 +68,6 @@ export default function Chat({
       });
     }
   }
-
   function getTime(time: string) {
     return new Date(time).toLocaleTimeString('fr-FR', {
       timeStyle: 'short',
@@ -78,24 +77,29 @@ export default function Chat({
   }
 
   useEffect(() => {
-    socket?.on('connect', () => {
-      socket?.on('messageAdded', function (e: MessageSend) {
+    socket?.on('messageAdded', function (e: MessageSend) {
+      if (e.channelName !== currentChannel?.channelBase.name) return;
+      setMessageList((prev) => [
+        ...prev,
+        { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
+      ]);
+    });
+    socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
+      if (
+        e.senderNickname === SelfUser.nickname ||
+        currentChannel?.id === e.senderNickname + 'mp'
+      ) {
         setMessageList((prev) => [
           ...prev,
           { author: e.senderNickname, message: e.message, sent_at: e.sent_at },
         ]);
-      });
-
-      socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-        console.log(e);
-        addMPMessage(e);
-      });
+      } else if (!channelList.find((x) => x.channelBase.name === e.senderNickname && x.type === 'mp')) refreshChannel();
     });
     return () => {
-      socket?.off('connect');
       socket?.off('messageAdded');
+      socket?.off('messageprivateAdded');
     };
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [socket, currentChannel, channelList, SelfUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCurrentChannel(
@@ -146,7 +150,7 @@ export default function Chat({
             ) : (
               <AvatarGroup size="sm" max={4}>
                 {usersInChannel.map((e) => (
-                  <Avatar src={e.avatar} name="group" />
+                  <Avatar src={e.avatar} name={e.nickname} />
                 ))}
               </AvatarGroup>
             )}
@@ -165,51 +169,25 @@ export default function Chat({
           </ConversationHeader>
 
           <MessageList>
-            {currentChannel?.type === 'channel'
-              ? messageList.map((e, id) => (
-                  <Message
-                    key={id}
-                    model={{
-                      message: e.message,
-                      sentTime: getTime(e.sent_at),
-                      sender: e.author,
-                      direction:
-                        e.author === SelfUser.nickname
-                          ? 'incoming'
-                          : 'outgoing',
-                      position: 'first',
-                    }}
-                  >
-                    <Avatar src={getAvatar(e.author)} name={e.author} />
-                    <Message.Header
-                      sender={e.author}
-                      sentTime={getTime(e.sent_at)}
-                    />
-                  </Message>
-                ))
-              : currentChannel?.mpMessage?.map(
-                  (e: MessageGetList, id: number) => (
-                    <Message
-                      key={id}
-                      model={{
-                        message: e.message,
-                        sentTime: getTime(e.sent_at),
-                        sender: currentChannel.channelBase.name,
-                        direction:
-                          e.author === SelfUser.nickname
-                            ? 'incoming'
-                            : 'outgoing',
-                        position: 'first',
-                      }}
-                    >
-                      <Avatar src={getAvatar(e.author)} name={e.author} />
-                      <Message.Header
-                        sender={e.author}
-                        sentTime={getTime(e.sent_at)}
-                      />
-                    </Message>
-                  ),
-                )}
+            {messageList.map((e, id) => (
+              <Message
+                key={id}
+                model={{
+                  message: e.message,
+                  sentTime: getTime(e.sent_at),
+                  sender: e.author,
+                  direction:
+                    e.author === SelfUser.nickname ? 'incoming' : 'outgoing',
+                  position: 'first',
+                }}
+              >
+                <Avatar src={getAvatar(e.author)} name={e.author} />
+                <Message.Header
+                  sender={e.author}
+                  sentTime={getTime(e.sent_at)}
+                />
+              </Message>
+            ))}
           </MessageList>
           <MessageInput
             placeholder="Type message here"

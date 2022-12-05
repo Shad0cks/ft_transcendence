@@ -8,12 +8,13 @@ import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
 import { Button } from 'react-bootstrap';
+import { ChannelDTO } from '../../models/channel';
 
 export default function PartyManage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket>();
-
+  const [channelEdit, setChannelEdit] = useState<ChannelDTO>();
   const [user, setUser] = useState<GetUserIt>();
 
   useEffect(() => {
@@ -32,11 +33,20 @@ export default function PartyManage() {
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  function EditParty(e: ChannelDTO) {
+    setChannelEdit(e);
+  }
+
   return username ? (
     <div style={{ fontFamily: 'Orbitron' }}>
       <Header username={username} iconUser={user?.avatar} />
-      <PartyCreate username={username} socket={socket} />
-      <ListeParty socket={socket} username={username} />
+      <PartyCreate
+        username={username}
+        socket={socket}
+        channelEdit={channelEdit}
+        setChannelEdit={setChannelEdit}
+      />
+      <ListeParty socket={socket} username={username} editParty={EditParty} />
       <div
         style={{
           backgroundColor: '#282c34 ',

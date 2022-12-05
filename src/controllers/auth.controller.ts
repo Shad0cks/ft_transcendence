@@ -32,7 +32,8 @@ export class AuthController {
     @Param('avatar') avatar: string,
   ) {
     if (avatar !== 'default')
-      user.avatar = 'https://avataruserstorage.blob.core.windows.net/avatarimg/' + avatar;
+      user.avatar =
+        'https://avataruserstorage.blob.core.windows.net/avatarimg/' + avatar;
     user.twofa_secret = nickname;
     return this.authService.logUserIn({ user: user }, res, true);
   }

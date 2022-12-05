@@ -54,9 +54,7 @@ export default function Register() {
         `Upload block blob avatarimg successfully`,
         uploadBlobResponse.requestId,
       );
-      setAvatar(
-        `${'default'}${time}${fileExt}`,
-      );
+      setAvatar(`${'default'}${time}${fileExt}`);
     }
   }
 

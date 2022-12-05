@@ -460,9 +460,8 @@ export class ChatService {
       message.receiver = receiver;
       return await this.directMessageRepository.save(message);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
+      console.log(error);
+      return error;
     }
   }
 
@@ -568,6 +567,52 @@ export class ChatService {
       });
     }
     return result;
+  }
+
+  async getDirectMessagesFromUser(user: User, otherUserNickname: string) {
+    const rawMessages = await this.directMessageRepository.find({
+      relations: ['sender', 'receiver'],
+      where: [
+        {
+          receiver: {
+            nickname: user.nickname,
+          },
+          sender: {
+            nickname: otherUserNickname,
+          },
+        },
+        {
+          sender: {
+            nickname: user.nickname,
+          },
+          receiver: {
+            nickname: otherUserNickname,
+          },
+        },
+      ],
+      select: {
+        message: true,
+        sent_at: true,
+        sender: {
+          nickname: true,
+        },
+        receiver: {
+          nickname: true,
+        },
+      },
+      order: {
+        sent_at: 'ASC',
+      },
+    });
+    const messages = [];
+    for (let i = 0; i < rawMessages.length; ++i) {
+      messages.push({
+        sent_at: rawMessages[i].sent_at,
+        message: rawMessages[i].message,
+        author: rawMessages[i].sender.nickname,
+      });
+    }
+    return messages;
   }
 
   async getChannelAdminsNicknames(user: User, channelName: string) {

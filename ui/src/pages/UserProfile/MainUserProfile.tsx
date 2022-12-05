@@ -16,6 +16,8 @@ import TwoFactorAuth from '../../components/TwoFactorAuth';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { UserLogout } from '../../services/User/userDelog';
+import TSSnackbar from '../../components/TSSnackbar';
+import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ export default function MainUserProfile() {
     ascii: '',
   });
   const [openModal, setOpenModal] = useState(false);
+  const snackbar = useSnackbar();
   const speakeasy = require('speakeasy');
 
   useEffect(() => {
@@ -49,7 +52,7 @@ export default function MainUserProfile() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function updateName() {
+  function updateName(snackbar: SnackbarHook) {
     if (!newName.current) {
       return;
     }
@@ -62,6 +65,10 @@ export default function MainUserProfile() {
         } else if (res.ok) {
           localStorage.setItem('nickname', newValue);
           window.location.reload();
+        } else {
+          snackbar.setMessage('Nickname already taken');
+          snackbar.setSeverity('error');
+          snackbar.setOpen(true);
         }
       });
     }
@@ -157,7 +164,7 @@ export default function MainUserProfile() {
               ref={newName}
             />
             <Button
-              onClick={updateName}
+              onClick={() => updateName(snackbar)}
               variant="outline-success"
               id="button-addon2"
             >
@@ -204,6 +211,12 @@ export default function MainUserProfile() {
           settwofa={() => setotp()}
         />
       </Popup>
+      <TSSnackbar
+        open={snackbar.open}
+        setOpen={snackbar.setOpen}
+        severity={snackbar.severity}
+        message={snackbar.message}
+      />
     </>
   ) : null;
 }

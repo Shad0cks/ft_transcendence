@@ -6,7 +6,9 @@ export default function AvailableParty({
   id,
   joinChannel,
   leaveChannel,
+  editChannel,
   isIn,
+  isAdmin,
 }: {
   name: string;
   password: boolean;
@@ -14,6 +16,8 @@ export default function AvailableParty({
   isIn: boolean;
   joinChannel: () => void;
   leaveChannel: () => void;
+  editChannel: () => void;
+  isAdmin: boolean;
 }) {
   return (
     <div>
@@ -33,6 +37,12 @@ export default function AvailableParty({
               Leave
             </button>
           )}
+
+          {isIn && isAdmin ? (
+            <button className="btn btn-danger" onClick={editChannel}>
+              Edit
+            </button>
+          ) : null}
         </div>
       </div>
     </div>
