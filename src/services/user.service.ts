@@ -266,11 +266,20 @@ export class UserService {
   }
 
   async unblockUser(user: User, blockedDTO: BlockedDTO) {
-    await this.userRepository
-      .createQueryBuilder()
-      .relation(User, 'blocked')
-      .of(user)
-      .remove(blockedDTO.nickname);
+    try {
+      const blockedUser = await this.findOneByNickname(
+        blockedDTO.nickname,
+        null,
+      );
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'blocked')
+        .of(user)
+        .remove(blockedUser);
+      return blockedUser;
+    } catch (error) {
+      return error;
+    }
   }
 
   async getBlockedNicknames(nickname: string): Promise<string[]> {
