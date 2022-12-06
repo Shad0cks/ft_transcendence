@@ -76,11 +76,11 @@ export class ChatGateway {
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
     const Userfromchannel = await this.chatService.getParticipantsNickname(
       messageDTO.channelName,
-      );
-      const messageEntity = await this.chatService.registerChannelMessage(
-        messageDTO,
-        );
-        console.log('oui');
+    );
+    const messageEntity = await this.chatService.registerChannelMessage(
+      messageDTO,
+    );
+    console.log('oui');
     messageDTO.sent_at = messageEntity.sent_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
@@ -223,8 +223,8 @@ export class ChatGateway {
     const Userfromchannel: Promise<string[]> =
       this.chatService.getParticipantsNickname(channel.channelName);
     for (const user of await Userfromchannel) {
-      await this.server.to(user).emit('leaveChannel', channel);
+      this.server.to(user).emit('leaveChannel', channel);
     }
-    await this.server.to(socket.id).emit('leaveChannel', channel);
+    this.server.to(socket.id).emit('leaveChannel', channel);
   }
 }

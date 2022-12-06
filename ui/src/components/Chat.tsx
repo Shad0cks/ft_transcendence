@@ -54,16 +54,14 @@ export default function Chat({
   }
 
   function sendMessage(e: string) {
-    if (currentChannel?.type === 'channel')
-    {
+    if (currentChannel?.type === 'channel') {
       console.log('message emit');
       socket?.emit('addMessage', {
         message: e,
         channelName: currentChannel?.channelBase.name,
         senderNickname: SelfUser?.nickname,
       });
-    }
-    else {
+    } else {
       socket?.emit('addMessagePrivate', {
         message: e,
         receiverNickname: currentChannel?.channelBase.name,
@@ -89,7 +87,6 @@ export default function Chat({
       ]);
     });
     socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-      
       if (
         e.senderNickname === SelfUser?.nickname ||
         currentChannel?.id === e.senderNickname + 'mp'
