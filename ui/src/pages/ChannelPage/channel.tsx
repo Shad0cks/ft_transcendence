@@ -172,7 +172,7 @@ export default function Channel() {
             id: prev.length + 1,
             privacy: '(null)',
             password: '(null)',
-            whitelist: []
+            whitelist: [],
           },
           type: 'mp',
           mpMessage: [],
@@ -185,18 +185,24 @@ export default function Channel() {
   async function getAllChannels() {
     let tmpSelected = false;
     setChannelUsersList([]);
-    if (location.state && location.state.startDM)
-    {
+    if (location.state && location.state.startDM) {
       AddChannelDM(location.state.startDM);
       tmpSelected = true;
     }
     await getDMs().then(async (map) => {
       Object.keys(map).forEach((key: string, id: number) => {
-          if (id === 0 && !tmpSelected) {
+        if (id === 0 && !tmpSelected) {
           tmpSelected = true;
           setChannelSelected(key + 'mp');
-         }
-         if (!(location && location.state && location.state.startDM && location.state.startDM === key))
+        }
+        if (
+          !(
+            location &&
+            location.state &&
+            location.state.startDM &&
+            location.state.startDM === key
+          )
+        )
           setChannelUsersList((prev) => [
             ...prev,
             {
@@ -206,14 +212,13 @@ export default function Channel() {
                 id: id,
                 privacy: '(null)',
                 password: '(null)',
-                whitelist: []
+                whitelist: [],
               },
               type: 'mp',
               mpMessage: map[key].messages,
             },
           ]);
-    });
-          
+      });
     });
 
     await getListInChannel().then((e) => {
@@ -307,8 +312,6 @@ export default function Channel() {
     (async () => {
       await getAllChannels();
     })();
-
-    
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -429,21 +432,18 @@ export default function Channel() {
           </div>
         </div>
         <div>
-        <Button
-          onClick={() => {
-            navigate('/channelManager');
-          }}
-          variant="success"
-        >
-          Manage Channels
-        </Button>
-        <span> </span>
-        <Button
-          onClick={() => setOpenBlockUsers(true)}
-          variant="warning"
-        >
-          Users Blocked
-        </Button>
+          <Button
+            onClick={() => {
+              navigate('/channelManager');
+            }}
+            variant="success"
+          >
+            Manage Channels
+          </Button>
+          <span> </span>
+          <Button onClick={() => setOpenBlockUsers(true)} variant="warning">
+            Users Blocked
+          </Button>
         </div>
       </div>
       <ModalUserProfile

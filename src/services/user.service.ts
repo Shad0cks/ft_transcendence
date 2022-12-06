@@ -242,15 +242,15 @@ export class UserService {
       throw new BadRequestException("You can't block yourself");
     }
     try {
-      await this.userRepository
-        .createQueryBuilder()
-        .relation(User, 'blocked')
-        .of(user)
-        .add(blockedDTO.nickname);
       const blockedUser = await this.findOneByNickname(
         blockedDTO.nickname,
         null,
       );
+      await this.userRepository
+        .createQueryBuilder()
+        .relation(User, 'blocked')
+        .of(user)
+        .add(blockedUser);
       return blockedUser;
     } catch (error) {
       if (error.code === '23503') {

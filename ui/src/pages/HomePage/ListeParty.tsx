@@ -93,11 +93,6 @@ export default function ListeParty({
       getListInChannel().then((e) => setInChannel(e));
     });
 
-    socket?.on('whitelistEdited', function () {
-      getListChannel().then((e) => setChannel(e));
-      getListInChannel().then((e) => setInChannel(e));
-    });
-
     socket?.on('joinChannel', function (e) {
       if (e.userNickname === username)
         getListInChannel().then((e) => setInChannel(e));
@@ -130,23 +125,33 @@ export default function ListeParty({
 
   const kickWhitlist = (user: string) => {
     if (!tmpChannel) return;
-    socket?.emit("RemoveToWhitelist", {userNickname: user, channelName: tmpChannel.name})
-    SeTmpChannel({...tmpChannel, whitelist: tmpChannel.whitelist.filter(x => x !== user)});
-  }
- 
-  const addUserWhitelist = () => 
-  {
+    socket?.emit('RemoveToWhitelist', {
+      userNickname: user,
+      channelName: tmpChannel.name,
+    });
+    SeTmpChannel({
+      ...tmpChannel,
+      whitelist: tmpChannel.whitelist.filter((x) => x !== user),
+    });
+  };
+
+  const addUserWhitelist = () => {
     if (!tmpChannel || !addUserWL.current) return;
     let newUser = (addUserWL.current as HTMLInputElement).value;
-    socket?.emit("AddToWhitelist", {userNickname: newUser, channelName: tmpChannel.name})
-    SeTmpChannel({...tmpChannel, whitelist: [...tmpChannel.whitelist, newUser]});
-  }
+    socket?.emit('AddToWhitelist', {
+      userNickname: newUser,
+      channelName: tmpChannel.name,
+    });
+    SeTmpChannel({
+      ...tmpChannel,
+      whitelist: [...tmpChannel.whitelist, newUser],
+    });
+  };
 
-  const editWhitelist = (e: ChannelDTO) => 
-  {
+  const editWhitelist = (e: ChannelDTO) => {
     SeTmpChannel(e);
     setOpenModalWhitelist(true);
-  }
+  };
 
   useEffect(() => {
     getListChannel().then((e) => setChannel(e));
@@ -158,7 +163,8 @@ export default function ListeParty({
       <h2 className="ListeParty_title">Available Channels: </h2>
       <div className="ListeParty_list">
         {channel.map((e: ChannelDTO, i: number) => {
-          return e.privacy !== 'private' || inChannel?.find((x) => x.name === e.name) ? (
+          return e.privacy !== 'private' ||
+            inChannel?.find((x) => x.name === e.name) ? (
             <AvailableParty
               key={i}
               name={e.name}
@@ -179,7 +185,10 @@ export default function ListeParty({
       <Popup
         open={openModal}
         closeOnDocumentClick
-        onClose={() => {setOpenModal(false); SeTmpChannel(undefined)}}
+        onClose={() => {
+          setOpenModal(false);
+          SeTmpChannel(undefined);
+        }}
       >
         <div
           style={{
@@ -213,55 +222,73 @@ export default function ListeParty({
       <Popup
         open={openModalWhitelist}
         closeOnDocumentClick
-        onClose={() => {setOpenModalWhitelist(false); getListChannel().then((e) => setChannel(e)); getListInChannel().then((e) => setInChannel(e)); SeTmpChannel(undefined)}}
+        onClose={() => {
+          setOpenModalWhitelist(false);
+          getListChannel().then((e) => setChannel(e));
+          getListInChannel().then((e) => setInChannel(e));
+          SeTmpChannel(undefined);
+        }}
       >
         <div
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: "column",
+            flexDirection: 'column',
             height: 'auto',
             backgroundColor: '#282c34',
-            paddingTop: "20px",
-            paddingBottom: "20px",
+            paddingTop: '20px',
+            paddingBottom: '20px',
             zIndex: 2,
-            fontFamily: 'Orbitron'
+            fontFamily: 'Orbitron',
           }}
         >
-           <InputGroup className="mb-3" style={{ width: '300px' }}>
-              <Form.Control
-                id="imput"
-                placeholder="Add user to channel"
-                aria-label="Recipient's token"
-                aria-describedby="basic-addon2"
-                ref={addUserWL}
-              />
-              <Button
-                variant="outline-success"
-                id="button-addon2"
-                onClick={() => addUserWhitelist()}
-              >
-                Add
-              </Button>
-            </InputGroup> 
-            <div >
-              <ListGroup variant="flush" style={{overflow: 'scroll', height: "300px", backgroundColor: "white"}}>
-                  <ListGroup.Item>Users in whitelist :</ListGroup.Item>
-                  { tmpChannel?.whitelist.map((elem, id) => (
-                        <ListGroup.Item
-                          key={id}
-                        >
-                          <span
-                              style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}  
-                            >
-                              {elem} <BsFillTrashFill color='red' style={{cursor: "pointer"}} onClick={() => kickWhitlist(elem)}/>
-                            </span>
-                        </ListGroup.Item>
-                      ))
-                    }
-                </ListGroup>
-            </div>
+          <InputGroup className="mb-3" style={{ width: '300px' }}>
+            <Form.Control
+              id="imput"
+              placeholder="Add user to channel"
+              aria-label="Recipient's token"
+              aria-describedby="basic-addon2"
+              ref={addUserWL}
+            />
+            <Button
+              variant="outline-success"
+              id="button-addon2"
+              onClick={() => addUserWhitelist()}
+            >
+              Add
+            </Button>
+          </InputGroup>
+          <div>
+            <ListGroup
+              variant="flush"
+              style={{
+                overflow: 'scroll',
+                height: '300px',
+                backgroundColor: 'white',
+              }}
+            >
+              <ListGroup.Item>Users in whitelist :</ListGroup.Item>
+              {tmpChannel?.whitelist.map((elem, id) => (
+                <ListGroup.Item key={id}>
+                  <span
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-evenly',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {elem}{' '}
+                    <BsFillTrashFill
+                      color="red"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => kickWhitlist(elem)}
+                    />
+                  </span>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
         </div>
       </Popup>
     </div>

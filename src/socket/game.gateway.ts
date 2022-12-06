@@ -37,45 +37,4 @@ export class GameGateway {
     player1;
     player2;
   }
-
-  @SubscribeMessage('playermove')
-  async onPlayermove(
-    socket: CustomSocket,
-    gameid: string,
-    player: string,
-    otherplayer: string,
-    barremoove: number,
-  ) {
-    this.server.to(otherplayer).emit('playermove', barremoove);
-    this.gameService.playerbarremoove(gameid, player, barremoove);
-  }
-
-  @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
-    if (data === null) return;
-    this.server.emit('gameOption', data);
-  }
-
-  @SubscribeMessage('GameStart') async BallEvent(gameid: string) {
-    let game;
-    const interval = setInterval(async () => {
-      game = await this.gameService.get(gameid);
-      if (game.score1 != 5 || game.score2 != 5) clearInterval(interval);
-      this.server.emit('ballPos', game);
-      this.gameService.updateGame(game);
-    }, 1000 / 60);
-  }
-
-  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
-    this.server.emit('newPlayer', data);
-  }
-
-  @SubscribeMessage('joinQueue')
-  async onJoinQueue(socket: CustomSocket, player: string) {
-    this.gameService.Addtoqueue(player);
-  }
-
-  @SubscribeMessage('leaveQueue')
-  async OnLeaveQueue(socket: CustomSocket, player: string) {
-    this.gameService.Removetoqueue(player);
-  }
 }

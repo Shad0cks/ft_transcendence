@@ -1,4 +1,5 @@
 import {
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -20,6 +21,9 @@ import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
+import { PlayerDTO } from 'src/dto/player.dto';
+import { ballDTO } from 'src/dto/ballGame.dto';
+import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -41,6 +45,31 @@ export class ChatGateway {
 
   handleDisconnect(client: CustomSocket) {
     //console.log(`Client disConnected: ${client.id}`);
+  }
+
+  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
+    this.server.emit('playermove', data);
+  }
+
+  @SubscribeMessage('gameOption')
+  async ongameOption(socket: CustomSocket, data: GameObjDTO) {
+    console.log('dasdasdasdad', data);
+    if (data === null) return;
+    this.server.emit('gameOption', data);
+  }
+
+  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
+    this.server.emit('ballPos', data);
+  }
+
+  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
+    this.server.emit('newPlayer', data);
+  }
+
+  @SubscribeMessage('GamePause') gamePause(
+    @MessageBody() data: { gameID: string; pause: boolean },
+  ) {
+    this.server.emit('GamePause', data);
   }
 
   @SubscribeMessage('addMessage')
@@ -88,12 +117,6 @@ export class ChatGateway {
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
     await this.chatService.createChannel(channel);
-    await this.chatService.joinChannel({
-      channelName: channel.channelName,
-      userNickname: channel.creatorNickname,
-      isAdmin: true,
-      password: channel.password,
-    });
     this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
   }
 

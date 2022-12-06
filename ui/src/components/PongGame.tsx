@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import '../css/Components/PongGame.css';
 import { Socket } from 'socket.io-client';
 import { GameObj } from '../models/game';
+import Popup from 'reactjs-popup';
 
 const keys: boolean[] = [];
 
@@ -17,8 +18,11 @@ export default function PongGame({
   socket: Socket;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
+  let pause = false;
+  const [pauseT, setPauseT] = useState(false);
+  const [seconds, setSeconds] = useState(5);
   const playerID = getPlayerID();
+  let myInterval: NodeJS.Timer;
 
   interface playerProps {
     lien: string;
@@ -302,6 +306,7 @@ export default function PongGame({
   });
 
   function game(context: CanvasRenderingContext2D) {
+    if (pause) return;
     sendPlayers();
     sendBallPos();
     whatKey();
@@ -376,11 +381,45 @@ export default function PongGame({
     else return 3;
   }
 
+  const visibilty = useCallback((e: Event) => {
+    if (document.hidden) {
+      socket.emit('GamePause', { gameID: gameInfo.gameID, pause: true });
+    } else {
+      socket.emit('GamePause', { gameID: gameInfo.gameID, pause: false });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    socket.on('GamePause', (e: { gameID: string; pause: boolean }) => {
+      pause = e.pause; // eslint-disable-line react-hooks/exhaustive-deps
+      setPauseT(e.pause);
+      let sec = 5;
+      if (!pause) return;
+      setSeconds(5);
+
+      clearInterval(myInterval);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      myInterval = setInterval(() => {
+        if (sec > 0) {
+          setSeconds((prev) => prev - 1);
+          sec--;
+        }
+        if (sec <= 0) {
+          console.log('sa');
+          setSeconds(5);
+          setPauseT(false);
+          clearInterval(myInterval);
+        }
+      }, 1000);
+    });
+  }, [socket]);
+
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       window.addEventListener('mousemove', mouseMouveEvent);
+      window.addEventListener('visibilitychange', visibilty);
       window.addEventListener('touchmove', touchStartLister);
       if (gameInfo.offline) {
         window.addEventListener('keydown', handleUserKeyPress);
@@ -407,11 +446,31 @@ export default function PongGame({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <canvas
-      className="canvasGame"
-      ref={canvasRef}
-      width={width}
-      height={height}
-    />
+    <>
+      <canvas
+        className="canvasGame"
+        ref={canvasRef}
+        width={width}
+        height={height}
+      />
+      <Popup open={pauseT}>
+        <div
+          style={{
+            height: '300px',
+            backgroundColor: '#282c34',
+            zIndex: 2,
+            fontFamily: 'Orbitron',
+            color: 'white',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+          }}
+        >
+          <h1 style={{ color: 'blue' }}>{seconds}</h1>
+          <h2>Before user1 win</h2>
+        </div>
+      </Popup>
+    </>
   );
 }
