@@ -419,14 +419,15 @@ export class ChatService {
       const participant = await this.findParticipant(
         channelMessageDTO.senderNickname,
         channelMessageDTO.channelName,
-      );
-      const restrictions = await this.getActiveRestrictions(participant);
-      if (this.isBanned(restrictions)) {
-        throw new ForbiddenException('You are banned');
-      }
-      if (this.isMuted(restrictions)) {
-        throw new ForbiddenException('You are muted');
-      }
+        );
+        const restrictions = await this.getActiveRestrictions(participant);
+        console.log(restrictions);
+        if (this.isBanned(restrictions)) {
+          throw new ForbiddenException('You are banned');
+        }
+        if (this.isMuted(restrictions)) {
+          throw new ForbiddenException('You are muted');
+        }
       const channelMessage = new ChannelMessage();
       const channel = await this.findChannelByName(
         channelMessageDTO.channelName,

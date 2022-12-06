@@ -74,7 +74,7 @@ export default function ListeParty({
       isAdmin: false,
       password: e.password,
     });
-    setInChannel(inChannel.filter((item) => item.id !== e.id));
+    setInChannel(inChannel.filter((item) => item.name !== e.name));
   };
 
   useEffect(() => {
@@ -97,6 +97,12 @@ export default function ListeParty({
       if (e.userNickname === username)
         getListInChannel().then((e) => setInChannel(e));
     });
+
+    socket?.on('leaveChannel', function (e) {
+      if (e.userNickname === username)
+        setInChannel(inChannel.filter((item) => item.name !== e.channelName));
+    });
+
     return () => {
       socket?.off('connect');
       socket?.off('createChannel');

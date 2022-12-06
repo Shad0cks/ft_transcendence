@@ -55,11 +55,14 @@ export default function Chat({
 
   function sendMessage(e: string) {
     if (currentChannel?.type === 'channel')
+    {
+      console.log('message emit');
       socket?.emit('addMessage', {
         message: e,
         channelName: currentChannel?.channelBase.name,
         senderNickname: SelfUser?.nickname,
       });
+    }
     else {
       socket?.emit('addMessagePrivate', {
         message: e,
@@ -78,6 +81,7 @@ export default function Chat({
 
   useEffect(() => {
     socket?.on('messageAdded', function (e: MessageSend) {
+      console.log('message added');
       if (e.channelName !== currentChannel?.channelBase.name) return;
       setMessageList((prev) => [
         ...prev,
@@ -85,7 +89,7 @@ export default function Chat({
       ]);
     });
     socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
-      console.log('message added');
+      
       if (
         e.senderNickname === SelfUser?.nickname ||
         currentChannel?.id === e.senderNickname + 'mp'

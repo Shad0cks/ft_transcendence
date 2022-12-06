@@ -84,10 +84,11 @@ export class ChatGateway {
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
     const Userfromchannel = await this.chatService.getParticipantsNickname(
       messageDTO.channelName,
-    );
-    const messageEntity = await this.chatService.registerChannelMessage(
-      messageDTO,
-    );
+      );
+      const messageEntity = await this.chatService.registerChannelMessage(
+        messageDTO,
+        );
+        console.log('oui');
     messageDTO.sent_at = messageEntity.sent_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
