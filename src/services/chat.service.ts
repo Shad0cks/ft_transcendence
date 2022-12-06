@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -110,7 +109,7 @@ export class ChatService {
     } catch (error) {
       if (error.code === '23505') {
         // duplicate nickname
-        throw new ConflictException('Channel name already exists');
+        throw new WsException('Channel name already exists');
       }
     }
   }
