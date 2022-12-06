@@ -398,8 +398,8 @@ export default function PongGame({
       setSeconds(5);
 
       clearInterval(myInterval);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       myInterval = setInterval(() => {
-        // eslint-disable-line react-hooks/exhaustive-deps
         if (sec > 0) {
           setSeconds((prev) => prev - 1);
           sec--;
