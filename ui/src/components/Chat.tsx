@@ -85,6 +85,7 @@ export default function Chat({
       ]);
     });
     socket?.on('messageprivateAdded', function (e: PrivateMessageDTO) {
+      console.log('message added');
       if (
         e.senderNickname === SelfUser?.nickname ||
         currentChannel?.id === e.senderNickname + 'mp'

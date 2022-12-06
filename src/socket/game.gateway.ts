@@ -27,21 +27,4 @@ export class GameGateway {
     player1;
     player2;
   }
-
-  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
-    this.server.emit('playermove', data);
-  }
-
-  @SubscribeMessage('gameOption') GameEvent(@MessageBody() data: GameObjDTO) {
-    if (data === null) return;
-    this.server.emit('gameOption', data);
-  }
-
-  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
-    this.server.emit('ballPos', data);
-  }
-
-  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
-    this.server.emit('newPlayer', data);
-  }
 }
