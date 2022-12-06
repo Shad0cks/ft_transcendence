@@ -145,7 +145,14 @@ export default function Friends() {
                 <ButtonGroup aria-label="Basic example">
                   <Button variant="secondary">Play</Button>
                   <Button variant="secondary">Profile</Button>
-                  <Button variant="secondary" onClick={() => navigate("/chat", {state: {startDM: elem.nickname}})} >DM</Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      navigate('/chat', { state: { startDM: elem.nickname } })
+                    }
+                  >
+                    DM
+                  </Button>
                   <span
                     style={{
                       color: 'red',
