@@ -4,6 +4,7 @@ import { BsFillTrashFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup';
 import { SnackbarHook } from '../customHooks/useSnackbar';
+import { GetUserIt } from '../models/getUser';
 import { addNewBlockedUser } from '../services/User/addNewBlockedUser';
 import { GetBlockedUers } from '../services/User/getBlockedUsers';
 import { unblockUser } from '../services/User/UnblockUser';
@@ -19,7 +20,7 @@ export default function ModalBlockUser({
   snackbar: SnackbarHook;
 }) {
   const navigate = useNavigate();
-  const [blockedList, setBlockedList] = useState<string[]>();
+  const [blockedList, setBlockedList] = useState<GetUserIt[]>();
   const inputRef = useRef(null);
   async function getListBlockedUsers() {
     const requete = await GetBlockedUers();
@@ -98,20 +99,20 @@ export default function ModalBlockUser({
             <ListGroup.Item>Blocked Users :</ListGroup.Item>
             {blockedList?.map((elem, id) => (
               <ListGroup.Item key={id}>
-                <span
+                <div
                   style={{
                     display: 'flex',
                     justifyContent: 'space-evenly',
                     alignItems: 'center',
                   }}
                 >
-                  {elem}{' '}
+                  {elem.nickname}{' '}
                   <BsFillTrashFill
                     color="red"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => deleteBlockedUser(elem)}
+                    onClick={() => deleteBlockedUser(elem.nickname)}
                   />
-                </span>
+                </div>
               </ListGroup.Item>
             ))}
           </ListGroup>
