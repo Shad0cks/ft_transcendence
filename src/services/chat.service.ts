@@ -94,6 +94,7 @@ export class ChatService {
 
   async createChannel(createChannelDTO: CreateChannelDTO): Promise<Channel> {
     const channel = new Channel();
+    const owner = new ChannelParticipant();
 
     try {
       channel.name = createChannelDTO.channelName;
@@ -105,6 +106,13 @@ export class ChatService {
       }
       const result = await this.channelRepository.save(channel);
       delete result.password;
+      owner.channel = result;
+      owner.isAdmin = true;
+      owner.user = await this.userService.findOneByNickname(
+        createChannelDTO.creatorNickname,
+        null,
+      );
+      await this.channelParticipantRepository.save(owner);
       return result;
     } catch (error) {
       if (error.code === '23505') {
