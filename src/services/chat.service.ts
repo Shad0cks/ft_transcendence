@@ -400,8 +400,12 @@ export class ChatService {
       .createQueryBuilder('chatRestriction')
       .leftJoinAndSelect('chatRestriction.punishedParticipant', 'participant')
       .leftJoinAndSelect('participant.user', 'user')
+      .leftJoinAndSelect('participant.channel', 'channel')
       .where('user.nickname = :nickname', {
         nickname: participant.user.nickname,
+      })
+      .andWhere('channel.name = :channelName', {
+        channelName: participant.channel.name,
       })
       .andWhere('end_date > :now', { now: nowTimestamp })
       .getMany();
