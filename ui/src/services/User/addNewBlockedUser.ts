@@ -14,33 +14,30 @@ export function AddNewBlockedUser(userNickname: string) {
   });
 }
 
-export function addNewBlockedUser(
+export async function addNewBlockedUser(
   userNickname: string,
   snackbar: SnackbarHook,
   navigate: NavigateFunction,
-) : boolean {
-  let resFunc = false;
+): Promise<boolean> {
+  let tmpRes = false;
   snackbar.setSeverity('error');
-  AddNewBlockedUser(userNickname)
+  await AddNewBlockedUser(userNickname)
     .then(async (res) => {
       if (res.ok) {
-        resFunc = true;
         snackbar.setMessage(userNickname + ' blocked !');
         snackbar.setSeverity('success');
+        tmpRes = true;
       } else if (res.status === 401) {
         await UserLogout();
         navigate('/');
-        resFunc = false;
       } else {
         snackbar.setMessage('Error while blocking user.');
-        resFunc = false;
       }
     })
     .catch((err) => {
-      resFunc = false;
       console.error(err);
       snackbar.setMessage('Error while blocking user.');
     });
   snackbar.setOpen(true);
-  return (resFunc);
+  return tmpRes;
 }
