@@ -433,7 +433,6 @@ export class ChatService {
         channelMessageDTO.channelName,
       );
       const restrictions = await this.getActiveRestrictions(participant);
-      console.log(restrictions);
       if (this.isBanned(restrictions)) {
         throw new ForbiddenException('You are banned');
       }
