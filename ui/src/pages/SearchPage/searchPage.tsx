@@ -8,7 +8,7 @@ import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 import TSSnackbar from '../../components/TSSnackbar';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 
-function searchUser(
+export function searchUser(
   nickname: string | undefined | null,
   setUser: (c: GetUserIt | undefined | null) => void,
   snackbar: SnackbarHook,
@@ -87,7 +87,7 @@ export default function SearchPage() {
           Search
         </Button>
       </InputGroup>
-      {getUserProfile()}
+      <div className="containerRow">{getUserProfile()}</div>
       <TSSnackbar
         open={snackbar.open}
         setOpen={snackbar.setOpen}

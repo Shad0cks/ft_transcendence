@@ -21,6 +21,9 @@ import { ChannelType } from '../../models/channelType';
 import { GetMPsList } from '../../services/Channel/getMPsList';
 import { GetAdmins } from '../../services/Channel/getAdmis';
 import { AiTwotoneCrown } from 'react-icons/ai';
+import { ModalUserProfile } from '../../components/ModalUserProfile';
+import useSnackbar from '../../customHooks/useSnackbar';
+import { searchUser } from '../SearchPage/searchPage';
 
 export default function Channel() {
   const navigate = useNavigate();
@@ -34,6 +37,11 @@ export default function Channel() {
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
   const [admins, setAdmins] = useState<{ nickname: string }[]>();
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+  const snackbar = useSnackbar();
+  const [searchedUser, setSearchedUser] = useState<
+    GetUserIt | undefined | null
+  >();
 
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
@@ -53,6 +61,11 @@ export default function Channel() {
   //   });
   // }
 
+  const openProfile = (nickname: string) => {
+    searchUser(nickname, setSearchedUser, snackbar);
+    setOpenProfileModal(true);
+  };
+
   const popover = (player: string) => {
     const currChannel = channelUsersList.find((x) => x.id === channelSelected);
     if (!currChannel) return <></>;
@@ -65,6 +78,9 @@ export default function Channel() {
           <Button variant="primary" onClick={() => AddChannelDM(player)}>
             DM
           </Button>{' '}
+          <Button variant="primary" onClick={() => openProfile(player)}>
+            Profile
+          </Button>
           <Button
             variant="primary"
             onClick={() => {
@@ -405,6 +421,13 @@ export default function Channel() {
           Manage Channels
         </Button>
       </div>
+      <ModalUserProfile
+        searchedUser={searchedUser}
+        user={user}
+        snackbar={snackbar}
+        open={openProfileModal}
+        setOpen={setOpenProfileModal}
+      />
     </div>
   ) : null;
 }

@@ -137,7 +137,7 @@ export class ChatService {
         channelRestrictionDTO.adminNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.admin = adminParticipant;
+      restriction.adminParticipant = adminParticipant;
 
       restriction.end_date = channelRestrictionDTO.end;
 
@@ -151,7 +151,7 @@ export class ChatService {
         channelRestrictionDTO.userNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.user = userParticipant;
+      restriction.punishedParticipant = userParticipant;
 
       await this.chatRestrictionRepository.save(restriction);
     } catch (error) {
@@ -391,7 +391,7 @@ export class ChatService {
 
     const restrictions = await this.chatRestrictionRepository
       .createQueryBuilder('chatRestriction')
-      .leftJoinAndSelect('chatRestriction.user', 'participant')
+      .leftJoinAndSelect('chatRestriction.punishedParticipant', 'participant')
       .leftJoinAndSelect('participant.user', 'user')
       .where('user.nickname = :nickname', {
         nickname: participant.user.nickname,
@@ -657,7 +657,9 @@ export class ChatService {
     const channelsName = [];
 
     for (let i = 0; i < userChannelParticipants.length; ++i) {
-      channelsName.push(userChannelParticipants[i].channel.name);
+      channelsName.push({
+        channelname: userChannelParticipants[i].channel.name,
+      });
     }
     return channelsName;
   }
