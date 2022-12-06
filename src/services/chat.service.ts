@@ -144,8 +144,8 @@ export class ChatService {
         channelRestrictionDTO.adminNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.adminParticipant = adminParticipant;
-
+      restriction.adminUser = adminParticipant.user;
+      restriction.channel = adminParticipant.channel;
       restriction.end_date = channelRestrictionDTO.end;
 
       if (channelRestrictionDTO.restriction as ChannelRestrictionType)
@@ -158,7 +158,7 @@ export class ChatService {
         channelRestrictionDTO.userNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.punishedParticipant = userParticipant;
+      restriction.punishedUser = userParticipant.user;
 
       await this.chatRestrictionRepository.save(restriction);
     } catch (error) {
@@ -398,9 +398,8 @@ export class ChatService {
 
     const restrictions = await this.chatRestrictionRepository
       .createQueryBuilder('chatRestriction')
-      .leftJoinAndSelect('chatRestriction.punishedParticipant', 'participant')
-      .leftJoinAndSelect('participant.user', 'user')
-      .leftJoinAndSelect('participant.channel', 'channel')
+      .leftJoinAndSelect('chatRestriction.punishedUser', 'user')
+      .leftJoinAndSelect('chatRestriction.channel', 'channel')
       .where('user.nickname = :nickname', {
         nickname: participant.user.nickname,
       })
@@ -433,6 +432,7 @@ export class ChatService {
         channelMessageDTO.channelName,
       );
       const restrictions = await this.getActiveRestrictions(participant);
+      console.log(restrictions);
       if (this.isBanned(restrictions)) {
         throw new ForbiddenException('You are banned');
       }

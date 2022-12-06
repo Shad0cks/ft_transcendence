@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ChannelParticipant } from './channelParticipant.entity';
+import { Channel } from './channel.entity';
+import { User } from './user.entity';
 
 export type ChannelRestrictionType = 'ban' | 'mute';
 
@@ -8,11 +9,14 @@ export class ChatRestriction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => ChannelParticipant)
-  punishedParticipant: ChannelParticipant;
+  @ManyToOne(() => User)
+  punishedUser: User;
 
-  @ManyToOne(() => ChannelParticipant)
-  adminParticipant: ChannelParticipant;
+  @ManyToOne(() => User)
+  adminUser: User;
+
+  @ManyToOne(() => Channel)
+  channel: Channel;
 
   @Column({
     type: 'enum',
