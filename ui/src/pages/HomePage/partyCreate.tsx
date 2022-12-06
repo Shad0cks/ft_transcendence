@@ -78,7 +78,7 @@ export default function PartyCreate({
             <option>private</option>
           </Form.Select>
         </Form.Group>
-        {channelVisiblity !== 'public' ? (
+        {channelVisiblity === 'protected' ? (
           <Form.Group className="mb-3">
             <Form.Label htmlFor="gamePass">Password</Form.Label>
             <Form.Control

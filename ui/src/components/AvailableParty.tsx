@@ -9,15 +9,17 @@ export default function AvailableParty({
   editChannel,
   isIn,
   isAdmin,
+  editWhitelist
 }: {
   name: string;
-  password: boolean;
+  password: string;
   id: string;
   isIn: boolean;
   joinChannel: () => void;
   leaveChannel: () => void;
   editChannel: () => void;
   isAdmin: boolean;
+  editWhitelist: () => void;
 }) {
   return (
     <div>
@@ -26,7 +28,7 @@ export default function AvailableParty({
           <h5 className="card-title">{name}</h5>
           <p className="card-text">
             {' '}
-            {password ? 'public' : 'Private Channel'}{' '}
+            {password}{' '}
           </p>
           {!isIn ? (
             <button className="btn btn-primary" onClick={joinChannel}>
@@ -42,7 +44,14 @@ export default function AvailableParty({
             <button className="btn btn-danger" onClick={editChannel}>
               Edit
             </button>
-          ) : null}
+          ) 
+          : null}
+          {password === "private" && isIn && isAdmin?
+          <button className="btn btn-danger" onClick={editWhitelist}>
+              Whitelist
+          </button> 
+          : null
+          }
         </div>
       </div>
     </div>
