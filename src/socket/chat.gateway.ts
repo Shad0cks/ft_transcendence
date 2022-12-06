@@ -126,12 +126,6 @@ export class ChatGateway {
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
     await this.chatService.createChannel(channel);
-    await this.chatService.joinChannel({
-      channelName: channel.channelName,
-      userNickname: channel.creatorNickname,
-      isAdmin: true,
-      password: channel.password,
-    });
     this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
   }
 
