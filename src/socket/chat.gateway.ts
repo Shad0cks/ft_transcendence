@@ -45,6 +45,7 @@ export class ChatGateway {
 
   handleDisconnect(client: CustomSocket) {
     //console.log(`Client disConnected: ${client.id}`);
+    client;
   }
 
   @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
