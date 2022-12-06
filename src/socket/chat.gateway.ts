@@ -19,6 +19,7 @@ import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
+import { GameObjDTO } from 'src/dto/game.dto';
 
 @WebSocketGateway()
 export class ChatGateway {
@@ -33,21 +34,13 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    //console.log(`Client Connected: ${client.id}`);
-    // console.log(this.connectedUser.get());
-    // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
-    // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
-    // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
-    // this.Usersockets.push(TempUsersocket);
-    // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
-    client;
+    console.log(client.id);
   }
 
   //deconnexion
 
   handleDisconnect(client: CustomSocket) {
     //console.log(`Client disConnected: ${client.id}`);
-    client;
   }
 
   @SubscribeMessage('addMessage')
@@ -125,17 +118,13 @@ export class ChatGateway {
 
   @SubscribeMessage('AddToWhitelist')
   async onAddToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
-    try {
-      this.chatService.addToWhitelist(whitelist);
-      const join = new JoinChannelDTO();
-      join.channelName = whitelist.channelName;
-      join.isAdmin = false;
-      join.password = '';
-      join.userNickname = whitelist.userNickname;
-      this.chatService.joinChannel(join);
-    } catch (error) {
-      console.log(error);
-    }
+    await this.chatService.addToWhitelist(whitelist);
+    this.chatService.joinChannel({
+      channelName: whitelist.channelName,
+      userNickname: whitelist.userNickname,
+      isAdmin: false,
+      password: '',
+    });
   }
 
   @SubscribeMessage('RemoveToWhitelist')
@@ -212,5 +201,6 @@ export class ChatGateway {
     for (const user of await Userfromchannel) {
       await this.server.to(user).emit('leaveChannel', channel);
     }
+    await this.server.to(socket.id).emit('leaveChannel', channel);
   }
 }

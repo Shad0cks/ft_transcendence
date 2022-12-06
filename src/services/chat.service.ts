@@ -314,6 +314,7 @@ export class ChatService {
       }
       // whitelist check
       if (channel.privacy === 'private') {
+        console.log('YEs');
         await this.isWhitelist(
           joinChannelDTO.channelName,
           participant.user.nickname,
