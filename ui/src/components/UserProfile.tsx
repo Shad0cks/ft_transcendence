@@ -20,13 +20,11 @@ export default function UserProfile(props: UserProfileProps) {
     return <div></div>;
   }
   return (
-    <div className="containerRow">
-      <UserCard
-        user={props.searchedUser}
-        snackbar={props.snackbar}
-        isFriend={isFriend}
-        loggedUser={props.user!}
-      />
-    </div>
+    <UserCard
+      user={props.searchedUser}
+      snackbar={props.snackbar}
+      isFriend={isFriend}
+      loggedUser={props.user!}
+    />
   );
 }

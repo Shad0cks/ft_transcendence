@@ -125,13 +125,17 @@ export class ChatGateway {
 
   @SubscribeMessage('AddToWhitelist')
   async onAddToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
-    this.chatService.addToWhitelist(whitelist);
-    this.chatService.joinChannel({
-      channelName: whitelist.channelName,
-      userNickname: whitelist.userNickname,
-      isAdmin: false,
-      password: '',
-    });
+    try {
+      this.chatService.addToWhitelist(whitelist);
+      const join = new JoinChannelDTO();
+      join.channelName = whitelist.channelName;
+      join.isAdmin = false;
+      join.password = '';
+      join.userNickname = whitelist.userNickname;
+      this.chatService.joinChannel(join);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @SubscribeMessage('RemoveToWhitelist')

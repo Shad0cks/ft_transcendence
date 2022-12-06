@@ -9,10 +9,10 @@ export class ChatRestriction {
   id: number;
 
   @ManyToOne(() => ChannelParticipant)
-  user: ChannelParticipant;
+  punishedParticipant: ChannelParticipant;
 
   @ManyToOne(() => ChannelParticipant)
-  admin: ChannelParticipant;
+  adminParticipant: ChannelParticipant;
 
   @Column({
     type: 'enum',

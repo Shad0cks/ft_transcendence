@@ -50,7 +50,7 @@ export function UserCard(props: UserCardProps) {
     );
   }
   return (
-    <Card style={{ width: '18rem' }} border="primary">
+    <Card border="primary">
       <Card.Img variant="top" src={props.user.avatar} />
       <Card.Body className="cardBody">
         <Card.Title>{props.user.nickname}</Card.Title>
@@ -58,18 +58,6 @@ export function UserCard(props: UserCardProps) {
           Wins : {props.user.wins} / Losses: {props.user.losses}
         </Card.Text>
         <ButtonGroup aria-label="Basic example">
-          <Button variant="secondary">Play</Button>
-          <Button variant="secondary">Profile</Button>
-          <Button variant="secondary">DM</Button>
-          <span
-            style={{
-              color: 'red',
-              marginRight: '.05em',
-              display: 'inline-block',
-            }}
-          >
-            &nbsp;
-          </span>
           {getFriendButton()}
         </ButtonGroup>
       </Card.Body>

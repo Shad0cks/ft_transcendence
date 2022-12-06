@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-jwt';
@@ -31,6 +31,9 @@ export class twofaJwtStrategy extends PassportStrategy(Strategy, '2fajwt') {
   }
 
   async validate(request: Request, payload: any): Promise<any> {
+    if (payload.nickname == '') {
+      throw new UnauthorizedException();
+    }
     const user = await this.userService.findOneByLogin42(payload.login42);
 
     request.user = user;

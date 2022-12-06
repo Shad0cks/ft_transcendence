@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -110,7 +109,7 @@ export class ChatService {
     } catch (error) {
       if (error.code === '23505') {
         // duplicate nickname
-        throw new ConflictException('Channel name already exists');
+        throw new WsException('Channel name already exists');
       }
     }
   }
@@ -137,7 +136,7 @@ export class ChatService {
         channelRestrictionDTO.adminNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.admin = adminParticipant;
+      restriction.adminParticipant = adminParticipant;
 
       restriction.end_date = channelRestrictionDTO.end;
 
@@ -151,7 +150,7 @@ export class ChatService {
         channelRestrictionDTO.userNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.user = userParticipant;
+      restriction.punishedParticipant = userParticipant;
 
       await this.chatRestrictionRepository.save(restriction);
     } catch (error) {
@@ -391,7 +390,7 @@ export class ChatService {
 
     const restrictions = await this.chatRestrictionRepository
       .createQueryBuilder('chatRestriction')
-      .leftJoinAndSelect('chatRestriction.user', 'participant')
+      .leftJoinAndSelect('chatRestriction.punishedParticipant', 'participant')
       .leftJoinAndSelect('participant.user', 'user')
       .where('user.nickname = :nickname', {
         nickname: participant.user.nickname,
@@ -644,5 +643,23 @@ export class ChatService {
     } catch (error) {
       return error;
     }
+  }
+
+  async getChannelsWhereIsAdmin(user: User) {
+    const userChannelParticipants = await this.channelParticipantRepository
+      .createQueryBuilder('channelParticipant')
+      .leftJoinAndSelect('channelParticipant.user', 'user')
+      .leftJoinAndSelect('channelParticipant.channel', 'channel')
+      .where('user.nickname = :nickname', { nickname: user.nickname })
+      .andWhere('channelParticipant.isAdmin = true')
+      .getMany();
+    const channelsName = [];
+
+    for (let i = 0; i < userChannelParticipants.length; ++i) {
+      channelsName.push({
+        channelname: userChannelParticipants[i].channel.name,
+      });
+    }
+    return channelsName;
   }
 }

@@ -5,6 +5,7 @@ import { AuthService } from 'src/services/auth.service';
 import { Jwt2faGuard } from 'src/guards/2fajwt.guard';
 import { ReqUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entities/user.entity';
+import { RegisterjwtGuard } from 'src/guards/registerjwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +20,22 @@ export class AuthController {
   @Get('42/redirect')
   @UseGuards(Intra42AuthGuard)
   handleRedirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-    return this.authService.logUserIn(req, res);
+    return this.authService.logUserIn(req, res, false);
+  }
+
+  @Get('42/register/:nickname/:avatar')
+  @UseGuards(RegisterjwtGuard)
+  handleRedirectRegister(
+    @ReqUser() user: User,
+    @Res({ passthrough: true }) res: Response,
+    @Param('nickname') nickname: string,
+    @Param('avatar') avatar: string,
+  ) {
+    if (avatar !== 'default')
+      user.avatar =
+        'https://avataruserstorage.blob.core.windows.net/avatarimg/' + avatar;
+    user.twofa_secret = nickname;
+    return this.authService.logUserIn({ user: user }, res, true);
   }
 
   @Get('42/2faredirect/:token')
