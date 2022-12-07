@@ -12,7 +12,7 @@ import { GetUserIt } from '../../models/getUser';
 import { UserLogout } from '../../services/User/userDelog';
 import { GetInChannels } from '../../services/Channel/getInChannels';
 import { ChannelDTO } from '../../models/channel';
-import socketIOClient, { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 import { ChannelJoin } from '../../models/channelJoined';
 import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
@@ -33,7 +33,6 @@ export default function Channel() {
   const [channelUsersList, setChannelUsersList] = useState<ChannelType[]>([]);
   const [channelSelected, setChannelSelected] = useState<string>();
   const [usersInChannel, setUsersInChannel] = useState<string[]>([]);
-  const [socket, setSocket] = useState<Socket>();
   const [usersInfos, setUsersInfos] = useState<GetUserIt[]>([]);
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
   const [admins, setAdmins] = useState<{ nickname: string }[]>();
@@ -276,9 +275,6 @@ export default function Channel() {
   }
 
   useEffect(() => {
-    setSocket(
-      socketIOClient('http://localhost:8080', { withCredentials: true }),
-    );
     setPlayerClicked(-1);
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
@@ -361,7 +357,6 @@ export default function Channel() {
             channelList={channelUsersList}
             selectChannel={selectChannel}
             channelSelected={channelSelected}
-            socket={socket}
             usersInChannel={usersInfos}
             messageList={messageList}
             setMessageList={setMessageList}

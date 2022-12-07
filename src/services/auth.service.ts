@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -55,7 +56,13 @@ export class AuthService {
           const login42 = userDTO.nickname;
           userDTO.nickname = userDTO.twofa_secret;
           userDTO.twofa_secret = '';
-          user = await this.userService.createUser(userDTO, login42);
+          try {
+            user = await this.userService.createUser(userDTO, login42);
+          } catch (error) {
+            if (error instanceof ConflictException)
+              response.redirect('http://localhost:3000/register/?error=true');
+            return;
+          }
         } else {
           const payload: JwtPayload = {
             nickname: '',

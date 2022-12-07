@@ -31,6 +31,8 @@ export class ChatGateway {
     private connectedUser: ConnectedUsers,
   ) {}
 
+  private userstat = new Map<string, string>();
+
   //connexion
   handleConnection(client: CustomSocket) {
     //console.log(`Client Connected: ${client.id}`);
@@ -40,14 +42,34 @@ export class ChatGateway {
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
     // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
+    this.userstat.set(client.user.login42, 'online');
+    for (const user of Clients.get()) {
+      this.server
+        .to(Clients.getSocketId(user[0]))
+        .emit('StatusUpdate', JSON.stringify(Array.from(this.userstat)));
+    }
     client;
   }
 
   //deconnexion
-
   handleDisconnect(client: CustomSocket) {
-    //console.log(`Client disConnected: ${client.id}`);
-    client;
+    this.userstat.delete(client.user.login42);
+    for (const user of Clients.get()) {
+      this.server
+        .to(Clients.getSocketId(user[0]))
+        .emit('StatusUpdate', JSON.stringify(Array.from(this.userstat)));
+    }
+  }
+
+  @SubscribeMessage('SetStatus')
+  async SetStatus(client: CustomSocket, stat: string) {
+    this.userstat.set(client.user.login42, stat);
+    for (const user of Clients.get()) {
+      this.server
+        .to(Clients.getSocketId(user[0]))
+        .emit('StatusUpdate', JSON.stringify(Array.from(this.userstat)));
+    }
+    return;
   }
 
   @SubscribeMessage('addMessage')

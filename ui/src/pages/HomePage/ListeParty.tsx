@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 import { useNavigate } from 'react-router-dom';
 import AvailableParty from '../../components/AvailableParty';
 import '../../css/Pages/ListeParty.css';
@@ -12,11 +12,9 @@ import Popup from 'reactjs-popup';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
 export default function ListeParty({
-  socket,
   username,
   editParty,
 }: {
-  socket: Socket | undefined;
   username: string;
   editParty: (e: ChannelDTO) => void;
 }) {

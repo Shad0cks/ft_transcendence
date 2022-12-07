@@ -1,17 +1,15 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 import { ChannelDTO } from '../../models/channel';
 import { CreateChannelDTO } from '../../models/newChannel';
 
 export default function PartyCreate({
   username,
-  socket,
   channelEdit,
   setChannelEdit,
 }: {
-  socket: Socket | undefined;
   username: string | undefined;
   channelEdit: ChannelDTO | undefined;
   setChannelEdit: React.Dispatch<React.SetStateAction<ChannelDTO | undefined>>;

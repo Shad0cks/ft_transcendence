@@ -8,6 +8,7 @@ import { Button } from 'react-bootstrap';
 import { GetUserIt } from './models/getUser';
 import { GetUserInfo } from './services/User/getUserInfo';
 import { UserLogout } from './services/User/userDelog';
+import { socket } from './services/socket';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -15,7 +16,7 @@ function App() {
   const [username, setUsername] = useState<string>();
   const [user, setUser] = useState<GetUserIt>();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');

@@ -1,17 +1,15 @@
 import React, { SetStateAction, useState } from 'react';
 import { GameObj } from '../../models/game';
-import { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 
 export default function GameModChoose({
   game,
   setGame,
   nextPage,
-  socket,
 }: {
   setGame: React.Dispatch<SetStateAction<GameObj>>;
   game: GameObj;
   nextPage: (inc?: number) => void;
-  socket: Socket | undefined;
 }) {
   const [clicked, setClicked] = useState(-1);
 

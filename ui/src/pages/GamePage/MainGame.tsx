@@ -5,7 +5,7 @@ import GamePlayerChoose from './GamePlayerChoose';
 import GameModChoose from './GameModChoose';
 import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
-import socketIOClient, { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 import Header from '../../components/Header';
 import { newPlayer } from '../../models/newPlayer';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,6 @@ function MainGame() {
     player2: { taken: false, socket: undefined },
   });
   const [user, setUser] = useState<GetUserIt>();
-  const [socket, setSocket] = useState<Socket>();
   const [username, setUsername] = useState<string | null>(null);
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
@@ -58,12 +57,11 @@ function MainGame() {
   }
 
   useEffect(() => {
-    socket?.on('connect', () => {
-      socket.emit('newPlayer', {
-        socketID: socket.id,
-        gameID: window.location.pathname,
-      });
+    socket.emit('newPlayer', {
+      socketID: socket.id,
+      gameID: window.location.pathname,
     });
+    socket.emit('SetStatus', 'ingame');
 
     //socket?.on('disconnect', () => {console.log("disco", socket.id); if (isPlayer()) setGame({...game, screen: 5, emiter: socket.id, player1: {...game.player1, socket: "disconnected"}})})
     socket?.on('gameOption', (data: GameObj) => {
@@ -97,9 +95,6 @@ function MainGame() {
   }, [game, socket]);
 
   useEffect(() => {
-    setSocket(
-      socketIOClient('http://localhost:8080', { withCredentials: true }),
-    );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
@@ -121,7 +116,6 @@ function MainGame() {
             setGame={setGame}
             nextPage={incrementGameOp}
             setSocket={setPlayerSocket}
-            socket={socket}
           />
         );
       case 2:
@@ -130,7 +124,6 @@ function MainGame() {
             game={game}
             setGame={setGame}
             nextPage={incrementGameOp}
-            socket={socket}
           />
         );
       case 3:
@@ -139,7 +132,6 @@ function MainGame() {
             game={game}
             setGame={setGame}
             nextPage={incrementGameOp}
-            socket={socket}
           />
         );
       case 4:
@@ -149,12 +141,7 @@ function MainGame() {
               <p className="playerNum">Player 1</p>
               <p className="playerNum">Player 2</p>
             </div>
-            <PongGame
-              width={1000}
-              height={600}
-              gameInfo={game}
-              socket={socket!}
-            />
+            <PongGame width={1000} height={600} gameInfo={game} />
           </div>
         );
       case 5:
@@ -173,7 +160,6 @@ function MainGame() {
             setGame={setGame}
             nextPage={incrementGameOp}
             setSocket={setPlayerSocket}
-            socket={socket}
           />
         );
     }

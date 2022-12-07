@@ -16,7 +16,7 @@ import {
   EllipsisButton,
   AvatarGroup,
 } from '@chatscope/chat-ui-kit-react';
-import { Socket } from 'socket.io-client';
+import { socket } from '../services/socket';
 import { GetUserIt } from '../models/getUser';
 import { MessageGetList } from '../models/messageGetList';
 import { MessageSend } from '../models/messageSend';
@@ -28,7 +28,6 @@ export default function Chat({
   channelList,
   selectChannel,
   channelSelected,
-  socket,
   usersInChannel,
   messageList,
   setMessageList,
@@ -38,7 +37,6 @@ export default function Chat({
   channelList: ChannelType[];
   selectChannel: (channelID: string) => void;
   channelSelected: string | undefined;
-  socket: Socket | undefined;
   usersInChannel: GetUserIt[];
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;

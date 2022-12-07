@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import '../css/Components/PongGame.css';
-import { Socket } from 'socket.io-client';
+import { socket } from '../services/socket';
 import { GameObj } from '../models/game';
 
 const keys: boolean[] = [];
@@ -9,12 +9,10 @@ export default function PongGame({
   width,
   height,
   gameInfo,
-  socket,
 }: {
   width: number;
   height: number;
   gameInfo: GameObj;
-  socket: Socket;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

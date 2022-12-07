@@ -50,7 +50,7 @@ export class WsAdapter extends IoAdapter {
         }
 
         Clients.add(payload.nickname, socket.id);
-        socket.user = { nickname: payload.nickname };
+        socket.user = { nickname: payload.nickname, login42: payload.login42 };
 
         // automatically updates Clients on disconnection
         socket.on('disconnect', () => {

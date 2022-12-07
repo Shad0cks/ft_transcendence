@@ -10,14 +10,20 @@ import 'reactjs-popup/dist/index.css';
 export default function Register() {
   //const navigate = useNavigate();
   const newName = useRef(null);
-  const [avatar, setAvatar] = useState<string | undefined>(undefined);
+  const [avatar, setAvatar] = useState<string | undefined>(
+    'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg',
+  );
 
   function Register() {
     if (!newName.current) {
       return;
     }
     const nickname = (newName.current as HTMLInputElement).value;
-    const sendavatar = avatar !== undefined ? avatar : 'default';
+    const sendavatar =
+      avatar !==
+      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg'
+        ? avatar
+        : 'default';
 
     if (nickname !== '' && sendavatar !== '') {
       window.location.replace(

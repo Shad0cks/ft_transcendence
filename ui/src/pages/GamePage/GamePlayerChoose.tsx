@@ -1,19 +1,17 @@
 import React, { SetStateAction } from 'react';
 import { GameObj } from '../../models/game';
-import { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 
 export default function GamePlayerChoose({
   game,
   setGame,
   nextPage,
   setSocket,
-  socket,
 }: {
   setGame: React.Dispatch<SetStateAction<GameObj>>;
   game: GameObj;
   nextPage: (inc?: number) => void;
   setSocket: (playerID: number) => void;
-  socket: Socket | undefined;
 }) {
   const changePage = () => {
     if (!game.player1.taken || !game.player2.taken) {

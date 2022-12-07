@@ -3,7 +3,7 @@ import PartyCreate from './partyCreate';
 import ListeParty from './ListeParty';
 import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
-import socketIOClient, { Socket } from 'socket.io-client';
+import { socket } from '../../services/socket';
 import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
@@ -13,14 +13,10 @@ import { ChannelDTO } from '../../models/channel';
 export default function PartyManage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket>();
   const [channelEdit, setChannelEdit] = useState<ChannelDTO>();
   const [user, setUser] = useState<GetUserIt>();
 
   useEffect(() => {
-    setSocket(
-      socketIOClient('http://localhost:8080', { withCredentials: true }),
-    );
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
     if (usernameStorage === null) navigate('/');
@@ -42,11 +38,10 @@ export default function PartyManage() {
       <Header username={username} iconUser={user?.avatar} />
       <PartyCreate
         username={username}
-        socket={socket}
         channelEdit={channelEdit}
         setChannelEdit={setChannelEdit}
       />
-      <ListeParty socket={socket} username={username} editParty={EditParty} />
+      <ListeParty username={username} editParty={EditParty} />
       <div
         style={{
           backgroundColor: '#282c34 ',
