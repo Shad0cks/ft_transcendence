@@ -20,7 +20,7 @@ export default function ModalBlockUser({
   snackbar: SnackbarHook;
 }) {
   const navigate = useNavigate();
-  const [blockedList, setBlockedList] = useState<GetUserIt[]>();
+  const [blockedList, setBlockedList] = useState<string[]>([]);
   const inputRef = useRef(null);
   async function getListBlockedUsers() {
     const requete = await GetBlockedUers();
@@ -32,14 +32,16 @@ export default function ModalBlockUser({
     return JSON.parse(txt);
   }
 
-  function newBlockedUser() {
+  async function newBlockedUser() {
     if (!inputRef.current) return;
     const inputValue = (inputRef.current as HTMLInputElement).value;
-    addNewBlockedUser(inputValue, snackbar, navigate);
+    if (await addNewBlockedUser(inputValue, snackbar, navigate))
+      setBlockedList((prev) => [...prev, inputValue]);
   }
 
   function deleteBlockedUser(user: string) {
     unblockUser(user, snackbar, navigate);
+    setBlockedList((prev) => prev.filter((x) => x !== user));
   }
 
   return (
@@ -48,9 +50,14 @@ export default function ModalBlockUser({
       closeOnDocumentClick
       onClose={() => {
         setOpen(false);
+        setBlockedList([]);
       }}
       onOpen={() => {
-        getListBlockedUsers().then((e) => setBlockedList(e));
+        getListBlockedUsers().then((e) =>
+          e.forEach((x: GetUserIt) =>
+            setBlockedList((prev) => [...prev, x.nickname]),
+          ),
+        );
       }}
     >
       <div
@@ -102,11 +109,11 @@ export default function ModalBlockUser({
                     alignItems: 'center',
                   }}
                 >
-                  {elem.nickname}{' '}
+                  {elem}{' '}
                   <BsFillTrashFill
                     color="red"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => deleteBlockedUser(elem.nickname)}
+                    onClick={() => deleteBlockedUser(elem)}
                   />
                 </div>
               </ListGroup.Item>
