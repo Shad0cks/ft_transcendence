@@ -21,7 +21,7 @@ export class GameGateway {
   server: Server;
 
   handleConnection(client: CustomSocket) {
-    console.log('Game:', client.id);
+    client;
   }
 
   //handleDisconnect(client: CustomSocket) {}

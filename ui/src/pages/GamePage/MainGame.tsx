@@ -65,10 +65,7 @@ function MainGame() {
       });
     });
 
-    //socket?.on('disconnect', () => {console.log("disco", socket.id); if (isPlayer()) setGame({...game, screen: 5, emiter: socket.id, player1: {...game.player1, socket: "disconnected"}})})
     socket?.on('gameOption', (data: GameObj) => {
-      console.log('receive', data);
-
       if (data.gameID === game.gameID && data.emiter !== socket.id)
         setGame(data);
     });
@@ -78,11 +75,11 @@ function MainGame() {
       socket?.off('gameOption');
     };
   }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
-  console.log('salut', socket?.id);
+
   useEffect(() => {
     if (socket && socket.id !== undefined) {
       if (game.emiter !== socket.id) return;
-      console.log('emited', game);
+
       socket.emit('gameOption', game);
     }
   }, [game]); // eslint-disable-line react-hooks/exhaustive-deps

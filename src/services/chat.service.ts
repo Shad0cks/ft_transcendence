@@ -322,7 +322,6 @@ export class ChatService {
       }
       // whitelist check
       if (channel.privacy === 'private') {
-        console.log('YEs');
         await this.isWhitelist(
           joinChannelDTO.channelName,
           participant.user.nickname,
@@ -433,7 +432,7 @@ export class ChatService {
         channelMessageDTO.channelName,
       );
       const restrictions = await this.getActiveRestrictions(participant);
-      console.log(restrictions);
+
       if (this.isBanned(restrictions)) {
         throw new ForbiddenException('You are banned');
       }
@@ -472,7 +471,6 @@ export class ChatService {
       message.receiver = receiver;
       return await this.directMessageRepository.save(message);
     } catch (error) {
-      console.log(error);
       return error;
     }
   }

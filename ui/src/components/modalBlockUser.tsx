@@ -36,15 +36,11 @@ export default function ModalBlockUser({
     if (!inputRef.current) return;
     const inputValue = (inputRef.current as HTMLInputElement).value;
     addNewBlockedUser(inputValue, snackbar, navigate);
-    console.log('add', inputValue);
   }
 
   function deleteBlockedUser(user: string) {
     unblockUser(user, snackbar, navigate);
-    console.log('delete', user);
   }
-
-  console.log(blockedList);
 
   return (
     <Popup

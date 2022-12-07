@@ -28,7 +28,6 @@ export default function PartyCreate({
     data: CreateChannelDTO,
   ) => {
     data.creatorNickname = username!;
-    console.log(data);
 
     if (socket && socket.id !== undefined) {
       if (channelEdit) {

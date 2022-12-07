@@ -158,7 +158,6 @@ export default function Channel() {
   }
 
   function AddChannelDM(target: string) {
-    console.log(channelUsersList);
     const targetChannel = channelUsersList.find(
       (x) => x.channelBase.name === target && x.type === 'mp',
     );

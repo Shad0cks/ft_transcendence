@@ -55,7 +55,6 @@ export default function Chat({
 
   function sendMessage(e: string) {
     if (currentChannel?.type === 'channel') {
-      console.log('message emit');
       socket?.emit('addMessage', {
         message: e,
         channelName: currentChannel?.channelBase.name,
@@ -79,7 +78,6 @@ export default function Chat({
 
   useEffect(() => {
     socket?.on('messageAdded', function (e: MessageSend) {
-      console.log('message added');
       if (e.channelName !== currentChannel?.channelBase.name) return;
       setMessageList((prev) => [
         ...prev,

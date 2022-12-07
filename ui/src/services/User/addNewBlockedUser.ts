@@ -3,7 +3,6 @@ import { SnackbarHook } from '../../customHooks/useSnackbar';
 import { UserLogout } from '../User/userDelog';
 
 export function AddNewBlockedUser(userNickname: string) {
-  console.log(userNickname);
   return fetch(process.env.REACT_APP_API_URL + '/user/blocked', {
     method: 'POST',
     headers: {

@@ -405,7 +405,6 @@ export default function PongGame({
           sec--;
         }
         if (sec <= 0) {
-          console.log('sa');
           setSeconds(5);
           setPauseT(false);
           clearInterval(myInterval);

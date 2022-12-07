@@ -38,13 +38,12 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    console.log(client.id);
+    client;
   }
 
   //deconnexion
 
   handleDisconnect(client: CustomSocket) {
-    //console.log(`Client disConnected: ${client.id}`);
     client;
   }
 
@@ -54,7 +53,6 @@ export class ChatGateway {
 
   @SubscribeMessage('gameOption')
   async ongameOption(socket: CustomSocket, data: GameObjDTO) {
-    console.log('dasdasdasdad', data);
     if (data === null) return;
     this.server.emit('gameOption', data);
   }
@@ -81,7 +79,7 @@ export class ChatGateway {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
-    console.log('oui');
+
     messageDTO.sent_at = messageEntity.sent_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
@@ -111,9 +109,7 @@ export class ChatGateway {
           .emit('messageprivateAdded', message);
       }
       this.server.to(socket.id).emit('messageprivateAdded', message);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   @SubscribeMessage('createChannel')
@@ -215,7 +211,6 @@ export class ChatGateway {
       this.chatService.getParticipantsNickname(channel);
     const Res = await Userfromchannel;
     this.server.to(socket.id).emit('GetUserFromChannel', Res);
-    // console.log(Res);
   }
 
   @SubscribeMessage('leaveChannel')

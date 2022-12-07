@@ -98,7 +98,6 @@ export default function ListeParty({
     });
 
     socket?.on('leaveChannel', function (e) {
-      console.log('leave on');
       if (e.userNickname === username)
         setInChannel(inChannel.filter((item) => item.name !== e.channelName));
     });

@@ -41,7 +41,6 @@ export default function MainUserProfile() {
       if (res.ok) {
         const requete = res.text().then((e) => JSON.parse(e));
         requete.then((e: GetUserIt) => {
-          console.log(e);
           setUser(e);
           setUsername(e.nickname);
         });
@@ -79,10 +78,6 @@ export default function MainUserProfile() {
 
     if (secret) {
       setOpenModal(true);
-      console.log({
-        ascii: secret.ascii,
-        otpauth_url: secret.otpauth_url,
-      });
       setSecret({
         ascii: secret.ascii,
         otpauth_url: secret.otpauth_url,
@@ -105,11 +100,7 @@ export default function MainUserProfile() {
       );
       const containerClient = blobServiceClient.getContainerClient('avatarimg');
       const blobClient = containerClient.getBlockBlobClient(newFile.name);
-      const uploadBlobResponse = await blobClient.uploadBrowserData(newFile);
-      console.log(
-        `Upload block blob avatarimg successfully`,
-        uploadBlobResponse.requestId,
-      );
+      await blobClient.uploadBrowserData(newFile);
       UserSetAvatar(
         `https://avataruserstorage.blob.core.windows.net/avatarimg/${user.id.toString()}${time}${fileExt}`,
         user.nickname,
