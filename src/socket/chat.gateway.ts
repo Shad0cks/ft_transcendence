@@ -25,7 +25,7 @@ import { PlayerDTO } from 'src/dto/player.dto';
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
@@ -134,7 +134,11 @@ export class ChatGateway {
     socket: CustomSocket,
     restriction: ChannelRestrictionDTO,
   ) {
-    this.chatService.addRestriction(restriction);
+    try {
+      await this.chatService.addRestriction(restriction);
+    } catch (error) {
+      this.server.to(socket.id).emit('error', error.message);
+    }
   }
 
   @SubscribeMessage('AddToWhitelist')
