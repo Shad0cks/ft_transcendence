@@ -22,7 +22,10 @@ function App() {
     const usrReq = searchParams.get('nickname');
     let usernameStorage = localStorage.getItem('nickname');
 
-    if ((logReq && logReq === 'true' && socket.connected) || usernameStorage !== null)
+    if (
+      (logReq && logReq === 'true' && socket.connected) ||
+      usernameStorage !== null
+    )
       seIsLog(true);
     else seIsLog(false);
     if (usernameStorage !== null) setUsername(usernameStorage);
