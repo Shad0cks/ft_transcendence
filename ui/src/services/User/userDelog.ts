@@ -7,7 +7,6 @@ export function UserLogout() {
       'Content-Type': 'application/json',
     },
     method: 'GET',
-    credentials: 'include',
   });
 }
 

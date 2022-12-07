@@ -116,13 +116,9 @@ export class UserController {
     return await this.userService.unblockUser(user, blockedDTO);
   }
 
-  @Get(':nickname/matchs')
+  @Get(':nickname/matches')
   @UseGuards(JwtAuthGuard)
-  async getHistoryMatchs(@Param('nickname') nickname: string) {
-    return (
-      await this.userService.findOneByNickname(nickname, {
-        selectMatchs: true,
-      })
-    ).matchs;
+  async getPongMatchesAction(@Param('nickname') nickname: string) {
+    return await this.userService.getPongMatches(nickname);
   }
 }

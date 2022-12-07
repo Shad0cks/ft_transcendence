@@ -47,11 +47,7 @@ export default function Register() {
       );
       const containerClient = blobServiceClient.getContainerClient('avatarimg');
       const blobClient = containerClient.getBlockBlobClient(newFile.name);
-      const uploadBlobResponse = await blobClient.uploadBrowserData(newFile);
-      console.log(
-        `Upload block blob avatarimg successfully`,
-        uploadBlobResponse.requestId,
-      );
+      await blobClient.uploadBrowserData(newFile);
       setAvatar(`${'default'}${time}${fileExt}`);
     }
   }

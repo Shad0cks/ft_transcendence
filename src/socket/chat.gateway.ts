@@ -1,4 +1,5 @@
 import {
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -19,8 +20,12 @@ import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
+import { GameObjDTO } from 'src/dto/game.dto';
+import { PlayerDTO } from 'src/dto/player.dto';
+import { ballDTO } from 'src/dto/ballGame.dto';
+import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
@@ -72,6 +77,30 @@ export class ChatGateway {
     return;
   }
 
+  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
+    this.server.emit('playermove', data);
+  }
+
+  @SubscribeMessage('gameOption')
+  async ongameOption(socket: CustomSocket, data: GameObjDTO) {
+    if (data === null) return;
+    this.server.emit('gameOption', data);
+  }
+
+  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
+    this.server.emit('ballPos', data);
+  }
+
+  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
+    this.server.emit('newPlayer', data);
+  }
+
+  @SubscribeMessage('GamePause') gamePause(
+    @MessageBody() data: { gameID: string; pause: boolean },
+  ) {
+    this.server.emit('GamePause', data);
+  }
+
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
     const Userfromchannel = await this.chatService.getParticipantsNickname(
@@ -80,6 +109,7 @@ export class ChatGateway {
     const messageEntity = await this.chatService.registerChannelMessage(
       messageDTO,
     );
+
     messageDTO.sent_at = messageEntity.sent_at;
     for (const user of Userfromchannel) {
       const UserBlocked = this.userService.getBlockedNicknames(user);
@@ -109,20 +139,12 @@ export class ChatGateway {
           .emit('messageprivateAdded', message);
       }
       this.server.to(socket.id).emit('messageprivateAdded', message);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
     await this.chatService.createChannel(channel);
-    await this.chatService.joinChannel({
-      channelName: channel.channelName,
-      userNickname: channel.creatorNickname,
-      isAdmin: true,
-      password: channel.password,
-    });
     this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
   }
 
@@ -142,22 +164,22 @@ export class ChatGateway {
     socket: CustomSocket,
     restriction: ChannelRestrictionDTO,
   ) {
-    this.chatService.addRestriction(restriction);
+    try {
+      await this.chatService.addRestriction(restriction);
+    } catch (error) {
+      this.server.to(socket.id).emit('error', error.message);
+    }
   }
 
   @SubscribeMessage('AddToWhitelist')
   async onAddToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
-    try {
-      this.chatService.addToWhitelist(whitelist);
-      const join = new JoinChannelDTO();
-      join.channelName = whitelist.channelName;
-      join.isAdmin = false;
-      join.password = '';
-      join.userNickname = whitelist.userNickname;
-      this.chatService.joinChannel(join);
-    } catch (error) {
-      console.log(error);
-    }
+    await this.chatService.addToWhitelist(whitelist);
+    this.chatService.joinChannel({
+      channelName: whitelist.channelName,
+      userNickname: whitelist.userNickname,
+      isAdmin: false,
+      password: '',
+    });
   }
 
   @SubscribeMessage('RemoveToWhitelist')
@@ -223,7 +245,6 @@ export class ChatGateway {
       this.chatService.getParticipantsNickname(channel);
     const Res = await Userfromchannel;
     this.server.to(socket.id).emit('GetUserFromChannel', Res);
-    // console.log(Res);
   }
 
   @SubscribeMessage('leaveChannel')
@@ -232,7 +253,8 @@ export class ChatGateway {
     const Userfromchannel: Promise<string[]> =
       this.chatService.getParticipantsNickname(channel.channelName);
     for (const user of await Userfromchannel) {
-      await this.server.to(user).emit('leaveChannel', channel);
+      this.server.to(user).emit('leaveChannel', channel);
     }
+    this.server.to(socket.id).emit('leaveChannel', channel);
   }
 }

@@ -63,7 +63,6 @@ function MainGame() {
     });
     socket.emit('SetStatus', 'ingame');
 
-    //socket?.on('disconnect', () => {console.log("disco", socket.id); if (isPlayer()) setGame({...game, screen: 5, emiter: socket.id, player1: {...game.player1, socket: "disconnected"}})})
     socket?.on('gameOption', (data: GameObj) => {
       if (data.gameID === game.gameID && data.emiter !== socket.id)
         setGame(data);
@@ -78,6 +77,7 @@ function MainGame() {
   useEffect(() => {
     if (socket && socket.id !== undefined) {
       if (game.emiter !== socket.id) return;
+
       socket.emit('gameOption', game);
     }
   }, [game]); // eslint-disable-line react-hooks/exhaustive-deps

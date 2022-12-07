@@ -22,7 +22,7 @@ export default function Header({
         bg="dark"
         variant="dark"
         fixed="top"
-        style={{ fontFamily: 'Orbitron' }}
+        style={{ fontFamily: 'Orbitron', zIndex: 1 }}
       >
         <Container>
           <Navbar.Brand

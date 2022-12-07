@@ -26,7 +26,6 @@ export default function PartyCreate({
     data: CreateChannelDTO,
   ) => {
     data.creatorNickname = username!;
-    console.log(data);
 
     if (socket && socket.id !== undefined) {
       if (channelEdit) {
@@ -76,7 +75,7 @@ export default function PartyCreate({
             <option>private</option>
           </Form.Select>
         </Form.Group>
-        {channelVisiblity !== 'public' ? (
+        {channelVisiblity === 'protected' ? (
           <Form.Group className="mb-3">
             <Form.Label htmlFor="gamePass">Password</Form.Label>
             <Form.Control

@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { GetUserIt } from '../../models/getUser';
@@ -24,9 +24,11 @@ import { AiTwotoneCrown } from 'react-icons/ai';
 import { ModalUserProfile } from '../../components/ModalUserProfile';
 import useSnackbar from '../../customHooks/useSnackbar';
 import { searchUser } from '../SearchPage/searchPage';
+import ModalBlockUser from '../../components/modalBlockUser';
 
 export default function Channel() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [playerClicked, setPlayerClicked] = useState<number>();
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<GetUserIt>();
@@ -37,6 +39,8 @@ export default function Channel() {
   const [messageList, setMessageList] = useState<MessageGetList[]>([]);
   const [admins, setAdmins] = useState<{ nickname: string }[]>();
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const [openBlockUsers, setOpenBlockUsers] = useState(false);
+
   const snackbar = useSnackbar();
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
@@ -166,6 +170,7 @@ export default function Channel() {
             id: prev.length + 1,
             privacy: '(null)',
             password: '(null)',
+            whitelist: [],
           },
           type: 'mp',
           mpMessage: [],
@@ -178,26 +183,39 @@ export default function Channel() {
   async function getAllChannels() {
     let tmpSelected = false;
     setChannelUsersList([]);
+    if (location.state && location.state.startDM) {
+      AddChannelDM(location.state.startDM);
+      tmpSelected = true;
+    }
     await getDMs().then(async (map) => {
       Object.keys(map).forEach((key: string, id: number) => {
-        if (id === 0) {
+        if (id === 0 && !tmpSelected) {
           tmpSelected = true;
           setChannelSelected(key + 'mp');
         }
-        setChannelUsersList((prev) => [
-          ...prev,
-          {
-            id: key + 'mp',
-            channelBase: {
-              name: key,
-              id: id,
-              privacy: '(null)',
-              password: '(null)',
+        if (
+          !(
+            location &&
+            location.state &&
+            location.state.startDM &&
+            location.state.startDM === key
+          )
+        )
+          setChannelUsersList((prev) => [
+            ...prev,
+            {
+              id: key + 'mp',
+              channelBase: {
+                name: key,
+                id: id,
+                privacy: '(null)',
+                password: '(null)',
+                whitelist: [],
+              },
+              type: 'mp',
+              mpMessage: map[key].messages,
             },
-            type: 'mp',
-            mpMessage: map[key].messages,
-          },
-        ]);
+          ]);
       });
     });
 
@@ -407,14 +425,20 @@ export default function Channel() {
             </ListGroup>
           </div>
         </div>
-        <Button
-          onClick={() => {
-            navigate('/channelManager');
-          }}
-          variant="success"
-        >
-          Manage Channels
-        </Button>
+        <div>
+          <Button
+            onClick={() => {
+              navigate('/channelManager');
+            }}
+            variant="success"
+          >
+            Manage Channels
+          </Button>
+          <span> </span>
+          <Button onClick={() => setOpenBlockUsers(true)} variant="warning">
+            Users Blocked
+          </Button>
+        </div>
       </div>
       <ModalUserProfile
         searchedUser={searchedUser}
@@ -422,6 +446,12 @@ export default function Channel() {
         snackbar={snackbar}
         open={openProfileModal}
         setOpen={setOpenProfileModal}
+      />
+
+      <ModalBlockUser
+        snackbar={snackbar}
+        open={openBlockUsers}
+        setOpen={setOpenBlockUsers}
       />
     </div>
   ) : null;

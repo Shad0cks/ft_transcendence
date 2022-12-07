@@ -30,6 +30,7 @@ export default function PartyManage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function EditParty(e: ChannelDTO) {
+    window.scrollTo(0, 0);
     setChannelEdit(e);
   }
 

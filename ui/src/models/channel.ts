@@ -3,4 +3,5 @@ export type ChannelDTO = {
   name: string;
   privacy: string;
   password: string;
+  whitelist: string[];
 };

@@ -94,6 +94,7 @@ export class ChatService {
 
   async createChannel(createChannelDTO: CreateChannelDTO): Promise<Channel> {
     const channel = new Channel();
+    const owner = new ChannelParticipant();
 
     try {
       channel.name = createChannelDTO.channelName;
@@ -105,6 +106,13 @@ export class ChatService {
       }
       const result = await this.channelRepository.save(channel);
       delete result.password;
+      owner.channel = result;
+      owner.isAdmin = true;
+      owner.user = await this.userService.findOneByNickname(
+        createChannelDTO.creatorNickname,
+        null,
+      );
+      await this.channelParticipantRepository.save(owner);
       return result;
     } catch (error) {
       if (error.code === '23505') {
@@ -136,8 +144,8 @@ export class ChatService {
         channelRestrictionDTO.adminNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.adminParticipant = adminParticipant;
-
+      restriction.adminUser = adminParticipant.user;
+      restriction.channel = adminParticipant.channel;
       restriction.end_date = channelRestrictionDTO.end;
 
       if (channelRestrictionDTO.restriction as ChannelRestrictionType)
@@ -150,7 +158,7 @@ export class ChatService {
         channelRestrictionDTO.userNickname,
         channelRestrictionDTO.channelName,
       );
-      restriction.punishedParticipant = userParticipant;
+      restriction.punishedUser = userParticipant.user;
 
       await this.chatRestrictionRepository.save(restriction);
     } catch (error) {
@@ -390,10 +398,13 @@ export class ChatService {
 
     const restrictions = await this.chatRestrictionRepository
       .createQueryBuilder('chatRestriction')
-      .leftJoinAndSelect('chatRestriction.punishedParticipant', 'participant')
-      .leftJoinAndSelect('participant.user', 'user')
+      .leftJoinAndSelect('chatRestriction.punishedUser', 'user')
+      .leftJoinAndSelect('chatRestriction.channel', 'channel')
       .where('user.nickname = :nickname', {
         nickname: participant.user.nickname,
+      })
+      .andWhere('channel.name = :channelName', {
+        channelName: participant.channel.name,
       })
       .andWhere('end_date > :now', { now: nowTimestamp })
       .getMany();
@@ -421,6 +432,7 @@ export class ChatService {
         channelMessageDTO.channelName,
       );
       const restrictions = await this.getActiveRestrictions(participant);
+
       if (this.isBanned(restrictions)) {
         throw new ForbiddenException('You are banned');
       }
@@ -459,7 +471,6 @@ export class ChatService {
       message.receiver = receiver;
       return await this.directMessageRepository.save(message);
     } catch (error) {
-      console.log(error);
       return error;
     }
   }
