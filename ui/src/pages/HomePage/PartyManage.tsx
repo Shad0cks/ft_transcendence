@@ -19,7 +19,7 @@ export default function PartyManage() {
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
-    if (usernameStorage === null) navigate('/');
+    if (usernameStorage === null || socket.connected) navigate('/');
     else
       GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
         if (e.status === 401) {

@@ -16,13 +16,13 @@ function App() {
   const [username, setUsername] = useState<string>();
   const [user, setUser] = useState<GetUserIt>();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
     const usrReq = searchParams.get('nickname');
     let usernameStorage = localStorage.getItem('nickname');
 
-    if ((logReq && logReq === 'true') || usernameStorage !== null)
+    if ((logReq && logReq === 'true' && socket.connected) || usernameStorage !== null)
       seIsLog(true);
     else seIsLog(false);
     if (usernameStorage !== null) setUsername(usernameStorage);

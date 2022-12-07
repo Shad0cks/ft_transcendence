@@ -72,7 +72,7 @@ function MainGame() {
       socket?.off('connect');
       socket?.off('gameOption');
     };
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (socket && socket.id !== undefined) {
@@ -92,7 +92,7 @@ function MainGame() {
       socket?.off('newPlayer');
       socket?.off('disconnected');
     };
-  }, [game, socket]);
+  }, [game]);
 
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
