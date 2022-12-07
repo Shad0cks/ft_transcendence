@@ -50,6 +50,6 @@ export class AuthController {
 
   @Get('logout')
   logoutAction(@Res({ passthrough: true }) res: Response): void {
-    res.clearCookie('jwt', { httpOnly: true });
+    res.clearCookie('jwt', { sameSite: 'none', httpOnly: true });
   }
 }
