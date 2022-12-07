@@ -10,13 +10,13 @@ import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO, Usersocket } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { HistoryMatch } from '../entities/historymatch.entity';
+import { PongMatch } from '../entities/pongMatch.entity';
 import { ChannelParticipant } from 'src/entities/channelParticipant.entity';
 import { BlockedDTO } from 'src/dto/blocked.dto';
+import { RegisterPongMatchDTO } from 'src/dto/registerPongMatch.dto';
 
 export interface UserOptions {
   selectFriends?: boolean;
-  selectMatchs?: boolean;
   selectBlocked?: boolean;
 }
 
@@ -27,8 +27,8 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(ChannelParticipant)
     private channelParticipantsRepository: Repository<ChannelParticipant>,
-    @InjectRepository(HistoryMatch)
-    private matchRepository: Repository<HistoryMatch>,
+    @InjectRepository(PongMatch)
+    private matchRepository: Repository<PongMatch>,
   ) {}
 
   async createUser(userDTO: UserDTO, login42: string): Promise<User> {
@@ -81,8 +81,6 @@ export class UserService {
           options.selectFriends === undefined ? false : options.selectFriends,
         blocked:
           options.selectBlocked === undefined ? false : options.selectBlocked,
-        matchs:
-          options.selectMatchs === undefined ? false : options.selectMatchs,
       },
       take: 1,
     });
@@ -99,7 +97,6 @@ export class UserService {
       },
       relations: {
         friends: true,
-        matchs: true,
       },
       select: {
         id: true,
@@ -217,9 +214,60 @@ export class UserService {
     }
   }
 
-  async addMatch(user: User, aHistoryMatch: HistoryMatch) {
-    aHistoryMatch.user = user;
-    await this.matchRepository.save(aHistoryMatch);
+  async registerPongMatch(registerPongMatchDTO: RegisterPongMatchDTO) {
+    try {
+      const match = new PongMatch();
+      const user1 = await this.findOneByNickname(
+        registerPongMatchDTO.user1Nickname,
+        null,
+      );
+      const user2 = await this.findOneByNickname(
+        registerPongMatchDTO.user2Nickname,
+        null,
+      );
+
+      match.user1 = user1;
+      match.user2 = user2;
+      match.score1 = registerPongMatchDTO.user1Score;
+      match.score2 = registerPongMatchDTO.user2Score;
+      await this.matchRepository.save(match);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getPongMatches(nickname: string) {
+    const matches = this.matchRepository.find({
+      relations: ['user1', 'user2'],
+      where: [
+        {
+          user1: {
+            nickname: nickname,
+          },
+        },
+        {
+          user2: {
+            nickname: nickname,
+          },
+        },
+      ],
+      select: {
+        score1: true,
+        score2: true,
+        user1: {
+          nickname: true,
+          avatar: true,
+        },
+        user2: {
+          nickname: true,
+          avatar: true,
+        },
+      },
+      order: {
+        created_at: 'DESC',
+      },
+    });
+    return matches;
   }
 
   async deleteFriend(user: User, friendDTO: FriendDTO) {

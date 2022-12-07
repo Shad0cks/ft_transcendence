@@ -1,18 +1,16 @@
 import {
   Column,
-  PrimaryColumn,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-@Entity()
-export class HistoryMatch {
-  @PrimaryColumn()
-  player1: string;
 
-  @Column()
-  player2: string;
+@Entity()
+export class PongMatch {
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   score1: number;
@@ -23,6 +21,9 @@ export class HistoryMatch {
   @CreateDateColumn()
   created_at: Date;
 
-  @ManyToOne(() => User, (user) => user.matchs)
-  user: User;
+  @ManyToOne(() => User)
+  user1: User;
+
+  @ManyToOne(() => User)
+  user2: User;
 }

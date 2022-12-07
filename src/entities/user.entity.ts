@@ -3,10 +3,8 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { HistoryMatch } from './historymatch.entity';
 
 @Entity()
 export class User {
@@ -32,9 +30,6 @@ export class User {
   @ManyToMany(() => User)
   @JoinTable()
   blocked: User[];
-
-  @OneToMany(() => HistoryMatch, (match) => match.user)
-  matchs: HistoryMatch[];
 
   @Column()
   avatar: string;

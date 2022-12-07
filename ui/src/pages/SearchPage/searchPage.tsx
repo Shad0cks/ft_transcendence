@@ -7,6 +7,7 @@ import UserProfile from '../../components/UserProfile';
 import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 import TSSnackbar from '../../components/TSSnackbar';
 import { GetUserInfo } from '../../services/User/getUserInfo';
+import { MatchHistory } from '../../components/MatchHistory';
 
 export function searchUser(
   nickname: string | undefined | null,
@@ -16,6 +17,7 @@ export function searchUser(
   if (!nickname) {
     return;
   }
+
   GetUserInfo(nickname).then((response) => {
     if (response.ok) {
       response.text().then((object) => {
@@ -39,6 +41,7 @@ export default function SearchPage() {
     GetUserIt | undefined | null
   >();
   let getUserProfile;
+  let getMatchHistory;
 
   if (!user) {
     return <div></div>;
@@ -48,6 +51,7 @@ export default function SearchPage() {
     getUserProfile = () => {
       return <div></div>;
     };
+    getMatchHistory = getUserProfile;
   } else {
     getUserProfile = () => {
       return (
@@ -57,6 +61,9 @@ export default function SearchPage() {
           snackbar={snackbar}
         />
       );
+    };
+    getMatchHistory = () => {
+      return <MatchHistory searchedUser={searchedUser!} />;
     };
   }
 
@@ -88,6 +95,7 @@ export default function SearchPage() {
         </Button>
       </InputGroup>
       <div className="containerRow">{getUserProfile()}</div>
+      <div className="containerRow">{getMatchHistory()}</div>
       <TSSnackbar
         open={snackbar.open}
         setOpen={snackbar.setOpen}
