@@ -11,16 +11,14 @@ function setup() {
   return glbsocket;
 }
 
+export let statusMap: Map<string, string> = new Map();
+
 export const socket = glbsocket.connected ? glbsocket : setup();
 
-socket?.on('connect', function () {
-  console.log('Socket Connected');
-});
+socket?.on('connect', function () {});
 
 socket?.on('StatusUpdate', function (e: any) {
-  console.log('Socket recv', new Map(JSON.parse(e)));
+  statusMap = new Map(JSON.parse(e));
 });
 
-socket?.on('disconnect', function () {
-  console.log('Socket disconnected');
-});
+socket?.on('disconnect', function () {});

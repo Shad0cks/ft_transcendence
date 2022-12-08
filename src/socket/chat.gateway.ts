@@ -40,13 +40,11 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    //console.log(`Client Connected: ${client.id}`);
-    // console.log(this.connectedUser.get());
     // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
     // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
-    // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
+
     this.userstat.set(client.user.login42, 'online');
     for (const user of Clients.get()) {
       this.server

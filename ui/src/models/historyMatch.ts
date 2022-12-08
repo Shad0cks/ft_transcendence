@@ -1,6 +1,8 @@
+import { GetUserIt } from './getUser';
+
 export interface historyMatchIt {
-  player1: string;
-  player2: string;
+  user1: GetUserIt;
+  user2: GetUserIt;
   score1: number;
   score2: number;
   created_at: Date;
