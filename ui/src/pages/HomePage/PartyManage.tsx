@@ -3,7 +3,7 @@ import PartyCreate from './partyCreate';
 import ListeParty from './ListeParty';
 import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '../../services/socket';
+import { socket } from '../../services/socket'; // eslint-disable-line
 import { GetUserIt } from '../../models/getUser';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
@@ -19,7 +19,7 @@ export default function PartyManage() {
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
-    if (usernameStorage === null || socket.connected) navigate('/');
+    if (usernameStorage === null) navigate('/');
     else
       GetUserInfo(localStorage.getItem('nickname')!).then(async (e) => {
         if (e.status === 401) {

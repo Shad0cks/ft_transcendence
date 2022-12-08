@@ -8,7 +8,7 @@ import { Button } from 'react-bootstrap';
 import { GetUserIt } from './models/getUser';
 import { GetUserInfo } from './services/User/getUserInfo';
 import { UserLogout } from './services/User/userDelog';
-import { socket } from './services/socket';
+import { socket } from './services/socket'; // eslint-disable-line
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -22,10 +22,7 @@ function App() {
     const usrReq = searchParams.get('nickname');
     let usernameStorage = localStorage.getItem('nickname');
 
-    if (
-      (logReq && logReq === 'true' && socket.connected) ||
-      usernameStorage !== null
-    )
+    if ((logReq && logReq === 'true') || usernameStorage !== null)
       seIsLog(true);
     else seIsLog(false);
     if (usernameStorage !== null) setUsername(usernameStorage);
