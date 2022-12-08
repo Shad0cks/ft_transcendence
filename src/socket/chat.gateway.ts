@@ -77,30 +77,6 @@ export class ChatGateway {
     return;
   }
 
-  @SubscribeMessage('playermove') handleEvent(@MessageBody() data: PlayerDTO) {
-    this.server.emit('playermove', data);
-  }
-
-  @SubscribeMessage('gameOption')
-  async ongameOption(socket: CustomSocket, data: GameObjDTO) {
-    if (data === null) return;
-    this.server.emit('gameOption', data);
-  }
-
-  @SubscribeMessage('ballPos') BallEvent(@MessageBody() data: ballDTO) {
-    this.server.emit('ballPos', data);
-  }
-
-  @SubscribeMessage('newPlayer') PlayerJoin(@MessageBody() data: newPlayerDTO) {
-    this.server.emit('newPlayer', data);
-  }
-
-  @SubscribeMessage('GamePause') gamePause(
-    @MessageBody() data: { gameID: string; pause: boolean },
-  ) {
-    this.server.emit('GamePause', data);
-  }
-
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
     const Userfromchannel = await this.chatService.getParticipantsNickname(

@@ -5,6 +5,7 @@ import { UserModule } from './user.module';
 import { AuthModule } from './auth.module';
 import { ChatSocketModule } from './socket/chat.socket.module';
 import { ChatModule } from './chat.module';
+import { GameModule } from './socket/game.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ChatModule } from './chat.module';
     AuthModule,
     ChatModule,
     ChatSocketModule,
+    // GameModule,
   ],
   controllers: [],
   providers: [],

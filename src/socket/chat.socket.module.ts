@@ -18,6 +18,8 @@ import { PrivateMessageDTO } from 'src/dto/privateMessage.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { ChatGateway } from './chat.gateway';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
+import { GameGateway } from './game.gateway';
+import { GameService } from 'src/services/game.service';
 
 @Module({
   imports: [
@@ -40,6 +42,12 @@ import { DirectMessageDTO } from 'src/dto/directMessage.dto';
     ChatModule,
     UserModule,
   ],
-  providers: [ChatGateway, ConnectedUsers, UserService],
+  providers: [
+    ChatGateway,
+    ConnectedUsers,
+    UserService,
+    GameGateway,
+    GameService,
+  ],
 })
 export class ChatSocketModule {}
