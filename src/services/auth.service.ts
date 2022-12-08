@@ -119,7 +119,7 @@ export class AuthService {
         isAuthenticated: true,
       };
       const jwt = this.jwtService.sign(payload);
-      response.cookie('jwt', jwt, { sameSite: 'none', httpOnly: true });
+      response.cookie('jwt', jwt, { httpOnly: true });
       response.redirect(
         this.buildRedirectUrl('http://localhost:3000', '/callback', payload),
       );
