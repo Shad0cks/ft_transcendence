@@ -191,17 +191,6 @@ export class ChatGateway {
 
   //TODO Invite une game
 
-  @SubscribeMessage('InvitationGame')
-  async OnInvitationGame(
-    socket: CustomSocket,
-    InvitationSender: string,
-    InvitationReceiver: string,
-  ) {
-    this.server
-      .to(Clients.getSocketId(InvitationReceiver))
-      .emit('InvitationGame', InvitationSender);
-  }
-
   @SubscribeMessage('joinChannel')
   async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO) {
     await this.chatService.joinChannel(channel);

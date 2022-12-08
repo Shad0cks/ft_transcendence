@@ -9,12 +9,8 @@ import { Server } from 'socket.io';
 import { CustomSocket } from 'src/adapters/socket.adapter';
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
-import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 import { Clients } from 'src/adapters/socket.adapter';
-import { Socket } from 'dgram';
-import { ConsoleLogger } from '@nestjs/common';
-import { find, Subscriber } from 'rxjs';
 import { GameService } from 'src/services/game.service';
 
 @WebSocketGateway()
@@ -54,7 +50,12 @@ export class GameGateway {
   }
 
   @SubscribeMessage('GamePause') gamePause(
-    @MessageBody() data: { gameid: string; pause: boolean },
+    @MessageBody()
+    data: {
+      gameid: string;
+      pausePlayer1: boolean;
+      pausePlayer2: boolean;
+    },
   ) {
     const Gameviewver = this.gameService.getViewver(data.gameid);
     for (const viewver of Gameviewver) {
@@ -70,7 +71,7 @@ export class GameGateway {
       const Gameviewver = this.gameService.getViewver(gameid);
       for (const viewver of Gameviewver) {
         this.server.to(Clients.getSocketId(viewver).emit('Scored', player));
-        this.server.to(Clients.getSocketId(viewver)).emit('GameEnded');
+        this.server.to(Clients.getSocketId(viewver)).emit('GameEnded', player);
       }
       this.gameService.deleteGame(gameid);
     } else {
@@ -98,10 +99,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('Gameforceend')
-  async onGameforceend(socket: CustomSocket, gameid) {
+  async onGameforceend(socket: CustomSocket, gameid: string, player: string) {
     const Gameviewver = this.gameService.getViewver(gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('Gameforceend');
+      this.server.to(Clients.getSocketId(viewver)).emit('Gameforceend', player);
     }
     this.gameService.deleteGame(gameid);
   }
@@ -114,5 +115,34 @@ export class GameGateway {
   @SubscribeMessage('Leaveviewver')
   async onLeaveviewver(socket: CustomSocket, Gameid: string, viewver: string) {
     this.gameService.removeViewver(Gameid, viewver);
+  }
+
+  @SubscribeMessage('InvitationGame')
+  async OnInvitationGame(
+    socket: CustomSocket,
+    InvitationSender: string,
+    InvitationReceiver: string,
+  ) {
+    this.server
+      .to(Clients.getSocketId(InvitationReceiver))
+      .emit('InvitationGame', InvitationSender);
+  }
+
+  @SubscribeMessage('InvitationAccepted')
+  async OnInvitationAccepted(
+    socket: CustomSocket,
+    InvitationSender: string,
+    InvitationReceiver: string,
+  ) {
+    const Gameid = await this.gameService.create(
+      InvitationSender,
+      InvitationReceiver,
+    );
+    this.server
+      .to(Clients.getSocketId(InvitationReceiver))
+      .emit('FindGame', Gameid);
+    this.server
+      .to(Clients.getSocketId(InvitationSender))
+      .emit('FindGame', Gameid);
   }
 }

@@ -17,7 +17,9 @@ export class GameService {
       score1: 0,
       score2: 0,
     };
-    this.Game.set(player1 + player2, NewGame);
+    const IdGame = Date.now();
+    this.Game.set(IdGame.toString(), NewGame);
+    return IdGame.toString();
   }
 
   async addViewver(gameid: string, viewver: string) {
