@@ -85,11 +85,9 @@ export class GameGateway {
   async OnAddtoqueue(socket: CustomSocket, player: string) {
     const findgame = await this.gameService.Addtoqueue(player);
     if (findgame.bo) {
-      this.gameService.create(findgame.player, player);
-      this.server.to(socket.id).emit('FindGame', findgame.player + player);
-      this.server
-        .to(findgame.player)
-        .emit('FindGame', findgame.player + player);
+      const GameID = await this.gameService.create(findgame.player, player);
+      this.server.to(socket.id).emit('FindGame', GameID);
+      this.server.to(findgame.player).emit('FindGame', GameID);
     }
   }
 
