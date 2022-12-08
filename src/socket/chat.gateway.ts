@@ -1,5 +1,5 @@
 import {
-  MessageBody,
+  //MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -20,10 +20,10 @@ import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
-import { GameObjDTO } from 'src/dto/game.dto';
-import { PlayerDTO } from 'src/dto/player.dto';
-import { ballDTO } from 'src/dto/ballGame.dto';
-import { newPlayerDTO } from 'src/dto/newPlayer.dto';
+//import { GameObjDTO } from 'src/dto/game.dto';
+//import { PlayerDTO } from 'src/dto/player.dto';
+//import { ballDTO } from 'src/dto/ballGame.dto';
+//import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {
@@ -40,13 +40,11 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    //console.log(`Client Connected: ${client.id}`);
-    // console.log(this.connectedUser.get());
     // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
     // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
-    // console.log(`Client Nickname: ${TempUsersocket.nickname}`);
+
     this.userstat.set(client.user.login42, 'online');
     for (const user of Clients.get()) {
       this.server

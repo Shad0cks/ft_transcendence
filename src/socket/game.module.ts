@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserService } from 'src/services/user.service';
+//import { UserService } from 'src/services/user.service';
 import { ConnectedUsers } from './connectedUsers';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GameGateway } from './game.gateway';

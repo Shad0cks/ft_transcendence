@@ -7,7 +7,7 @@ import { disconnect } from '../services/User/userDelog';
 export default function useMatchHistory(nickname: string) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const history = useRef<historyMatchIt | null>(null);
+  const history = useRef<historyMatchIt[] | null>(null);
 
   useEffect(() => {
     getHistoryMatchs(nickname!)
@@ -27,5 +27,5 @@ export default function useMatchHistory(nickname: string) {
         disconnect(navigate);
       });
   });
-  return { history: history.current, isLoading: isLoading };
+  return { data: history.current, isLoading: isLoading };
 }

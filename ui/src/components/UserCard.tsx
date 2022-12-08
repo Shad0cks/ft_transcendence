@@ -10,6 +10,7 @@ interface UserCardProps {
   loggedUser: GetUserIt;
   snackbar: SnackbarHook;
   isFriend: boolean;
+  status: string;
 }
 
 export function UserCard(props: UserCardProps) {
@@ -60,6 +61,7 @@ export function UserCard(props: UserCardProps) {
         <ButtonGroup aria-label="Basic example">
           {getFriendButton()}
         </ButtonGroup>
+        {props.status}
       </Card.Body>
     </Card>
   );
