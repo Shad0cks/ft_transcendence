@@ -1,5 +1,5 @@
 import {
-  MessageBody,
+  //MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -20,10 +20,10 @@ import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
-import { GameObjDTO } from 'src/dto/game.dto';
-import { PlayerDTO } from 'src/dto/player.dto';
-import { ballDTO } from 'src/dto/ballGame.dto';
-import { newPlayerDTO } from 'src/dto/newPlayer.dto';
+//import { GameObjDTO } from 'src/dto/game.dto';
+//import { PlayerDTO } from 'src/dto/player.dto';
+//import { ballDTO } from 'src/dto/ballGame.dto';
+//import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {

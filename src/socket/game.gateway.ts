@@ -9,12 +9,12 @@ import { Server } from 'socket.io';
 import { CustomSocket } from 'src/adapters/socket.adapter';
 import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
-import { newPlayerDTO } from 'src/dto/newPlayer.dto';
+//import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 import { Clients } from 'src/adapters/socket.adapter';
-import { Socket } from 'dgram';
-import { ConsoleLogger } from '@nestjs/common';
-import { find, Subscriber } from 'rxjs';
+//import { Socket } from 'dgram';
+//import { ConsoleLogger } from '@nestjs/common';
+//import { find, Subscriber } from 'rxjs';
 import { GameService } from 'src/services/game.service';
 
 @WebSocketGateway()

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ballDTO } from 'src/dto/ballGame.dto';
-import { GameObjDTO } from 'src/dto/game.dto';
-import { Clients } from 'src/adapters/socket.adapter';
-import { GamePageDTO } from 'src/dto/Gamepage.dto';
+//import { ballDTO } from 'src/dto/ballGame.dto';
+//import { GameObjDTO } from 'src/dto/game.dto';
+//import { Clients } from 'src/adapters/socket.adapter';
+import { GamePageDTO } from 'src/dto/gamepage.dto';
 
 @Injectable()
 export class GameService {
