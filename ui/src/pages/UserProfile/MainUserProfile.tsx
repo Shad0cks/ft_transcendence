@@ -18,6 +18,7 @@ import 'reactjs-popup/dist/index.css';
 import { UserLogout } from '../../services/User/userDelog';
 import TSSnackbar from '../../components/TSSnackbar';
 import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
+import { socket } from '../../services/socket';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ export default function MainUserProfile() {
           window.location.reload();
         } else if (res.ok) {
           localStorage.setItem('nickname', newValue);
+          socket.emit('ChangeNickname', user.nickname);
           window.location.reload();
         } else {
           snackbar.setMessage('Nickname already taken');

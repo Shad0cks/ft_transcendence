@@ -45,7 +45,7 @@ export class ChatGateway {
     // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
     // this.Usersockets.push(TempUsersocket);
 
-    this.userstat.set(client.user.login42, 'online');
+    this.userstat.set(client.user.nickname, 'online');
     for (const user of Clients.get()) {
       this.server
         .to(Clients.getSocketId(user[0]))
@@ -56,7 +56,7 @@ export class ChatGateway {
 
   //deconnexion
   handleDisconnect(client: CustomSocket) {
-    this.userstat.delete(client.user.login42);
+    this.userstat.delete(client.user.nickname);
     for (const user of Clients.get()) {
       this.server
         .to(Clients.getSocketId(user[0]))
@@ -66,7 +66,20 @@ export class ChatGateway {
 
   @SubscribeMessage('SetStatus')
   async SetStatus(client: CustomSocket, stat: string) {
-    this.userstat.set(client.user.login42, stat);
+    this.userstat.set(client.user.nickname, stat);
+    for (const user of Clients.get()) {
+      this.server
+        .to(Clients.getSocketId(user[0]))
+        .emit('StatusUpdate', JSON.stringify(Array.from(this.userstat)));
+    }
+    return;
+  }
+
+  @SubscribeMessage('ChangeNickname')
+  async ChanegNickname(client: CustomSocket, oldnickname: string) {
+    const stat = this.userstat.get(oldnickname);
+    this.userstat.delete(oldnickname);
+    this.userstat.set(client.user.nickname, stat);
     for (const user of Clients.get()) {
       this.server
         .to(Clients.getSocketId(user[0]))
