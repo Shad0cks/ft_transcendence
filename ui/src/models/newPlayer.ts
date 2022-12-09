@@ -1,4 +1,4 @@
 export interface newPlayer {
-  socketID: string;
+  viewver: string;
   gameID: string;
 }

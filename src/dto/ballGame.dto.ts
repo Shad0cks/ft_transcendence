@@ -1,5 +1,4 @@
 export class ballDTO {
-  likedGame: string;
   x: number;
   y: number;
   r: number;

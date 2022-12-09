@@ -40,6 +40,13 @@ function App() {
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    socket.on('FindGame', (gameID: string) => {
+      console.log('receive game', gameID);
+      navigate('/game_' + gameID, { state: { gameid: gameID } });
+    });
+  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div>
       {isLog && username !== undefined ? (
@@ -56,7 +63,7 @@ function App() {
           <Header username={user?.nickname} iconUser={user?.avatar} />
           <Button
             onClick={() => {
-              navigate('/game_1');
+              socket.emit('Addtoqueue', username);
             }}
             variant="success"
           >

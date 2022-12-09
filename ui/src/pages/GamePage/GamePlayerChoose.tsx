@@ -14,10 +14,7 @@ export default function GamePlayerChoose({
   setSocket: (playerID: number) => void;
 }) {
   const changePage = () => {
-    if (!game.player1.taken || !game.player2.taken) {
-      setGame({ ...game, offline: true, emiter: socket?.id });
-      nextPage();
-    } else nextPage(2);
+    nextPage(2);
   };
 
   return (
@@ -47,8 +44,10 @@ export default function GamePlayerChoose({
           Player 2
         </button>
       </div>
-      {(game.player1.taken && game.player1.socket === socket?.id) ||
-      (game.player2.taken && game.player2.socket === socket?.id) ? (
+      {game.player1.taken &&
+      game.player2.taken &&
+      (game.player1.socket === socket?.id ||
+        game.player2.socket === socket?.id) ? (
         <button
           type="button"
           className="btn btn-outline-success"

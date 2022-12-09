@@ -4,16 +4,16 @@ import { socket } from '../services/socket';
 import { GameObj } from '../models/game';
 import Popup from 'reactjs-popup';
 
-const keys: boolean[] = [];
-
 export default function PongGame({
   width,
   height,
   gameInfo,
+  gameID,
 }: {
   width: number;
   height: number;
   gameInfo: GameObj;
+  gameID: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let pause = false;
@@ -23,7 +23,6 @@ export default function PongGame({
   let myInterval: NodeJS.Timer;
 
   interface playerProps {
-    lien: string;
     id: number;
     x: number;
     y: number;
@@ -34,7 +33,6 @@ export default function PongGame({
   }
 
   interface ballProps {
-    likedGame: string;
     x: number;
     y: number;
     r: number;
@@ -47,7 +45,6 @@ export default function PongGame({
   }
 
   const user1 = {
-    lien: window.location.pathname,
     id: 1,
     x: 20,
     y: height / 2 - 60 / 2,
@@ -58,7 +55,6 @@ export default function PongGame({
   };
 
   const user2 = {
-    lien: window.location.pathname,
     id: 2,
     x: width - 10 - 20,
     y: height / 2 - 60 / 2,
@@ -85,7 +81,6 @@ export default function PongGame({
   };
 
   const ball = {
-    likedGame: window.location.pathname,
     x: width / 2,
     y: height / 2,
     r: 10,
@@ -98,16 +93,14 @@ export default function PongGame({
   };
 
   function sendBallPos() {
-    if (playerID === 1 || (gameInfo.offline && playerID === 2))
-      socket.emit('ballPos', ball);
+    if (playerID === 1) socket.emit('ballPos', { data: ball, gameid: gameID });
   }
 
   function sendPlayers() {
-    if (gameInfo.offline) {
-      socket.emit('playermove', user1);
-      socket.emit('playermove', user2);
-    } else if (playerID === 1) socket.emit('playermove', user1);
-    else if (playerID === 2) socket.emit('playermove', user2);
+    if (playerID === 1)
+      socket.emit('playermove', { data: user1, gameid: gameID });
+    else if (playerID === 2)
+      socket.emit('playermove', { data: user2, gameid: gameID });
   }
 
   function drawMidLine(context: CanvasRenderingContext2D) {
@@ -227,16 +220,7 @@ export default function PongGame({
     let colidePoint = 0;
     let angleCollision = 0;
 
-    if (gameInfo.computer) {
-      let temp = gameInfo.player1.taken ? user2 : user1;
-      let botMove =
-        (ball.y - (temp.y + temp.height / 2)) * (gameInfo.botLevel / 10);
-
-      if (botMove - temp.height < height && botMove + temp.height > 0)
-        temp.y += botMove;
-    }
-
-    if (playerID === 1 || (gameInfo.offline && playerID === 2)) {
+    if (playerID === 1) {
       ball.x += ball.velocityX;
       ball.y += ball.velocityY;
     }
@@ -270,8 +254,6 @@ export default function PongGame({
   }
 
   socket.on('playermove', function (data: playerProps) {
-    if (data.lien !== user1.lien) return;
-
     if (playerID === 3) {
       if (data.id === 2) {
         user2.y = data.y;
@@ -279,21 +261,16 @@ export default function PongGame({
         user1.y = data.y;
       }
     } else if (playerID === 1) {
-      if (data.id === 2 && !gameInfo.offline) user2.y = data.y;
+      if (data.id === 2) user2.y = data.y;
     } else if (playerID === 2) {
-      if (data.id === 1 && !gameInfo.offline) {
+      if (data.id === 1) {
         user1.y = data.y;
       }
     }
   });
 
   socket.on('ballPos', function (data: ballProps) {
-    if (
-      data.likedGame !== user1.lien ||
-      playerID === 1 ||
-      (gameInfo.offline && playerID === 2)
-    )
-      return;
+    if (playerID === 1) return;
     ball.velocityX = data.velocityX;
     ball.velocityY = data.velocityY;
     ball.speed = data.speed;
@@ -307,7 +284,6 @@ export default function PongGame({
     if (pause) return;
     sendPlayers();
     sendBallPos();
-    whatKey();
     updateGame();
     createTerrin(context);
   }
@@ -354,25 +330,6 @@ export default function PongGame({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function whatKey() {
-    if (playerID === 3) return;
-    let temp = gameInfo.player1.taken ? user2 : user1;
-    if (keys[38] && keys[40]) return;
-    if (keys[38] && temp.y > 0) {
-      temp.y -= temp.speed;
-    } else if (keys[40] && temp.y + user1.height < height) {
-      temp.y += user2.speed;
-    }
-  }
-
-  const handleUserKeyPress = useCallback((e: KeyboardEvent) => {
-    keys[e.keyCode] = true;
-  }, []);
-
-  const handleUserKeyUp = useCallback((e: KeyboardEvent) => {
-    keys[e.keyCode] = false;
-  }, []);
-
   function getPlayerID() {
     if (socket.id === gameInfo.player1.socket) return 1;
     else if (socket.id === gameInfo.player2.socket) return 2;
@@ -381,33 +338,59 @@ export default function PongGame({
 
   const visibilty = useCallback((e: Event) => {
     if (document.hidden) {
-      socket.emit('GamePause', { gameID: gameInfo.gameID, pause: true });
+      if (pause)
+        socket.emit('Gameforceend', { gameid: gameID, player: undefined });
+      else if (playerID === 1)
+        socket.emit('GamePause', {
+          gameid: gameID,
+          pause: true,
+          player: gameInfo.player1.nickname,
+        });
+      else if (playerID === 2) {
+        socket.emit('GamePause', {
+          gameid: gameID,
+          pause: true,
+          player: gameInfo.player2.nickname,
+        });
+      }
     } else {
-      socket.emit('GamePause', { gameID: gameInfo.gameID, pause: false });
+      socket.emit('GamePause', {
+        gameid: gameID,
+        pause: false,
+        player: 'none',
+      });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    socket.on('GamePause', (e: { gameID: string; pause: boolean }) => {
-      pause = e.pause; // eslint-disable-line react-hooks/exhaustive-deps
-      setPauseT(e.pause);
-      let sec = 5;
-      if (!pause) return;
-      setSeconds(5);
+    socket.on(
+      'GamePause',
+      (e: { gameid: string; pause: boolean; player: undefined | string }) => {
+        pause = e.pause; // eslint-disable-line react-hooks/exhaustive-deps
+        setPauseT(e.pause);
+        let sec = 5;
+        if (!pause) return;
+        setSeconds(5);
 
-      clearInterval(myInterval);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      myInterval = setInterval(() => {
-        if (sec > 0) {
-          setSeconds((prev) => prev - 1);
-          sec--;
-        }
-        if (sec <= 0) {
-          setSeconds(5);
-          setPauseT(false);
-          clearInterval(myInterval);
-        }
-      }, 1000);
+        clearInterval(myInterval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        myInterval = setInterval(() => {
+          if (sec > 0) {
+            setSeconds((prev) => prev - 1);
+            sec--;
+          }
+          if (sec <= 0 && pause) {
+            socket.emit('Gameforceend', { gameid: gameID, player: e.player });
+            setSeconds(5);
+            setPauseT(false);
+            clearInterval(myInterval);
+          }
+        }, 1000);
+      },
+    );
+
+    socket.on('Gameforceend', (player: string | undefined) => {
+      console.log('lose is ', player);
     });
   }, [socket]);
 
@@ -418,10 +401,6 @@ export default function PongGame({
       window.addEventListener('mousemove', mouseMouveEvent);
       window.addEventListener('visibilitychange', visibilty);
       window.addEventListener('touchmove', touchStartLister);
-      if (gameInfo.offline) {
-        window.addEventListener('keydown', handleUserKeyPress);
-        window.addEventListener('keyup', handleUserKeyUp);
-      }
       if (context) {
         const frame = 60;
         const interval = setInterval(() => {
@@ -433,10 +412,6 @@ export default function PongGame({
           clearInterval(interval);
           window.removeEventListener('mousemove', mouseMouveEvent);
           window.removeEventListener('touchmove', touchStartLister);
-          if (gameInfo.offline) {
-            window.removeEventListener('keydown', handleUserKeyPress);
-            window.removeEventListener('keyup', handleUserKeyUp);
-          }
         };
       }
     }

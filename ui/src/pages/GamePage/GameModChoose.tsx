@@ -35,8 +35,8 @@ export default function GameModChoose({
             if (isPlayer()) {
               setGame({
                 ...game,
-                offline: true,
-                computer: false,
+                // offline: true,
+                // computer: false,
                 emiter: socket?.id,
               });
               setClicked(1);
@@ -54,8 +54,8 @@ export default function GameModChoose({
             if (isPlayer()) {
               setGame({
                 ...game,
-                offline: true,
-                computer: true,
+                // offline: true,
+                // computer: true,
                 emiter: socket?.id,
               });
               setClicked(0);
@@ -65,7 +65,7 @@ export default function GameModChoose({
           Computer
         </button>
       </div>
-      <div
+      {/* <div
         className="GamePlayerChoose_range"
         style={!game.computer ? { visibility: 'hidden' } : undefined}
       >
@@ -95,7 +95,7 @@ export default function GameModChoose({
         >
           Play
         </button>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }

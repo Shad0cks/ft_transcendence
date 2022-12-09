@@ -21,31 +21,33 @@ export class GameGateway {
   constructor(private gameService: GameService) {}
 
   @SubscribeMessage('playermove') handleEvent(
-    @MessageBody() data: PlayerDTO,
-    gameid: string,
+    @MessageBody() e: { data: PlayerDTO; gameid: string },
   ) {
-    const Gameviewver = this.gameService.getViewver(gameid);
+    const Gameviewver = this.gameService.getViewver(e.gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(viewver).emit('playermove', data);
+      this.server.to(Clients.getSocketId(viewver)).emit('playermove', e.data);
     }
   }
 
   @SubscribeMessage('gameOption')
-  async ongameOption(socket: CustomSocket, data: GameObjDTO, gameid: string) {
-    if (data === null) return;
-    const Gameviewver = this.gameService.getViewver(gameid);
+  async ongameOption(
+    socket: CustomSocket,
+    e: { data: GameObjDTO; gameid: string },
+  ) {
+    if (e.data === null) return;
+    const Gameviewver = this.gameService.getViewver(e.gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(viewver).emit('gameOption', data);
+      this.server.to(Clients.getSocketId(viewver)).emit('gameOption', e);
     }
   }
 
   @SubscribeMessage('ballPos') async BallEvent(
-    @MessageBody() data: ballDTO,
-    Gameid: string,
+    socket: CustomSocket,
+    @MessageBody() e: { data: ballDTO; gameid: string },
   ) {
-    const Gameviewver = this.gameService.getViewver(Gameid);
+    const Gameviewver = this.gameService.getViewver(e.gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('ballPos', data);
+      this.server.to(Clients.getSocketId(viewver)).emit('ballPos', e.data);
     }
   }
 
@@ -53,13 +55,13 @@ export class GameGateway {
     @MessageBody()
     data: {
       gameid: string;
-      pausePlayer1: boolean;
-      pausePlayer2: boolean;
+      pause: boolean;
+      player: undefined | string;
     },
   ) {
     const Gameviewver = this.gameService.getViewver(data.gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(viewver).emit('GamePause', data);
+      this.server.to(Clients.getSocketId(viewver)).emit('GamePause', data);
     }
   }
 
@@ -88,7 +90,9 @@ export class GameGateway {
     if (findgame.bo) {
       const GameID = await this.gameService.create(findgame.player, player);
       this.server.to(socket.id).emit('FindGame', GameID);
-      this.server.to(findgame.player).emit('FindGame', GameID);
+      this.server
+        .to(Clients.getSocketId(findgame.player))
+        .emit('FindGame', GameID);
     }
   }
 
@@ -99,12 +103,17 @@ export class GameGateway {
   }
 
   @SubscribeMessage('Gameforceend')
-  async onGameforceend(socket: CustomSocket, gameid: string, player: string) {
-    const Gameviewver = this.gameService.getViewver(gameid);
+  async onGameforceend(
+    socket: CustomSocket,
+    e: { gameid: string; player: string | undefined },
+  ) {
+    const Gameviewver = this.gameService.getViewver(e.gameid);
     for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('Gameforceend', player);
+      this.server
+        .to(Clients.getSocketId(viewver))
+        .emit('Gameforceend', e.player);
     }
-    this.gameService.deleteGame(gameid);
+    this.gameService.deleteGame(e.gameid);
   }
 
   @SubscribeMessage('Addtoviewver')

@@ -6,17 +6,19 @@ import { GamePageDTO } from 'src/dto/gamepage.dto';
 
 @Injectable()
 export class GameService {
-  Game: Map<string, GamePageDTO>;
-  Queue: Array<string>;
+  Game: Map<string, GamePageDTO> = new Map<string, GamePageDTO>();
+  Queue: Array<string> = new Array<string>();
 
   async create(player1: string, player2: string) {
     const NewGame: GamePageDTO = {
       player1: player1,
       player2: player2,
-      viewver: [player1, player2],
+      viewver: new Array<string>(),
       score1: 0,
       score2: 0,
     };
+    NewGame.viewver.push(player1);
+    NewGame.viewver.push(player2);
     const IdGame = Date.now();
     this.Game.set(IdGame.toString(), NewGame);
     return IdGame.toString();
@@ -38,16 +40,16 @@ export class GameService {
   }
 
   async Addtoqueue(player: string): Promise<{ bo: boolean; player: string }> {
-    if (this.Queue.includes(player)) {
+    if (this.Queue && this.Queue.includes(player)) {
       return { bo: false, player: null };
     } else {
       this.Queue.push(player);
     }
-    if (this.Queue.length > 2) {
-      this.create(this.Queue[0], this.Queue[1]);
+    if (this.Queue.length > 1) {
+      const player1 = this.Queue[0];
       this.Queue.splice(this.Queue.indexOf(player), 1);
       this.Queue.splice(this.Queue.indexOf(this.Queue[0]), 1);
-      return { bo: true, player: this.Queue[0] };
+      return { bo: true, player: player1 };
     }
     return { bo: false, player: null };
   }
