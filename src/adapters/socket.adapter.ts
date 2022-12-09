@@ -3,9 +3,12 @@ import { Socket } from 'socket.io';
 import * as jwt from 'jsonwebtoken';
 import { ConnectedUsers } from 'src/socket/connectedUsers';
 import { JwtPayload } from 'src/strategies/Jwt.strategy';
+import { UserService } from 'src/services/user.service';
+import { INestApplicationContext } from '@nestjs/common';
+import { User } from 'src/entities/user.entity';
 
 export interface CustomSocket extends Socket {
-  user: any;
+  user: User;
 }
 
 const Clients = new ConnectedUsers();
@@ -26,18 +29,29 @@ function getTokenPayload(socket: CustomSocket): JwtPayload {
 }
 
 export class WsAdapter extends IoAdapter {
+  private userService: UserService;
+
+  constructor(private app: INestApplicationContext) {
+    super(app);
+    app.resolve<UserService>(UserService).then((userService) => {
+      this.userService = userService;
+    });
+  }
+
   createIOServer(port: number, options?: any) {
     const server = super.createIOServer(port, {
       ...options,
       cors: { origin: 'http://localhost:3000', credentials: true },
     });
-    server.use((socket: CustomSocket, next: any) => {
+    server.use(async (socket: CustomSocket, next: any) => {
       try {
         // authenticate the socket connection
         const payload = getTokenPayload(socket);
         if (!payload || !payload.isAuthenticated) {
           next(new Error('Unauthorized'));
         }
+
+        const user = await this.userService.findOneByLogin42(payload.login42);
 
         // disconnect old potential instances of user socket
         // that might be left open
@@ -50,7 +64,7 @@ export class WsAdapter extends IoAdapter {
         }
 
         Clients.add(payload.nickname, socket.id);
-        socket.user = { nickname: payload.nickname, login42: payload.login42 };
+        socket.user = user;
 
         // automatically updates Clients on disconnection
         socket.on('disconnect', () => {
