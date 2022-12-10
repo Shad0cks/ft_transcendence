@@ -20,7 +20,7 @@ function App() {
   const [user, setUser] = useState<GetUserIt>();
   const navigate = useNavigate();
   const snackbar = useSnackbar();
-  const sender = useReceiveInvite(snackbar);
+  const sender = useReceiveInvite(snackbar, navigate);
 
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
@@ -45,22 +45,15 @@ function App() {
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    socket.on('FindGame', (gameID: string) => {
-      localStorage.removeItem('searcheGame');
-      navigate('/game_' + gameID, { state: { gameid: gameID } });
-    });
-  }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <div>
       {isLog && username !== undefined ? (
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            flexDirection: 'column',
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: 'row',
             width: '100%',
             height: '100vh',
           }}
@@ -94,6 +87,7 @@ function App() {
             </Button>
           )}
           <Button
+          style={{marginLeft: "100px"}}
             onClick={() => {
               navigate('/chat');
             }}

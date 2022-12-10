@@ -77,7 +77,7 @@ export default function PongGame({
     height: height,
     x: 0,
     y: 0,
-    color: 'BLACK',
+    color: gameInfo.mapColor,
   };
 
   const ball = {

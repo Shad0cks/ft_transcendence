@@ -7,7 +7,7 @@ interface playerS {
 export interface GameObj {
   emiter: string | undefined;
   screen: number;
-  mapID: number;
+  mapColor: string;
   player1: playerS;
   player2: playerS;
 }

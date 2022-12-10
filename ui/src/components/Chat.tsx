@@ -43,6 +43,7 @@ export default function Chat({
   refreshChannel: () => Promise<void>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
+  const [inputSearch, setInputSearch] = useState('')
 
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
@@ -50,7 +51,6 @@ export default function Chat({
     else
       return 'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
   }
-
   function sendMessage(e: string) {
     if (currentChannel?.type === 'channel') {
       socket?.emit('addMessage', {
@@ -109,10 +109,11 @@ export default function Chat({
     <div className="chatContainer">
       <MainContainer>
         <Sidebar position="left" scrollable={false}>
-          <Search placeholder="Search..." />
+          <Search placeholder="Search chat..."  onChange={(e) => setInputSearch(e)}/>
 
           <ConversationList>
-            {channelList.map((elem, id) => (
+            {channelList.map((elem, id) => elem.channelBase.name.startsWith(inputSearch) ?
+            (
               <Conversation
                 onClick={() => selectChannel(elem.channelBase.name + elem.type)}
                 key={id}
@@ -127,7 +128,10 @@ export default function Chat({
                   status="available"
                 /> */}
               </Conversation>
-            ))}
+            )
+            :
+            null
+            )}
           </ConversationList>
         </Sidebar>
 
@@ -190,6 +194,7 @@ export default function Chat({
           <MessageInput
             placeholder="Type message here"
             onSend={(e) => sendMessage(e)}
+            disabled={channelList.length === 0}
           />
         </ChatContainer>
       </MainContainer>

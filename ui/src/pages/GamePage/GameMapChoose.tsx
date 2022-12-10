@@ -23,48 +23,18 @@ export default function GameMapChoose({
   return (
     <div className="GamePlayerChoose_container">
       <h1 className="GamePlayerChoose_title">Choose Map Background</h1>
-      <div className="GamePlayerChoose_box">
-        <img
-          src={'https://picsum.photos/200/300'}
-          className={game.mapID === 1 ? 'GamePlayerChoose_sl' : ''}
-          height="80px"
-          width="80px"
-          style={{ cursor: 'pointer' }}
-          onClick={() =>
-            isPlayer()
-              ? setGame({ ...game, mapID: 1, emiter: socket?.id })
-              : null
-          }
-          alt="background1"
-        />
-        <img
-          src={'https://picsum.photos/200/300'}
-          className={game.mapID === 2 ? 'GamePlayerChoose_sl' : ''}
-          height="80px"
-          width="80px"
-          style={{ cursor: 'pointer' }}
-          onClick={() =>
-            isPlayer()
-              ? setGame({ ...game, mapID: 2, emiter: socket?.id })
-              : null
-          }
-          alt="background2"
-        />
-        <img
-          src={'https://picsum.photos/200/300'}
-          className={game.mapID === 3 ? 'GamePlayerChoose_sl' : ''}
-          height="80px"
-          width="80px"
-          style={{ cursor: 'pointer' }}
-          onClick={() =>
-            isPlayer()
-              ? setGame({ ...game, mapID: 3, emiter: socket?.id })
-              : null
-          }
-          alt="background3"
-        />
+      <div>
+        <h3>Map Color:</h3>
+        <div style={{border: "solid 2px blue",margin: "10px auto", height: "60px", width: "100px", backgroundColor: game.mapColor === "null" ? "#000000" : game.mapColor}}></div>
       </div>
-      {game.mapID !== -1 ? (
+      <div>
+      <label style={{margin: "10px auto"}} htmlFor="head">Select: </label>
+        <input style={{display: "block", margin: "0 auto"}} type="color" id="head" name="color picker" onChange={(e) => {
+        if(isPlayer()) setGame({...game, mapColor: e.target.value, emiter: socket.id})
+        }}
+              value="#000000"/>
+    </div>
+      {game.mapColor !== "null" ? (
         <button
           type="button"
           className="btn btn-outline-success"

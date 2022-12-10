@@ -45,7 +45,7 @@
   justify-content: space-around;
   position: absolute;
   font-family: 'Orbitron';
-  font-size: 4em;
+  font-size: 3em;
 }
 
 @media (min-width: 1px) and (max-width: 645px) {
@@ -70,7 +70,7 @@
     justify-content: space-around;
     position: absolute;
     font-family: 'Orbitron';
-    font-size: 4em;
+    font-size: 3em;
   }
 }
 

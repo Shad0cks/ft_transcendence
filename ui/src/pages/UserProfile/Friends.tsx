@@ -22,7 +22,7 @@ export default function Friends() {
   const [username, setUsername] = useState<string | null>(null);
   const [friendsList, setFriendsList] = useState<GetUserIt[]>([]);
   const snackbar = useSnackbar();
-  const sender = useReceiveInvite(snackbar);
+  const sender = useReceiveInvite(snackbar, navigate);
 
   function updateName() {
     if (!newFriend.current) {

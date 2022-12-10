@@ -16,7 +16,7 @@ import TSSnackbar from '../../components/TSSnackbar';
 export default function PartyManage() {
   const navigate = useNavigate();
   const snackbar = useSnackbar();
-  const sender = useReceiveInvite(snackbar);
+  const sender = useReceiveInvite(snackbar, navigate);
   const [username, setUsername] = useState<string | null>(null);
   const [channelEdit, setChannelEdit] = useState<ChannelDTO>();
   const [user, setUser] = useState<GetUserIt>();

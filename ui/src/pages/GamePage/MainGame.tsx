@@ -18,7 +18,7 @@ function MainGame() {
   const [game, setGame] = useState<GameObj>({
     emiter: undefined,
     screen: 1,
-    mapID: -1,
+    mapColor: "null",
     player1: { taken: false, socket: undefined, nickname: undefined },
     player2: { taken: false, socket: undefined, nickname: undefined },
   });
@@ -67,6 +67,10 @@ function MainGame() {
   useEffect(() => {
     if (location.state) setGameid(location.state.gameid);
     socket.emit('SetStatus', 'ingame');
+    return () => 
+    {
+      socket.emit('SetStatus', 'online');
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -136,8 +140,8 @@ function MainGame() {
         return (
           <div className="mainGame_block">
             <div className="playeCont">
-              <p className="playerNum">Player 1</p>
-              <p className="playerNum">Player 2</p>
+              <p className="playerNum">{game.player1.nickname}</p>
+              <p className="playerNum">{game.player2.nickname}</p>
             </div>
             <PongGame
               width={1000}

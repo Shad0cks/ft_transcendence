@@ -20,9 +20,9 @@ export default function Header({
     <div>
       <Navbar
         bg="dark"
-        variant="dark"
+        variant="dark" 
         fixed="top"
-        style={{ fontFamily: 'Orbitron', zIndex: 1 }}
+        style={{ fontFamily: 'Orbitron', zIndex: 5 }}
       >
         <Container>
           <Navbar.Brand
@@ -32,7 +32,7 @@ export default function Header({
             FT_TRANSCENDENCE
           </Navbar.Brand>
           <Navbar.Toggle />
-          <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
+          <Navbar.Collapse className="responsive-navbar-nav justify-content-end" >
             <Nav className="justify-content-end">
               <NavDropdown
                 title={
