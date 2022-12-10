@@ -97,16 +97,16 @@ export default function MainUserProfile() {
 
     if (user && event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
-      let img = document.createElement("img");
+      let img = document.createElement('img');
       img.onload = async () => {
-        if (img.width === img.height)
-        {
+        if (img.width === img.height) {
           const fileExt = file.name.substring(file.name.lastIndexOf('.'));
           const newFile = new File([file], user.id.toString() + time + fileExt);
           const blobServiceClient = new BlobServiceClient(
             `https://${account}.blob.core.windows.net/?${sas}`,
           );
-          const containerClient = blobServiceClient.getContainerClient('avatarimg');
+          const containerClient =
+            blobServiceClient.getContainerClient('avatarimg');
           const blobClient = containerClient.getBlockBlobClient(newFile.name);
           await blobClient.uploadData(newFile);
           UserSetAvatar(
@@ -118,14 +118,12 @@ export default function MainUserProfile() {
               window.location.reload();
             } else if (res.ok) window.location.reload();
           });
-        }
-        else
-        {
+        } else {
           snackbar.setMessage('Image must be square (x=y)');
           snackbar.setSeverity('error');
           snackbar.setOpen(true);
         }
-      }
+      };
       img.src = URL.createObjectURL(file);
     }
   }

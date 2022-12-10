@@ -80,23 +80,25 @@ export default function Channel() {
       <Popover id="popover-basic">
         <Popover.Header as="h3">{player}</Popover.Header>
         <Popover.Body>
-          <Button variant="success" onClick={() => 
-          {
-            socket.emit('InvitationGame', {
-              InvitationSender: username,
-              InvitationReceiver: player,
-            });
-          }}
-          >Game</Button>{' '}
+          <Button
+            variant="success"
+            onClick={() => {
+              socket.emit('InvitationGame', {
+                InvitationSender: username,
+                InvitationReceiver: player,
+              });
+            }}
+          >
+            Game
+          </Button>{' '}
           <Button variant="primary" onClick={() => AddChannelDM(player)}>
             DM
           </Button>{' '}
           <Button variant="primary" onClick={() => openProfile(player)}>
             Profile
           </Button>
-          {
-            currChannel.type === "channel" && isUserAmin(username!) ?
-            ( <Button
+          {currChannel.type === 'channel' && isUserAmin(username!) ? (
+            <Button
               variant="danger"
               onClick={() => {
                 socket?.emit('AddRestriction', {
@@ -109,25 +111,23 @@ export default function Channel() {
               }}
             >
               ban
-            </Button>)
-            :
-            null
-          }{" "}
+            </Button>
+          ) : null}{' '}
           {currChannel.type === 'channel' ? (
             <Button
-            variant="primary"
-            onClick={() => {
-              socket?.emit('AddRestriction', {
-                userNickname: player,
-                adminNickname: user?.nickname,
-                channelName: currChannel.channelBase.name,
-                restriction: 'mute',
-                end: '2023-12-04 18:07:18.363',
-              });
-            }}
-          >
-            mute
-          </Button>
+              variant="primary"
+              onClick={() => {
+                socket?.emit('AddRestriction', {
+                  userNickname: player,
+                  adminNickname: user?.nickname,
+                  channelName: currChannel.channelBase.name,
+                  restriction: 'mute',
+                  end: '2023-12-04 18:07:18.363',
+                });
+              }}
+            >
+              mute
+            </Button>
           ) : null}{' '}
           {!isAdminUser && currChannel.type === 'channel' ? (
             <Button

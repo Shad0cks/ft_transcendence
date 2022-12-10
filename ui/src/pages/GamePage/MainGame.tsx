@@ -18,7 +18,7 @@ function MainGame() {
   const [game, setGame] = useState<GameObj>({
     emiter: undefined,
     screen: 1,
-    mapColor: "null",
+    mapColor: 'null',
     player1: { taken: false, socket: undefined, nickname: undefined },
     player2: { taken: false, socket: undefined, nickname: undefined },
   });
@@ -67,10 +67,9 @@ function MainGame() {
   useEffect(() => {
     if (location.state) setGameid(location.state.gameid);
     socket.emit('SetStatus', 'ingame');
-    return () => 
-    {
+    return () => {
       socket.emit('SetStatus', 'online');
-    }
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

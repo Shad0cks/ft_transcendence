@@ -3,7 +3,10 @@ import { NavigateFunction } from 'react-router-dom';
 import { socket } from '../services/socket';
 import { SnackbarHook } from './useSnackbar';
 
-export default function useReceiveInvite(snackbar: SnackbarHook, navigate: NavigateFunction) {
+export default function useReceiveInvite(
+  snackbar: SnackbarHook,
+  navigate: NavigateFunction,
+) {
   const [sender, setSender] = useState<string>();
 
   useEffect(() => {

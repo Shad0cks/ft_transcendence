@@ -43,7 +43,7 @@ export default function Chat({
   refreshChannel: () => Promise<void>;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
-  const [inputSearch, setInputSearch] = useState('')
+  const [inputSearch, setInputSearch] = useState('');
 
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
@@ -109,28 +109,31 @@ export default function Chat({
     <div className="chatContainer">
       <MainContainer>
         <Sidebar position="left" scrollable={false}>
-          <Search placeholder="Search chat..."  onChange={(e) => setInputSearch(e)}/>
+          <Search
+            placeholder="Search chat..."
+            onChange={(e) => setInputSearch(e)}
+          />
 
           <ConversationList>
-            {channelList.map((elem, id) => elem.channelBase.name.startsWith(inputSearch) ?
-            (
-              <Conversation
-                onClick={() => selectChannel(elem.channelBase.name + elem.type)}
-                key={id}
-                name={elem.channelBase.name}
-                lastSenderName="Type"
-                info={elem.type === 'channel' ? 'Channel' : 'Private Message'}
-                active={elem.id === channelSelected}
-              >
-                {/* <Avatar
+            {channelList.map((elem, id) =>
+              elem.channelBase.name.startsWith(inputSearch) ? (
+                <Conversation
+                  onClick={() =>
+                    selectChannel(elem.channelBase.name + elem.type)
+                  }
+                  key={id}
+                  name={elem.channelBase.name}
+                  lastSenderName="Type"
+                  info={elem.type === 'channel' ? 'Channel' : 'Private Message'}
+                  active={elem.id === channelSelected}
+                >
+                  {/* <Avatar
                   src={'https://picsum.photos/50/50'}
                   name={elem.name}
                   status="available"
                 /> */}
-              </Conversation>
-            )
-            :
-            null
+                </Conversation>
+              ) : null,
             )}
           </ConversationList>
         </Sidebar>

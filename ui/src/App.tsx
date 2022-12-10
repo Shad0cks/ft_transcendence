@@ -51,8 +51,8 @@ function App() {
         <div
           style={{
             display: 'flex',
-            justifyContent: "center",
-            alignItems: "center",
+            justifyContent: 'center',
+            alignItems: 'center',
             flexDirection: 'row',
             width: '100%',
             height: '100vh',
@@ -87,7 +87,7 @@ function App() {
             </Button>
           )}
           <Button
-          style={{marginLeft: "100px"}}
+            style={{ marginLeft: '100px' }}
             onClick={() => {
               navigate('/chat');
             }}
