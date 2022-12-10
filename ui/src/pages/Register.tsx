@@ -6,10 +6,13 @@ import Image from 'react-bootstrap/Image';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { Form } from 'react-bootstrap';
 import 'reactjs-popup/dist/index.css';
+import TSSnackbar from '../components/TSSnackbar';
+import useSnackbar from '../customHooks/useSnackbar';
 
 export default function Register() {
   //const navigate = useNavigate();
   const newName = useRef(null);
+  const snackbar = useSnackbar();
   const [avatar, setAvatar] = useState<string | undefined>(
     'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg',
   );
@@ -40,15 +43,28 @@ export default function Register() {
 
     if (event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
-      const fileExt = file.name.substring(file.name.lastIndexOf('.'));
-      const newFile = new File([file], 'default' + time + fileExt);
-      const blobServiceClient = new BlobServiceClient(
-        `https://${account}.blob.core.windows.net/?${sas}`,
-      );
-      const containerClient = blobServiceClient.getContainerClient('avatarimg');
-      const blobClient = containerClient.getBlockBlobClient(newFile.name);
-      await blobClient.uploadBrowserData(newFile);
-      setAvatar(`${'default'}${time}${fileExt}`);
+      let img = document.createElement("img");
+      img.onload = async () => {
+        if (img.width === img.height)
+        {
+          const fileExt = file.name.substring(file.name.lastIndexOf('.'));
+          const newFile = new File([file], 'default' + time + fileExt);
+          const blobServiceClient = new BlobServiceClient(
+            `https://${account}.blob.core.windows.net/?${sas}`,
+          );
+          const containerClient = blobServiceClient.getContainerClient('avatarimg');
+          const blobClient = containerClient.getBlockBlobClient(newFile.name);
+          await blobClient.uploadBrowserData(newFile);
+          setAvatar(`${'default'}${time}${fileExt}`);
+        }
+        else
+        {
+          snackbar.setMessage('Image must be square (x=y)');
+          snackbar.setSeverity('error');
+          snackbar.setOpen(true);
+        }
+      }
+      img.src = URL.createObjectURL(file);
     }
   }
 
@@ -91,6 +107,14 @@ export default function Register() {
           </InputGroup>
         </div>
       </div>
+      <TSSnackbar
+        open={snackbar.open}
+        setOpen={snackbar.setOpen}
+        severity={snackbar.severity}
+        message={snackbar.message}
+        senderInvite={undefined}
+        username={undefined}
+      />
     </>
   );
 }
