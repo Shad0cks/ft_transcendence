@@ -66,20 +66,22 @@ export class GameGateway {
   }
 
   @SubscribeMessage('Scored')
-  async onScored(socket: CustomSocket, gameid: string, player: string) {
-    await this.gameService.scored(gameid, player);
-    const Game = await this.gameService.get(gameid);
+  async onScored(socket: CustomSocket, e: { gameid: string; player: string }) {
+    await this.gameService.scored(e.gameid, e.player);
+    const Game = await this.gameService.get(e.gameid);
     if (Game.score1 === 5 || Game.score2 === 5) {
-      const Gameviewver = this.gameService.getViewver(gameid);
+      const Gameviewver = this.gameService.getViewver(e.gameid);
       for (const viewver of Gameviewver) {
-        this.server.to(Clients.getSocketId(viewver).emit('Scored', player));
-        this.server.to(Clients.getSocketId(viewver)).emit('GameEnded', player);
+        this.server.to(Clients.getSocketId(viewver).emit('Scored', e.player));
+        this.server
+          .to(Clients.getSocketId(viewver))
+          .emit('GameEnded', e.player);
       }
-      this.gameService.deleteGame(gameid);
+      this.gameService.deleteGame(e.gameid);
     } else {
-      const Gameviewver = this.gameService.getViewver(gameid);
+      const Gameviewver = this.gameService.getViewver(e.gameid);
       for (const viewver of Gameviewver) {
-        this.server.to(Clients.getSocketId(viewver).emit('Scored', player));
+        this.server.to(Clients.getSocketId(viewver).emit('Scored', e.player));
       }
     }
   }
@@ -129,29 +131,37 @@ export class GameGateway {
   @SubscribeMessage('InvitationGame')
   async OnInvitationGame(
     socket: CustomSocket,
-    InvitationSender: string,
-    InvitationReceiver: string,
+    e: { InvitationSender: string; InvitationReceiver: string },
   ) {
+    console.log(
+      'receive sender ',
+      e.InvitationSender,
+      'receiver ',
+      e.InvitationReceiver,
+    );
+
     this.server
-      .to(Clients.getSocketId(InvitationReceiver))
-      .emit('InvitationGame', InvitationSender);
+      .to(Clients.getSocketId(e.InvitationReceiver))
+      .emit('InvitationGame', e.InvitationSender);
   }
 
   @SubscribeMessage('InvitationAccepted')
   async OnInvitationAccepted(
     socket: CustomSocket,
-    InvitationSender: string,
-    InvitationReceiver: string,
+    e: {
+      InvitationSender: string;
+      InvitationReceiver: string;
+    },
   ) {
     const Gameid = await this.gameService.create(
-      InvitationSender,
-      InvitationReceiver,
+      e.InvitationSender,
+      e.InvitationReceiver,
     );
     this.server
-      .to(Clients.getSocketId(InvitationReceiver))
+      .to(Clients.getSocketId(e.InvitationReceiver))
       .emit('FindGame', Gameid);
     this.server
-      .to(Clients.getSocketId(InvitationSender))
+      .to(Clients.getSocketId(e.InvitationSender))
       .emit('FindGame', Gameid);
   }
 }

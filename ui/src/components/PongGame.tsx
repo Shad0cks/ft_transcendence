@@ -244,10 +244,18 @@ export default function PongGame({
     } else if (ball.x + ball.r >= width || ball.x - ball.r <= 0) {
       if (ball.x + ball.r >= width) {
         ball.user1score += 1;
+        socket.emit('Scored', {
+          gameid: gameID,
+          player: gameInfo.player1.nickname,
+        });
         resetTerrain();
         return;
       }
       ball.user2score += 1;
+      socket.emit('Scored', {
+        gameid: gameID,
+        player: gameInfo.player2.nickname,
+      });
       resetTerrain();
       return;
     }
@@ -337,6 +345,11 @@ export default function PongGame({
   }
 
   const visibilty = useCallback((e: Event) => {
+    if (
+      gameInfo.player1.socket !== socket.id &&
+      gameInfo.player2.socket !== socket.id
+    )
+      return;
     if (document.hidden) {
       if (pause)
         socket.emit('Gameforceend', { gameid: gameID, player: undefined });
@@ -360,6 +373,26 @@ export default function PongGame({
         player: 'none',
       });
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const exitPage = useCallback((e: Event) => {
+    e.preventDefault();
+    console.log('page exited');
+    if (
+      gameInfo.player1.socket !== socket.id &&
+      gameInfo.player2.socket !== socket.id
+    )
+      return;
+    if (playerID === 1)
+      socket.emit('Gameforceend', {
+        gameid: gameID,
+        player: gameInfo.player1.nickname,
+      });
+    else
+      socket.emit('Gameforceend', {
+        gameid: gameID,
+        player: gameInfo.player2.nickname,
+      });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -392,6 +425,10 @@ export default function PongGame({
     socket.on('Gameforceend', (player: string | undefined) => {
       console.log('lose is ', player);
     });
+
+    socket.on('GameEnded', (player: string) => {
+      console.log('winner is ', player);
+    });
   }, [socket]);
 
   useEffect(() => {
@@ -401,6 +438,7 @@ export default function PongGame({
       window.addEventListener('mousemove', mouseMouveEvent);
       window.addEventListener('visibilitychange', visibilty);
       window.addEventListener('touchmove', touchStartLister);
+      window.addEventListener('beforeunload', exitPage);
       if (context) {
         const frame = 60;
         const interval = setInterval(() => {

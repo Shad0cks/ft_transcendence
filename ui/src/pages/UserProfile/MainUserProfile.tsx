@@ -19,6 +19,7 @@ import { UserLogout } from '../../services/User/userDelog';
 import TSSnackbar from '../../components/TSSnackbar';
 import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 import { socket } from '../../services/socket';
+import useReceiveInvite from '../../customHooks/receiveInvite';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function MainUserProfile() {
   });
   const [openModal, setOpenModal] = useState(false);
   const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
   const speakeasy = require('speakeasy');
 
   useEffect(() => {
@@ -209,6 +211,8 @@ export default function MainUserProfile() {
         setOpen={snackbar.setOpen}
         severity={snackbar.severity}
         message={snackbar.message}
+        senderInvite={sender}
+        username={username}
       />
     </>
   ) : null;

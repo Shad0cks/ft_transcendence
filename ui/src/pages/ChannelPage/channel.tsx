@@ -25,6 +25,8 @@ import { ModalUserProfile } from '../../components/ModalUserProfile';
 import useSnackbar from '../../customHooks/useSnackbar';
 import { searchUser } from '../SearchPage/searchPage';
 import ModalBlockUser from '../../components/modalBlockUser';
+import useReceiveInvite from '../../customHooks/receiveInvite';
+import TSSnackbar from '../../components/TSSnackbar';
 
 export default function Channel() {
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ export default function Channel() {
   const [openBlockUsers, setOpenBlockUsers] = useState(false);
 
   const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
   >();
@@ -452,6 +455,15 @@ export default function Channel() {
         snackbar={snackbar}
         open={openBlockUsers}
         setOpen={setOpenBlockUsers}
+      />
+
+      <TSSnackbar
+        open={snackbar.open}
+        setOpen={snackbar.setOpen}
+        severity={snackbar.severity}
+        message={snackbar.message}
+        senderInvite={sender}
+        username={username}
       />
     </div>
   ) : null;

@@ -9,9 +9,14 @@ import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
 import { Button } from 'react-bootstrap';
 import { ChannelDTO } from '../../models/channel';
+import useReceiveInvite from '../../customHooks/receiveInvite';
+import useSnackbar from '../../customHooks/useSnackbar';
+import TSSnackbar from '../../components/TSSnackbar';
 
 export default function PartyManage() {
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
   const [username, setUsername] = useState<string | null>(null);
   const [channelEdit, setChannelEdit] = useState<ChannelDTO>();
   const [user, setUser] = useState<GetUserIt>();
@@ -67,6 +72,14 @@ export default function PartyManage() {
           Back to channels
         </Button>
       </div>
+      <TSSnackbar
+        open={snackbar.open}
+        setOpen={snackbar.setOpen}
+        severity={snackbar.severity}
+        message={snackbar.message}
+        senderInvite={sender}
+        username={username}
+      />
     </div>
   ) : null;
 }

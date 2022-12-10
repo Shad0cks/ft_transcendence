@@ -8,6 +8,7 @@ import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 import TSSnackbar from '../../components/TSSnackbar';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { MatchHistory } from '../../components/MatchHistory';
+import useReceiveInvite from '../../customHooks/receiveInvite';
 
 export function searchUser(
   nickname: string | undefined | null,
@@ -17,7 +18,6 @@ export function searchUser(
   if (!nickname) {
     return;
   }
-
   GetUserInfo(nickname).then((response) => {
     if (response.ok) {
       response.text().then((object) => {
@@ -36,6 +36,7 @@ export function searchUser(
 export default function SearchPage() {
   const user = useLoggedUser().user;
   const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
   const searchUserNicknameInput = useRef<HTMLInputElement>(null);
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
@@ -96,11 +97,14 @@ export default function SearchPage() {
       </InputGroup>
       <div className="containerRow">{getUserProfile()}</div>
       <div className="containerRow">{getMatchHistory()}</div>
+
       <TSSnackbar
         open={snackbar.open}
         setOpen={snackbar.setOpen}
         severity={snackbar.severity}
         message={snackbar.message}
+        senderInvite={sender}
+        username={user.nickname}
       />
     </div>
   );

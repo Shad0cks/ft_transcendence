@@ -9,6 +9,9 @@ import { GetUserIt } from './models/getUser';
 import { GetUserInfo } from './services/User/getUserInfo';
 import { UserLogout } from './services/User/userDelog';
 import { socket } from './services/socket'; // eslint-disable-line
+import TSSnackbar from './components/TSSnackbar';
+import useSnackbar from './customHooks/useSnackbar';
+import useReceiveInvite from './customHooks/receiveInvite';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -16,6 +19,8 @@ function App() {
   const [username, setUsername] = useState<string>();
   const [user, setUser] = useState<GetUserIt>();
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
 
   useEffect(() => {
     const logReq = searchParams.get('isAuthenticated');
@@ -42,7 +47,7 @@ function App() {
 
   useEffect(() => {
     socket.on('FindGame', (gameID: string) => {
-      console.log('receive game', gameID);
+      localStorage.removeItem('searcheGame');
       navigate('/game_' + gameID, { state: { gameid: gameID } });
     });
   }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -61,14 +66,33 @@ function App() {
           }}
         >
           <Header username={user?.nickname} iconUser={user?.avatar} />
-          <Button
-            onClick={() => {
-              socket.emit('Addtoqueue', username);
-            }}
-            variant="success"
-          >
-            Play
-          </Button>
+          {localStorage.getItem('searcheGame') ? (
+            <Button
+              onClick={() => {
+                socket.emit('LeaveQueue', username);
+                snackbar.setMessage('Game queue left');
+                snackbar.setSeverity('error');
+                snackbar.setOpen(true);
+                localStorage.removeItem('searcheGame');
+              }}
+              variant="warning"
+            >
+              Quit Queue
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                socket.emit('Addtoqueue', username);
+                snackbar.setMessage('Added to Game queue');
+                snackbar.setSeverity('success');
+                snackbar.setOpen(true);
+                localStorage.setItem('searcheGame', 'true');
+              }}
+              variant="success"
+            >
+              Play
+            </Button>
+          )}
           <Button
             onClick={() => {
               navigate('/chat');
@@ -81,6 +105,14 @@ function App() {
       ) : (
         <Login />
       )}
+      <TSSnackbar
+        open={snackbar.open}
+        setOpen={snackbar.setOpen}
+        severity={snackbar.severity}
+        message={snackbar.message}
+        senderInvite={sender}
+        username={username}
+      />
     </div>
   );
 }

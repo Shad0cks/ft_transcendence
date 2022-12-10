@@ -66,10 +66,6 @@ function MainGame() {
 
   useEffect(() => {
     if (location.state) setGameid(location.state.gameid);
-    // socket.emit('Addtoviewver',
-    //   gameid,
-    //   socket.id,
-    // );
     socket.emit('SetStatus', 'ingame');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

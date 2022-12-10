@@ -5,13 +5,15 @@ import { GetFriends } from '../../services/Friends/getFriends';
 import { Button, InputGroup, Card, ButtonGroup, Form } from 'react-bootstrap';
 import { AddFriend } from '../../services/Friends/addFriend';
 import TSSnackbar from '../../components/TSSnackbar';
-import { AlertColor } from '@mui/material';
 import { GetUserIt } from '../../models/getUser';
 import '../../css/Pages/Friends.css';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { RemoveFriend } from '../../services/Friends/removeFriend';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { UserLogout } from '../../services/User/userDelog';
+import { socket } from '../../services/socket';
+import useSnackbar from '../../customHooks/useSnackbar';
+import useReceiveInvite from '../../customHooks/receiveInvite';
 
 export default function Friends() {
   const navigate = useNavigate();
@@ -19,10 +21,8 @@ export default function Friends() {
   const newFriend = useRef(null);
   const [username, setUsername] = useState<string | null>(null);
   const [friendsList, setFriendsList] = useState<GetUserIt[]>([]);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] =
-    useState<AlertColor>('success');
+  const snackbar = useSnackbar();
+  const sender = useReceiveInvite(snackbar);
 
   function updateName() {
     if (!newFriend.current) {
@@ -33,9 +33,9 @@ export default function Friends() {
     AddFriend(newFriendVal, username!)
       .then(async (res) => {
         if (res.ok) {
-          setSnackbarMessage('Successfully adding new friend');
-          setSnackbarSeverity('success');
-          setOpenSnackbar(true);
+          snackbar.setMessage('Successfully adding new friend');
+          snackbar.setSeverity('success');
+          snackbar.setOpen(true);
           const requete = res.text().then((e) => JSON.parse(e));
           requete.then((e) => {
             setFriendsList([...friendsList, e]);
@@ -44,16 +44,16 @@ export default function Friends() {
           await UserLogout();
           navigate('/');
         } else {
-          setSnackbarMessage('Error while adding friend.');
-          setSnackbarSeverity('error');
-          setOpenSnackbar(true);
+          snackbar.setMessage('Error while adding friend.');
+          snackbar.setSeverity('error');
+          snackbar.setOpen(true);
         }
       })
       .catch((err) => {
         console.error(err);
-        setSnackbarMessage('Error while adding friend.');
-        setSnackbarSeverity('error');
-        setOpenSnackbar(true);
+        snackbar.setMessage('Error while adding friend.');
+        snackbar.setSeverity('error');
+        snackbar.setOpen(true);
       });
   }
 
@@ -66,23 +66,23 @@ export default function Friends() {
     RemoveFriend(friend, username!)
       .then(async (res) => {
         if (res.ok) {
-          setSnackbarMessage('Successfully deleted friend');
-          setSnackbarSeverity('success');
-          setOpenSnackbar(true);
+          snackbar.setMessage('Successfully deleted friend');
+          snackbar.setSeverity('success');
+          snackbar.setOpen(true);
         } else if (res.status === 401) {
           await UserLogout();
           navigate('/');
         } else {
-          setSnackbarMessage('Error while deleting friend.');
-          setSnackbarSeverity('error');
-          setOpenSnackbar(true);
+          snackbar.setMessage('Error while deleting friend.');
+          snackbar.setSeverity('error');
+          snackbar.setOpen(true);
         }
       })
       .catch((err) => {
         console.error(err);
-        setSnackbarMessage('Error while deleting friend.');
-        setSnackbarSeverity('error');
-        setOpenSnackbar(true);
+        snackbar.setMessage('Error while deleting friend.');
+        snackbar.setSeverity('error');
+        snackbar.setOpen(true);
       });
   }
 
@@ -143,7 +143,17 @@ export default function Friends() {
                   Wins : {elem.wins} / Losses: {elem.losses}
                 </Card.Text>
                 <ButtonGroup aria-label="Basic example">
-                  <Button variant="secondary">Play</Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      socket.emit('InvitationGame', {
+                        InvitationSender: username,
+                        InvitationReceiver: elem.nickname,
+                      });
+                    }}
+                  >
+                    Play
+                  </Button>
                   <Button variant="secondary">Profile</Button>
                   <Button
                     variant="secondary"
@@ -174,10 +184,12 @@ export default function Friends() {
           ))}
         </div>
         <TSSnackbar
-          open={openSnackbar}
-          setOpen={setOpenSnackbar}
-          severity={snackbarSeverity}
-          message={snackbarMessage}
+          open={snackbar.open}
+          setOpen={snackbar.setOpen}
+          severity={snackbar.severity}
+          message={snackbar.message}
+          senderInvite={sender}
+          username={username!}
         />
       </div>
     </div>
