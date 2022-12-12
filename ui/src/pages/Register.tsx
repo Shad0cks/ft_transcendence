@@ -13,20 +13,14 @@ export default function Register() {
   //const navigate = useNavigate();
   const newName = useRef(null);
   const snackbar = useSnackbar();
-  const [avatar, setAvatar] = useState<string | undefined>(
-    'default.jpg',
-  );
+  const [avatar, setAvatar] = useState<string | undefined>('default.jpg');
 
   function Register() {
     if (!newName.current) {
       return;
     }
     const nickname = (newName.current as HTMLInputElement).value;
-    const sendavatar =
-      avatar !==
-      'default.jpg'
-        ? avatar
-        : 'default';
+    const sendavatar = avatar !== 'default.jpg' ? avatar : 'default';
 
     if (nickname !== '' && sendavatar !== '') {
       window.location.replace(
@@ -72,7 +66,10 @@ export default function Register() {
           <h1>Setup Profile</h1>
           <Image
             style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-            src={"https://avataruserstorage.blob.core.windows.net/avatarimg/" + avatar}
+            src={
+              'https://avataruserstorage.blob.core.windows.net/avatarimg/' +
+              avatar
+            }
             roundedCircle
           />
           <InputGroup className="mb-3" style={{ width: '300px' }}>

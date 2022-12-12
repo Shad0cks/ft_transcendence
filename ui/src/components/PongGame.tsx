@@ -427,16 +427,18 @@ export default function PongGame({
       pause = true;
       setPauseT(true);
       if (player)
-        setWinner(gameInfo.player1.nickname === player ? gameInfo.player2.nickname : gameInfo.player1.nickname)
-      else
-        setWinner("nobody")
-
+        setWinner(
+          gameInfo.player1.nickname === player
+            ? gameInfo.player2.nickname
+            : gameInfo.player1.nickname,
+        );
+      else setWinner('nobody');
     });
 
     socket.on('GameEnded', (player: string) => {
       pause = true;
       setPauseT(true);
-      setWinner(player)
+      setWinner(player);
     });
   }, [socket]);
 
@@ -485,15 +487,15 @@ export default function PongGame({
             alignItems: 'center',
             flexDirection: 'column',
           }}
-        >  
-        { pauseT && winner !== undefined ?
-          <h1> Winner is {winner}</h1> 
-          :
-          <>
-            <h1 style={{ color: 'blue' }}>{seconds}</h1>
-            <h2>Before user1 win</h2>
-          </>
-        }
+        >
+          {pauseT && winner !== undefined ? (
+            <h1> Winner is {winner}</h1>
+          ) : (
+            <>
+              <h1 style={{ color: 'blue' }}>{seconds}</h1>
+              <h2>Before user1 win</h2>
+            </>
+          )}
         </div>
       </Popup>
     </>
