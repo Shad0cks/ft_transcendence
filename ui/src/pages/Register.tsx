@@ -14,7 +14,7 @@ export default function Register() {
   const newName = useRef(null);
   const snackbar = useSnackbar();
   const [avatar, setAvatar] = useState<string | undefined>(
-    'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg',
+    'default.jpg',
   );
 
   function Register() {
@@ -24,7 +24,7 @@ export default function Register() {
     const nickname = (newName.current as HTMLInputElement).value;
     const sendavatar =
       avatar !==
-      'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg'
+      'default.jpg'
         ? avatar
         : 'default';
 
@@ -36,7 +36,6 @@ export default function Register() {
   }
 
   async function updateImg(event: React.ChangeEvent<HTMLInputElement>) {
-    setAvatar('');
     const account = process.env.REACT_APP_AZURE_ACCOUNT_NAME;
     const sas = process.env.REACT_APP_SAS_TOKEN;
     const time = Date.now();
@@ -73,7 +72,7 @@ export default function Register() {
           <h1>Setup Profile</h1>
           <Image
             style={{ width: '150px', height: '150px', cursor: 'pointer' }}
-            src={avatar}
+            src={"https://avataruserstorage.blob.core.windows.net/avatarimg/" + avatar}
             roundedCircle
           />
           <InputGroup className="mb-3" style={{ width: '300px' }}>

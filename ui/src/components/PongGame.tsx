@@ -18,6 +18,7 @@ export default function PongGame({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let pause = false;
   const [pauseT, setPauseT] = useState(false);
+  const [winner, setWinner] = useState<string>();
   const [seconds, setSeconds] = useState(5);
   const playerID = getPlayerID();
   let myInterval: NodeJS.Timer;
@@ -423,11 +424,19 @@ export default function PongGame({
     );
 
     socket.on('Gameforceend', (player: string | undefined) => {
-      console.log('lose is ', player);
+      pause = true;
+      setPauseT(true);
+      if (player)
+        setWinner(gameInfo.player1.nickname === player ? gameInfo.player2.nickname : gameInfo.player1.nickname)
+      else
+        setWinner("nobody")
+
     });
 
     socket.on('GameEnded', (player: string) => {
-      console.log('winner is ', player);
+      pause = true;
+      setPauseT(true);
+      setWinner(player)
     });
   }, [socket]);
 
@@ -476,9 +485,15 @@ export default function PongGame({
             alignItems: 'center',
             flexDirection: 'column',
           }}
-        >
-          <h1 style={{ color: 'blue' }}>{seconds}</h1>
-          <h2>Before user1 win</h2>
+        >  
+        { pauseT && winner !== undefined ?
+          <h1> Winner is {winner}</h1> 
+          :
+          <>
+            <h1 style={{ color: 'blue' }}>{seconds}</h1>
+            <h2>Before user1 win</h2>
+          </>
+        }
         </div>
       </Popup>
     </>
