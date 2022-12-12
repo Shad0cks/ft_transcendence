@@ -24,8 +24,10 @@ export class GameGateway {
     @MessageBody() e: { data: PlayerDTO; gameid: string },
   ) {
     const Gameviewver = this.gameService.getViewver(e.gameid);
-    for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('playermove', e.data);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server.to(Clients.getSocketId(viewver)).emit('playermove', e.data);
+      }
     }
   }
 
@@ -46,8 +48,10 @@ export class GameGateway {
     @MessageBody() e: { data: ballDTO; gameid: string },
   ) {
     const Gameviewver = this.gameService.getViewver(e.gameid);
-    for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('ballPos', e.data);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server.to(Clients.getSocketId(viewver)).emit('ballPos', e.data);
+      }
     }
   }
 
@@ -60,8 +64,10 @@ export class GameGateway {
     },
   ) {
     const Gameviewver = this.gameService.getViewver(data.gameid);
-    for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('GamePause', data);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server.to(Clients.getSocketId(viewver)).emit('GamePause', data);
+      }
     }
   }
 
@@ -70,18 +76,23 @@ export class GameGateway {
     await this.gameService.scored(e.gameid, e.player);
     const Game = await this.gameService.get(e.gameid);
     if (Game.score1 === 5 || Game.score2 === 5) {
+      console.log(e.player, 'Win');
       const Gameviewver = this.gameService.getViewver(e.gameid);
-      for (const viewver of Gameviewver) {
-        this.server.to(Clients.getSocketId(viewver).emit('Scored', e.player));
-        this.server
-          .to(Clients.getSocketId(viewver))
-          .emit('GameEnded', e.player);
+      if (Gameviewver) {
+        for (const viewver of Gameviewver) {
+          this.server.to(Clients.getSocketId(viewver)).emit('Scored', e.player);
+          this.server
+            .to(Clients.getSocketId(viewver))
+            .emit('GameEnded', e.player);
+        }
+        this.gameService.deleteGame(e.gameid);
       }
-      this.gameService.deleteGame(e.gameid);
     } else {
       const Gameviewver = this.gameService.getViewver(e.gameid);
-      for (const viewver of Gameviewver) {
-        this.server.to(Clients.getSocketId(viewver).emit('Scored', e.player));
+      if (Gameviewver) {
+        for (const viewver of Gameviewver) {
+          this.server.to(Clients.getSocketId(viewver)).emit('Scored', e.player);
+        }
       }
     }
   }
@@ -110,12 +121,14 @@ export class GameGateway {
     e: { gameid: string; player: string | undefined },
   ) {
     const Gameviewver = this.gameService.getViewver(e.gameid);
-    for (const viewver of Gameviewver) {
-      this.server
-        .to(Clients.getSocketId(viewver))
-        .emit('Gameforceend', e.player);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server
+          .to(Clients.getSocketId(viewver))
+          .emit('Gameforceend', e.player);
+      }
+      this.gameService.deleteGame(e.gameid);
     }
-    this.gameService.deleteGame(e.gameid);
   }
 
   @SubscribeMessage('Addtoviewver')

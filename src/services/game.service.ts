@@ -36,7 +36,11 @@ export class GameService {
   }
 
   getViewver(gameid: string) {
-    return this.Game.get(gameid).viewver;
+    if (this.Game.get(gameid)) {
+      return this.Game.get(gameid).viewver;
+    } else {
+      return null;
+    }
   }
 
   async Addtoqueue(player: string): Promise<{ bo: boolean; player: string }> {
