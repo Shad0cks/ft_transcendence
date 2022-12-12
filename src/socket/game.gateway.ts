@@ -75,25 +75,31 @@ export class GameGateway {
   async onScored(socket: CustomSocket, e: { gameid: string; player: string }) {
     await this.gameService.scored(e.gameid, e.player);
     const Game = await this.gameService.get(e.gameid);
-    if (Game.score1 === 5 || Game.score2 === 5) {
-      console.log(e.player, 'Win');
-      const Gameviewver = this.gameService.getViewver(e.gameid);
-      if (Gameviewver) {
-        for (const viewver of Gameviewver) {
-          this.server.to(Clients.getSocketId(viewver)).emit('Scored', e.player);
+    if (Game) {
+      if (Game.score1 === 5 || Game.score2 === 5) {
+        console.log(e.player, 'Win');
+        const Gameviewver = this.gameService.getViewver(e.gameid);
+        if (Gameviewver) {
+          for (const viewver of Gameviewver) {
+            this.server
+              .to(Clients.getSocketId(viewver))
+              .emit('Scored', e.player);
+          }
+          for (const viewver of Gameviewver) {
+            this.server
+              .to(Clients.getSocketId(viewver))
+              .emit('GameEnded', e.player);
+          }
+          this.gameService.deleteGame(e.gameid);
         }
-        for (const viewver of Gameviewver) {
-          this.server
-            .to(Clients.getSocketId(viewver))
-            .emit('GameEnded', e.player);
-        }
-        this.gameService.deleteGame(e.gameid);
-      }
-    } else {
-      const Gameviewver = this.gameService.getViewver(e.gameid);
-      if (Gameviewver) {
-        for (const viewver of Gameviewver) {
-          this.server.to(Clients.getSocketId(viewver)).emit('Scored', e.player);
+      } else {
+        const Gameviewver = this.gameService.getViewver(e.gameid);
+        if (Gameviewver) {
+          for (const viewver of Gameviewver) {
+            this.server
+              .to(Clients.getSocketId(viewver))
+              .emit('Scored', e.player);
+          }
         }
       }
     }
