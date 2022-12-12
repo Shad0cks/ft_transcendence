@@ -81,6 +81,8 @@ export class GameGateway {
       if (Gameviewver) {
         for (const viewver of Gameviewver) {
           this.server.to(Clients.getSocketId(viewver)).emit('Scored', e.player);
+        }
+        for (const viewver of Gameviewver) {
           this.server
             .to(Clients.getSocketId(viewver))
             .emit('GameEnded', e.player);

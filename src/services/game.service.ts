@@ -73,7 +73,7 @@ export class GameService {
   }
 
   async scored(gameid: string, player: string) {
-    if (this.Game.get(gameid).player1 === player) {
+    if (this.Game.get(gameid) && this.Game.get(gameid).player1 === player) {
       this.Game.get(gameid).score1 += 1;
     } else {
       this.Game.get(gameid).score2 += 1;
