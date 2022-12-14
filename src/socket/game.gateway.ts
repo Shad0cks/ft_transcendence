@@ -185,4 +185,10 @@ export class GameGateway {
       .to(Clients.getSocketId(e.InvitationSender))
       .emit('FindGame', Gameid);
   }
+
+  @SubscribeMessage('Getallgame')
+  async onGetallgame(socket: CustomSocket) {
+    const AllGame = this.gameService.getallgame();
+    this.server.to(socket.id).emit('Getallgame', AllGame);
+  }
 }

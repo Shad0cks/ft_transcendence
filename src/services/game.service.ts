@@ -79,4 +79,24 @@ export class GameService {
       this.Game.get(gameid).score2 += 1;
     }
   }
+
+  async getallgame() {
+    const keyiterator = this.Game.keys();
+    if (keyiterator) {
+      let gamereturn: Array<{
+        gameid: string;
+        player1: string;
+        player2: string;
+      }>;
+      for (const key of keyiterator) {
+        gamereturn.push({
+          gameid: key,
+          player1: this.Game.get(key).player1,
+          player2: this.Game.get(key).player2,
+        });
+      }
+      return gamereturn;
+    }
+    return null;
+  }
 }
