@@ -41,7 +41,7 @@
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.6.0",
+    "rxjs": "^7.8.0",
     "speakeasy": "^2.0.0",
     "socket.io": "^4.5.4",
     "typeorm": "^0.3.11"
