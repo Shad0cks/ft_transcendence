@@ -89,13 +89,24 @@ export class GameService {
         player2: string;
       }>;
       for (const key of keyiterator) {
-        gamereturn.push({
+        const data = {
           gameid: key,
           player1: this.Game.get(key).player1,
           player2: this.Game.get(key).player2,
-        });
+        };
+        gamereturn.push(data);
       }
       return gamereturn;
+    }
+    return null;
+  }
+
+  async getGameidbyname(player: string) {
+    const allgame = await this.getallgame();
+    for (const game of allgame) {
+      if (player === game.player1 || player === game.player2) {
+        return game.gameid;
+      }
     }
     return null;
   }
