@@ -17,8 +17,10 @@ export default function FaPage() {
       return;
     }
     // TODO case empty token
+
     window.location.replace(
-      'http://localhost:8080/auth/42/2faredirect/' +
+      process.env.REACT_APP_API_URL +
+        '/auth/42/2faredirect/' +
         (token.current as HTMLInputElement).value,
     );
   };

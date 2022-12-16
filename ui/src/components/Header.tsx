@@ -48,6 +48,9 @@ export default function Header({
                 <NavDropdown.Item onClick={() => navigate('/editProfile')}>
                   Profile Edit
                 </NavDropdown.Item>
+                <NavDropdown.Item onClick={() => navigate('/games')}>
+                  Games
+                </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => navigate('/friends')}>
                   Friends
                 </NavDropdown.Item>

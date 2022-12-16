@@ -20,7 +20,6 @@ export default function PartyManage() {
   const [username, setUsername] = useState<string | null>(null);
   const [channelEdit, setChannelEdit] = useState<ChannelDTO>();
   const [user, setUser] = useState<GetUserIt>();
-
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
@@ -67,7 +66,7 @@ export default function PartyManage() {
           }}
           variant="success"
           id="button-addon"
-          onClick={() => navigate('/chat')}
+          onClick={() => navigate('/')}
         >
           Back to channels
         </Button>

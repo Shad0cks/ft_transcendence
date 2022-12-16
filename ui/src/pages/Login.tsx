@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Login() {
   const callLogin = () => {
-    window.location.replace('http://localhost:8080/auth/42/login');
+    window.location.replace(process.env.REACT_APP_API_URL + '/auth/42/login');
   };
 
   return (

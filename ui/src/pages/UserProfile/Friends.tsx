@@ -158,7 +158,7 @@ export default function Friends() {
                   <Button
                     variant="secondary"
                     onClick={() =>
-                      navigate('/chat', { state: { startDM: elem.nickname } })
+                      navigate('/', { state: { startDM: elem.nickname } })
                     }
                   >
                     DM

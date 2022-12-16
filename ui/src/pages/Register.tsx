@@ -24,7 +24,11 @@ export default function Register() {
 
     if (nickname !== '' && sendavatar !== '') {
       window.location.replace(
-        'http://localhost:8080/auth/42/register/' + nickname + '/' + sendavatar,
+        process.env.REACT_APP_API_URL +
+          '/auth/42/register/' +
+          nickname +
+          '/' +
+          sendavatar,
       );
     }
   }
