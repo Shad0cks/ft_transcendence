@@ -87,7 +87,11 @@ export class GameService {
         gameid: string;
         player1: string;
         player2: string;
-      }>;
+      }> = new Array<{
+        gameid: string;
+        player1: string;
+        player2: string;
+      }>();
       for (const key of keyiterator) {
         const data = {
           gameid: key,
