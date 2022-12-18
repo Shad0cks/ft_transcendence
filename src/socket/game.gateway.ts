@@ -188,7 +188,7 @@ export class GameGateway {
 
   @SubscribeMessage('Getallgame')
   async onGetallgame(socket: CustomSocket) {
-    const AllGame = this.gameService.getallgame();
+    const AllGame = await this.gameService.getallgame();
     this.server.to(socket.id).emit('Getallgame', AllGame);
   }
 }

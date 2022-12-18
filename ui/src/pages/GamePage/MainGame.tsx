@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PongGame from '../../components/PongGame';
 import '../../css/Pages/MainGame.css';
 import GamePlayerChoose from './GamePlayerChoose';
@@ -28,6 +28,8 @@ function MainGame() {
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
   };
+  const gameRef = useRef<GameObj | null>(null);
+  gameRef.current = game;
 
   // function isPlayer() : boolean
   // {
@@ -84,6 +86,10 @@ function MainGame() {
       if (e.data.emiter !== socket.id) setGame(e.data);
     });
 
+    socket.on('Gameforceend', (player: string | undefined) => {
+      navigate('/');
+    });
+
     // socket?.on('Addtoviewver', (gameID : string, viewver: string) => {
     //   if (viewver !== socket.id) {
     //     socket.emit('gameOption', { ...game, emiter: socket.id });
@@ -106,6 +112,21 @@ function MainGame() {
           navigate('/');
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
+
+    return () => {
+      if (!location.state) return;
+      if (socket.id === gameRef?.current?.player1.socket) {
+        socket.emit('Gameforceend', {
+          gameid: location.state.gameid,
+          player: gameRef?.current?.player1.nickname,
+        });
+      } else if (socket.id === gameRef?.current?.player2.socket) {
+        socket.emit('Gameforceend', {
+          gameid: location.state.gameid,
+          player: gameRef?.current?.player2.nickname,
+        });
+      }
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {
@@ -148,15 +169,6 @@ function MainGame() {
               gameInfo={game}
               gameID={gameid!}
             />
-          </div>
-        );
-      case 5:
-        return (
-          <div className="win">
-            {' '}
-            {game.player1.socket === 'disconnected'
-              ? 'Player 1 Win'
-              : 'Player 2 Win'}{' '}
           </div>
         );
       default:

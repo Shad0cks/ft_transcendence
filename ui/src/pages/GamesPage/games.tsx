@@ -81,7 +81,7 @@ export default function Games() {
         <div className="ListeParty_list">
           {gamesList && gamesList.length >= 1
             ? gamesList?.map((e: gameProp, i: number) => (
-                <div className="card" style={{ width: '18rem' }}>
+                <div key={i} className="card" style={{ width: '18rem' }}>
                   <div className="card-body">
                     <h5 className="card-title">Game</h5>
                     <p className="card-text">
@@ -90,7 +90,7 @@ export default function Games() {
                     </p>
                     <button
                       className="btn btn-primary"
-                      onClick={() => navigate(`game_${e.gameid}`)}
+                      onClick={() => navigate('/game_' + e.gameid)}
                     >
                       Spetatate
                     </button>

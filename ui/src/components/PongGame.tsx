@@ -376,26 +376,6 @@ export default function PongGame({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const exitPage = useCallback((e: Event) => {
-    e.preventDefault();
-    console.log('page exited');
-    if (
-      gameInfo.player1.socket !== socket.id &&
-      gameInfo.player2.socket !== socket.id
-    )
-      return;
-    if (playerID === 1)
-      socket.emit('Gameforceend', {
-        gameid: gameID,
-        player: gameInfo.player1.nickname,
-      });
-    else
-      socket.emit('Gameforceend', {
-        gameid: gameID,
-        player: gameInfo.player2.nickname,
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   useEffect(() => {
     socket.on(
       'GamePause',
@@ -423,18 +403,6 @@ export default function PongGame({
       },
     );
 
-    socket.on('Gameforceend', (player: string | undefined) => {
-      pause = true;
-      setPauseT(true);
-      if (player)
-        setWinner(
-          gameInfo.player1.nickname === player
-            ? gameInfo.player2.nickname
-            : gameInfo.player1.nickname,
-        );
-      else setWinner('nobody');
-    });
-
     socket.on('GameEnded', (player: string) => {
       pause = true;
       setPauseT(true);
@@ -449,7 +417,6 @@ export default function PongGame({
       window.addEventListener('mousemove', mouseMouveEvent);
       window.addEventListener('visibilitychange', visibilty);
       window.addEventListener('touchmove', touchStartLister);
-      window.addEventListener('beforeunload', exitPage);
       if (context) {
         const frame = 60;
         const interval = setInterval(() => {
@@ -461,6 +428,17 @@ export default function PongGame({
           clearInterval(interval);
           window.removeEventListener('mousemove', mouseMouveEvent);
           window.removeEventListener('touchmove', touchStartLister);
+          if (playerID === 1) {
+            socket.emit('Gameforceend', {
+              gameid: gameID,
+              player: gameInfo.player1.nickname,
+            });
+          } else if (playerID === 2) {
+            socket.emit('Gameforceend', {
+              gameid: gameID,
+              player: gameInfo.player2.nickname,
+            });
+          }
         };
       }
     }
