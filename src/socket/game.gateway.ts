@@ -191,4 +191,23 @@ export class GameGateway {
     const AllGame = this.gameService.getallgame();
     this.server.to(socket.id).emit('Getallgame', AllGame);
   }
+
+  @SubscribeMessage('getGameByPseudo')
+  async onGetgamebypseudo(socket: CustomSocket, player: string) {
+    const gameid = this.gameService.getGameidbyname(player);
+    this.server.to(socket.id).emit('Getallgame', gameid);
+  }
+
+  @SubscribeMessage('getUserbyGameid')
+  async ongetUserbyGameid(socket: CustomSocket, gameid: string) {
+    const game = await this.gameService.get(gameid);
+    if (game) {
+      this.server
+        .to(socket.id)
+        .emit('getUserbyGameid', {
+          player1: game.player1,
+          player2: game.player2,
+        });
+    }
+  }
 }
