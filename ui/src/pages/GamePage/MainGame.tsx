@@ -41,12 +41,12 @@ function MainGame() {
   //     return false;
   // }
 
-
-  function checkOnline() : boolean
-  {
-    if (!selectedPlayer)
-      return true
-    return (statusMap.get(selectedPlayer.player1) === 'ingame' && statusMap.get(selectedPlayer.player2) === 'ingame')
+  function checkOnline(): boolean {
+    if (!selectedPlayer) return false;
+    return (
+      statusMap.get(selectedPlayer.player1) === 'Offline' ||
+      statusMap.get(selectedPlayer.player2) === 'Offline'
+    );
   }
 
   function setPlayerSocket(playerID: number) {
@@ -128,15 +128,14 @@ function MainGame() {
   }, [game, socket]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (checkOnline() === false)
-    {
+    if (checkOnline()) {
       socket.emit('Gameforceend', {
         gameid: location.state.gameid,
         player: gameRef?.current?.player2.nickname,
       });
     }
-  }, [selectedPlayer, socket])
-  
+  }, [selectedPlayer, socket, statusMap]);
+
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);

@@ -38,8 +38,10 @@ export class GameGateway {
   ) {
     if (e.data === null) return;
     const Gameviewver = this.gameService.getViewver(e.gameid);
-    for (const viewver of Gameviewver) {
-      this.server.to(Clients.getSocketId(viewver)).emit('gameOption', e);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server.to(Clients.getSocketId(viewver)).emit('gameOption', e);
+      }
     }
   }
 
