@@ -48,7 +48,6 @@ export default function Channel() {
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
   >();
-
   // const [usersInfosInChannel, setUserInfoInChannel] = useState<GetUserIt[][]>();
 
   // async function getUsersInfoChannel(channelID: number)

@@ -5,7 +5,7 @@ import GamePlayerChoose from './GamePlayerChoose';
 import GameModChoose from './GameModChoose';
 import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
-import { socket } from '../../services/socket';
+import { socket, statusMap } from '../../services/socket';
 import Header from '../../components/Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GetUserInfo } from '../../services/User/getUserInfo';
@@ -40,6 +40,14 @@ function MainGame() {
   //     if (game.player1.socket === socket?.id || game.player2.socket === socket?.id) return true
   //     return false;
   // }
+
+
+  function checkOnline() : boolean
+  {
+    if (!selectedPlayer)
+      return true
+    return (statusMap.get(selectedPlayer.player1) === 'ingame' && statusMap.get(selectedPlayer.player2) === 'ingame')
+  }
 
   function setPlayerSocket(playerID: number) {
     if (
@@ -119,6 +127,16 @@ function MainGame() {
     };
   }, [game, socket]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (checkOnline() === false)
+    {
+      socket.emit('Gameforceend', {
+        gameid: location.state.gameid,
+        player: gameRef?.current?.player2.nickname,
+      });
+    }
+  }, [selectedPlayer, socket])
+  
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
     setUsername(usernameStorage);
