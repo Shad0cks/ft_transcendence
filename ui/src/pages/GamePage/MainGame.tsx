@@ -5,7 +5,7 @@ import GamePlayerChoose from './GamePlayerChoose';
 import GameModChoose from './GameModChoose';
 import GameMapChoose from './GameMapChoose';
 import { GameObj } from '../../models/game';
-import { socket, statusMap } from '../../services/socket';
+import { socket } from '../../services/socket';
 import Header from '../../components/Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GetUserInfo } from '../../services/User/getUserInfo';
@@ -41,11 +41,11 @@ function MainGame() {
   //     return false;
   // }
 
-  function checkOnline(): boolean {
+  function checkOnline(statusMaptmp: Map<string, string>): boolean {
     if (!selectedPlayer) return false;
     return (
-      statusMap.get(selectedPlayer.player1) === 'Offline' ||
-      statusMap.get(selectedPlayer.player2) === 'Offline'
+      statusMaptmp.get(selectedPlayer.player1) === undefined ||
+      statusMaptmp.get(selectedPlayer.player2) === undefined
     );
   }
 
@@ -109,6 +109,16 @@ function MainGame() {
       navigate('/');
     });
 
+    socket.on('StatusUpdate', function (e: any) {
+      const statusMapTmp : Map<string, string> = new Map(JSON.parse(e));
+    if (checkOnline(statusMapTmp)) {
+      socket.emit('Gameforceend', {
+        gameid: location.state.gameid,
+        player: gameRef?.current?.player2.nickname,
+      });
+    }
+    });
+
     socket.on(
       'getUserbyGameid',
       (players: { player1: string; player2: string }) => {
@@ -125,16 +135,8 @@ function MainGame() {
       // socket?.off('Addtoviewver');
       socket?.off('gameOption');
     };
-  }, [game, socket]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [game, socket, selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (checkOnline()) {
-      socket.emit('Gameforceend', {
-        gameid: location.state.gameid,
-        player: gameRef?.current?.player2.nickname,
-      });
-    }
-  }, [selectedPlayer, socket, statusMap]);
 
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');
