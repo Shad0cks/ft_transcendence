@@ -83,14 +83,16 @@ export default function Games() {
             ? gamesList?.map((e: gameProp, i: number) => (
                 <div key={i} className="card" style={{ width: '18rem' }}>
                   <div className="card-body">
-                    <h5 className="card-title">Game</h5>
-                    <p className="card-text">
-                      {' '}
-                      {e.player1}x{e.player2}{' '}
-                    </p>
+                    <h5 className="card-title">
+                      {e.player1} x {e.player2}{' '}
+                    </h5>
                     <button
                       className="btn btn-primary"
-                      onClick={() => navigate('/game_' + e.gameid)}
+                      onClick={() =>
+                        navigate('/game_' + e.gameid, {
+                          state: { gameid: e.gameid },
+                        })
+                      }
                     >
                       Spetatate
                     </button>

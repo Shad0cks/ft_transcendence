@@ -25,6 +25,10 @@ function MainGame() {
   const [user, setUser] = useState<GetUserIt>();
   const [username, setUsername] = useState<string | null>(null);
   const [gameid, setGameid] = useState<string | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<{
+    player1: string;
+    player2: string;
+  }>();
   const incrementGameOp = (inc: number = 1) => {
     setGame({ ...game, screen: game.screen + inc, emiter: socket?.id });
   };
@@ -38,7 +42,12 @@ function MainGame() {
   // }
 
   function setPlayerSocket(playerID: number) {
-    if (!username) return;
+    if (
+      !username &&
+      username !== selectedPlayer?.player1 &&
+      username !== selectedPlayer?.player2
+    )
+      return;
     if (playerID === 1) {
       if (game.player2.socket !== socket?.id)
         setGame({
@@ -67,8 +76,10 @@ function MainGame() {
   }
 
   useEffect(() => {
-    if (location.state) setGameid(location.state.gameid);
+    if (!location.state) return;
+    setGameid(location.state.gameid);
     socket.emit('SetStatus', 'ingame');
+    socket.emit('getUserbyGameid', location.state.gameid);
     return () => {
       socket.emit('SetStatus', 'online');
     };
@@ -89,6 +100,13 @@ function MainGame() {
     socket.on('Gameforceend', (player: string | undefined) => {
       navigate('/');
     });
+
+    socket.on(
+      'getUserbyGameid',
+      (players: { player1: string; player2: string }) => {
+        setSelectedPlayer(players);
+      },
+    );
 
     // socket?.on('Addtoviewver', (gameID : string, viewver: string) => {
     //   if (viewver !== socket.id) {
@@ -115,19 +133,25 @@ function MainGame() {
 
     return () => {
       if (!location.state) return;
-      if (socket.id === gameRef?.current?.player1.socket) {
+      if (
+        socket.id === gameRef?.current?.player1.socket ||
+        usernameStorage === selectedPlayer?.player1
+      ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
           player: gameRef?.current?.player1.nickname,
         });
-      } else if (socket.id === gameRef?.current?.player2.socket) {
+      } else if (
+        socket.id === gameRef?.current?.player2.socket ||
+        selectedPlayer?.player2 === usernameStorage
+      ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
           player: gameRef?.current?.player2.nickname,
         });
       }
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {
     switch (game.screen) {

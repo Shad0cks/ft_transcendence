@@ -194,20 +194,18 @@ export class GameGateway {
 
   @SubscribeMessage('getGameByPseudo')
   async onGetgamebypseudo(socket: CustomSocket, player: string) {
-    const gameid = this.gameService.getGameidbyname(player);
-    this.server.to(socket.id).emit('Getallgame', gameid);
+    const gameid = await this.gameService.getGameidbyname(player);
+    this.server.to(socket.id).emit('getGameByPseudo', gameid);
   }
 
   @SubscribeMessage('getUserbyGameid')
   async ongetUserbyGameid(socket: CustomSocket, gameid: string) {
     const game = await this.gameService.get(gameid);
     if (game) {
-      this.server
-        .to(socket.id)
-        .emit('getUserbyGameid', {
-          player1: game.player1,
-          player2: game.player2,
-        });
+      this.server.to(socket.id).emit('getUserbyGameid', {
+        player1: game.player1,
+        player2: game.player2,
+      });
     }
   }
 }

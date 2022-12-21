@@ -12,7 +12,7 @@ import { GetUserIt } from '../../models/getUser';
 import { UserLogout } from '../../services/User/userDelog';
 import { GetInChannels } from '../../services/Channel/getInChannels';
 import { ChannelDTO } from '../../models/channel';
-import { socket } from '../../services/socket';
+import { socket, statusMap } from '../../services/socket';
 import { ChannelJoin } from '../../models/channelJoined';
 import { MessageGetList } from '../../models/messageGetList';
 import { GetMessages } from '../../services/Channel/getMessages';
@@ -80,17 +80,30 @@ export default function Channel() {
       <Popover id="popover-basic">
         <Popover.Header as="h3">{player}</Popover.Header>
         <Popover.Body>
-          <Button
-            variant="success"
-            onClick={() => {
-              socket.emit('InvitationGame', {
-                InvitationSender: username,
-                InvitationReceiver: player,
-              });
-            }}
-          >
-            Game
-          </Button>{' '}
+          {statusMap.get(player) !== 'ingame' ? (
+            <Button
+              variant="success"
+              onClick={() => {
+                socket.emit('InvitationGame', {
+                  InvitationSender: username,
+                  InvitationReceiver: player,
+                });
+              }}
+            >
+              Game
+            </Button>
+          ) : (
+            <Button
+              variant="success"
+              onClick={() => {
+                socket.emit('getGameByPseudo', {
+                  player: player,
+                });
+              }}
+            >
+              View Game
+            </Button>
+          )}{' '}
           <Button variant="primary" onClick={() => AddChannelDM(player)}>
             DM
           </Button>{' '}
@@ -338,6 +351,10 @@ export default function Channel() {
           e.userNickname,
         ]);
       setUsersInChannel(usersInChannel.filter((user) => user !== username));
+    });
+
+    socket?.on('getGameByPseudo', function (gameid: string) {
+      navigate('/game_' + gameid, { state: { gameid: gameid } });
     });
 
     socket?.on('NewAdmin', function (e) {
