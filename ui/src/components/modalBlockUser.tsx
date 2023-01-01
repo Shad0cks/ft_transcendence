@@ -74,7 +74,7 @@ export default function ModalBlockUser({
           fontFamily: 'Orbitron',
         }}
       >
-        <InputGroup className="mb-3" style={{ width: '300px' }}>
+        <InputGroup className="mb-3" style={{ width: 'min(80%, 300px)' }}>
           <Form.Control
             id="imput"
             placeholder="Block new user"
@@ -83,11 +83,11 @@ export default function ModalBlockUser({
             ref={inputRef}
           />
           <Button
-            variant="outline-success"
+            variant="outline-warning"
             id="button-addon2"
             onClick={() => newBlockedUser()}
           >
-            Add
+            Block
           </Button>
         </InputGroup>
         <div>

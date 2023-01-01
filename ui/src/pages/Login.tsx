@@ -17,7 +17,7 @@ export default function Login() {
     >
       <button
         type="button"
-        className="btn btn-outline-success"
+        className="btn btn-outline-dark"
         style={{ margin: '0 auto' }}
         onClick={callLogin}
       >

@@ -110,13 +110,13 @@ function MainGame() {
     });
 
     socket.on('StatusUpdate', function (e: any) {
-      const statusMapTmp : Map<string, string> = new Map(JSON.parse(e));
-    if (checkOnline(statusMapTmp)) {
-      socket.emit('Gameforceend', {
-        gameid: location.state.gameid,
-        player: gameRef?.current?.player2.nickname,
-      });
-    }
+      const statusMapTmp: Map<string, string> = new Map(JSON.parse(e));
+      if (checkOnline(statusMapTmp)) {
+        socket.emit('Gameforceend', {
+          gameid: location.state.gameid,
+          player: gameRef?.current?.player2.nickname,
+        });
+      }
     });
 
     socket.on(
@@ -136,7 +136,6 @@ function MainGame() {
       socket?.off('gameOption');
     };
   }, [game, socket, selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   useEffect(() => {
     const usernameStorage = localStorage.getItem('nickname');

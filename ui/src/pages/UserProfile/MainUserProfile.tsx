@@ -20,6 +20,7 @@ import TSSnackbar from '../../components/TSSnackbar';
 import useSnackbar, { SnackbarHook } from '../../customHooks/useSnackbar';
 import { socket } from '../../services/socket';
 import useReceiveInvite from '../../customHooks/receiveInvite';
+import Background from '../../components/background';
 
 export default function MainUserProfile() {
   const navigate = useNavigate();
@@ -97,10 +98,19 @@ export default function MainUserProfile() {
 
     if (user && event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
+      const fileExt = file.name.substring(file.name.lastIndexOf('.'));
+      if (
+        (fileExt !== '.jpeg' && fileExt !== '.png') ||
+        file.name.indexOf('.') === -1
+      ) {
+        snackbar.setMessage('Only JPEG and PNG files are allowed');
+        snackbar.setSeverity('error');
+        snackbar.setOpen(true);
+        return;
+      }
       let img = document.createElement('img');
       img.onload = async () => {
         if (img.width === img.height) {
-          const fileExt = file.name.substring(file.name.lastIndexOf('.'));
           const newFile = new File([file], user.id.toString() + time + fileExt);
           const blobServiceClient = new BlobServiceClient(
             `https://${account}.blob.core.windows.net/?${sas}`,
@@ -122,6 +132,7 @@ export default function MainUserProfile() {
           snackbar.setMessage('Image must be square (x=y)');
           snackbar.setSeverity('error');
           snackbar.setOpen(true);
+          return;
         }
       };
       img.src = URL.createObjectURL(file);
@@ -152,6 +163,7 @@ export default function MainUserProfile() {
 
   return username && user ? (
     <>
+      <Background />
       <div>
         <Header username={username} iconUser={user?.avatar} />
         <div className="MainUserProfile_block">
@@ -171,7 +183,7 @@ export default function MainUserProfile() {
             />
             <Button
               onClick={() => updateName(snackbar)}
-              variant="outline-success"
+              variant="outline-dark"
               id="button-addon2"
             >
               Update

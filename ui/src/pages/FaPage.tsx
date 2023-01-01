@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Background from '../components/background';
 
 export default function FaPage() {
   const [searchParams] = useSearchParams();
@@ -36,6 +37,7 @@ export default function FaPage() {
         flexDirection: 'column',
       }}
     >
+      <Background />
       <div>
         {error ? (
           <label
@@ -58,11 +60,7 @@ export default function FaPage() {
             aria-describedby="basic-addon2"
             ref={token}
           />
-          <Button
-            onClick={callLogin}
-            variant="outline-success"
-            id="button-addon2"
-          >
+          <Button onClick={callLogin} variant="outline-dark" id="button-addon2">
             Verify
           </Button>
         </InputGroup>

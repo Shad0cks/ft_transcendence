@@ -32,7 +32,10 @@ export default function Header({
             FT_TRANSCENDENCE
           </Navbar.Brand>
           <Navbar.Toggle />
-          <Navbar.Collapse className="responsive-navbar-nav justify-content-end">
+          <Navbar.Collapse
+            className="responsive-navbar-nav justify-content-end"
+            style={{ paddingRight: '70px' }}
+          >
             <Nav className="justify-content-end">
               <NavDropdown
                 title={

@@ -9,6 +9,7 @@ import { socket } from '../../services/socket';
 import TSSnackbar from '../../components/TSSnackbar';
 import useSnackbar from '../../customHooks/useSnackbar';
 import useReceiveInvite from '../../customHooks/receiveInvite';
+import Background from '../../components/background';
 
 type gameProp = {
   gameid: string;
@@ -46,6 +47,7 @@ export default function Games() {
 
   return username ? (
     <>
+      <Background />
       <Header username={username} iconUser={user?.avatar} />
       <div className="ListeParty_block">
         {localStorage.getItem('searcheGame') ? (
@@ -65,7 +67,7 @@ export default function Games() {
         ) : (
           <button
             style={{ display: 'block', margin: '150px auto' }}
-            className="btn btn-success"
+            className="btn btn-dark"
             onClick={() => {
               socket.emit('Addtoqueue', username);
               snackbar.setMessage('Added to Game queue');

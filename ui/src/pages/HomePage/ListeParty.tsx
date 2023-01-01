@@ -212,7 +212,7 @@ export default function ListeParty({
                 ref={joinPassword}
               />
               <Button
-                variant="outline-success"
+                variant="outline-dark"
                 id="button-addon2"
                 onClick={() => joinWithPass()}
               >
@@ -255,7 +255,7 @@ export default function ListeParty({
               ref={addUserWL}
             />
             <Button
-              variant="outline-success"
+              variant="outline-dark"
               id="button-addon2"
               onClick={() => addUserWhitelist()}
             >

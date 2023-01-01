@@ -8,6 +8,7 @@ import { Form } from 'react-bootstrap';
 import 'reactjs-popup/dist/index.css';
 import TSSnackbar from '../components/TSSnackbar';
 import useSnackbar from '../customHooks/useSnackbar';
+import Background from '../components/background';
 
 export default function Register() {
   //const navigate = useNavigate();
@@ -40,10 +41,19 @@ export default function Register() {
 
     if (event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
+      const fileExt = file.name.substring(file.name.lastIndexOf('.'));
+      if (
+        (fileExt !== '.jpeg' && fileExt !== '.png') ||
+        file.name.indexOf('.') === -1
+      ) {
+        snackbar.setMessage('Only JPEG and PNG files are allowed');
+        snackbar.setSeverity('error');
+        snackbar.setOpen(true);
+        return;
+      }
       let img = document.createElement('img');
       img.onload = async () => {
         if (img.width === img.height) {
-          const fileExt = file.name.substring(file.name.lastIndexOf('.'));
           const newFile = new File([file], 'default' + time + fileExt);
           const blobServiceClient = new BlobServiceClient(
             `https://${account}.blob.core.windows.net/?${sas}`,
@@ -57,6 +67,7 @@ export default function Register() {
           snackbar.setMessage('Image must be square (x=y)');
           snackbar.setSeverity('error');
           snackbar.setOpen(true);
+          return;
         }
       };
       img.src = URL.createObjectURL(file);
@@ -66,6 +77,7 @@ export default function Register() {
   return (
     <>
       <div>
+        <Background />
         <div className="MainUserProfile_block">
           <h1>Setup Profile</h1>
           <Image
@@ -97,7 +109,7 @@ export default function Register() {
             </div>
             <Button
               onClick={Register}
-              variant="outline-success"
+              variant="outline-dark"
               id="button-addon2"
             >
               Register

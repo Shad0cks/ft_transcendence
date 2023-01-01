@@ -399,7 +399,6 @@ export default function Channel() {
     <div>
       <Header username={username} iconUser={user?.avatar} />
       <div className="btnCont">
-        <h1 className="txtChannel">Chat Room</h1>
         <div className="ChannelContainer">
           <Chat
             SelfUser={user!}
@@ -456,12 +455,12 @@ export default function Channel() {
             </ListGroup>
           </div>
         </div>
-        <div>
+        <div style={{ zIndex: 1 }}>
           <Button
             onClick={() => {
               navigate('/channelManager');
             }}
-            variant="success"
+            variant="dark"
           >
             Manage Channels
           </Button>

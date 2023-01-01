@@ -12,6 +12,7 @@ import { ChannelDTO } from '../../models/channel';
 import useReceiveInvite from '../../customHooks/receiveInvite';
 import useSnackbar from '../../customHooks/useSnackbar';
 import TSSnackbar from '../../components/TSSnackbar';
+import Background from '../../components/background';
 
 export default function PartyManage() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function PartyManage() {
 
   return username ? (
     <div style={{ fontFamily: 'Orbitron' }}>
+      <Background />
       <Header username={username} iconUser={user?.avatar} />
       <PartyCreate
         username={username}

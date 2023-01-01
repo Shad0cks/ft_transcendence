@@ -89,7 +89,7 @@ export default function GameModChoose({
       {clicked !== -1 ? (
         <button
           type="button"
-          className="btn btn-outline-success"
+          className="btn btn-outline-dark"
           style={{ margin: '0 auto' }}
           onClick={() => (isPlayer() ? nextPage() : null)}
         >

@@ -10,6 +10,7 @@ import TSSnackbar from './components/TSSnackbar';
 import useSnackbar from './customHooks/useSnackbar';
 import useReceiveInvite from './customHooks/receiveInvite';
 import Channel from './pages/ChannelPage/channel';
+import Background from './components/background';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -45,6 +46,7 @@ function App() {
   return (
     <div>
       {isLog && username !== undefined ? <Channel /> : <Login />}
+      <Background />
       <TSSnackbar
         open={snackbar.open}
         setOpen={snackbar.setOpen}

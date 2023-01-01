@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { GetUserIt } from '../models/getUser';
 import { GetUserInfo } from '../services/User/getUserInfo';
 import { UserLogout } from '../services/User/userDelog';
+import Background from '../components/background';
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -24,9 +25,12 @@ export default function NotFound() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return username ? (
-    <div className="NotFound_block">
+    <>
+      <Background />
       <Header username={username} iconUser={user?.avatar} />
-      <h1>Page Not Found</h1>
-    </div>
+      <div className="NotFound_block">
+        <h1>Page Not Found</h1>
+      </div>
+    </>
   ) : null;
 }

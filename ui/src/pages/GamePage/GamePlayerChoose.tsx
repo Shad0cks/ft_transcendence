@@ -50,7 +50,7 @@ export default function GamePlayerChoose({
         game.player2.socket === socket?.id) ? (
         <button
           type="button"
-          className="btn btn-outline-success"
+          className="btn btn-outline-dark"
           style={{ margin: '0 auto' }}
           onClick={() => {
             changePage();

@@ -10,6 +10,7 @@ import { GetUserInfo } from '../../services/User/getUserInfo';
 import { MatchHistory } from '../../components/MatchHistory';
 import useReceiveInvite from '../../customHooks/receiveInvite';
 import { useNavigate } from 'react-router-dom';
+import Background from '../../components/background';
 
 export function searchUser(
   nickname: string | undefined | null,
@@ -72,6 +73,7 @@ export default function SearchPage() {
 
   return (
     <div>
+      <Background />
       <Header username={user!.nickname} iconUser={user!.avatar} />
       <InputGroup
         className="mb-3"
@@ -84,7 +86,7 @@ export default function SearchPage() {
           ref={searchUserNicknameInput}
         />
         <Button
-          variant="outline-success"
+          variant="outline-dark"
           id="button-addon2"
           onClick={() =>
             searchUser(

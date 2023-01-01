@@ -14,6 +14,7 @@ import { UserLogout } from '../../services/User/userDelog';
 import { socket } from '../../services/socket';
 import useSnackbar from '../../customHooks/useSnackbar';
 import useReceiveInvite from '../../customHooks/receiveInvite';
+import Background from '../../components/background';
 
 export default function Friends() {
   const navigate = useNavigate();
@@ -112,6 +113,7 @@ export default function Friends() {
 
   return (
     <div>
+      <Background />
       <Header username={username!} iconUser={user?.avatar} />
       <div className="containerFriend">
         <InputGroup
@@ -125,7 +127,7 @@ export default function Friends() {
             ref={newFriend}
           />
           <Button
-            variant="outline-success"
+            variant="outline-dark"
             id="button-addon2"
             onClick={updateName}
           >
