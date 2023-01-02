@@ -8,6 +8,7 @@ import { ballDTO } from 'src/dto/ballGame.dto';
 import { GameObjDTO } from 'src/dto/game.dto';
 import { newPlayerDTO } from 'src/dto/newPlayer.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
+import { UserService } from 'src/services/user.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { PlayerDTO } from 'src/dto/player.dto';
     // ChatModule,
     // UserModule,
   ],
-  providers: [GameGateway, ConnectedUsers, GameService],
+  providers: [GameGateway, ConnectedUsers, GameService, UserService],
 })
 export class GameModule {}

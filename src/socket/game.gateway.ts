@@ -12,13 +12,18 @@ import { GameObjDTO } from 'src/dto/game.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { GameService } from 'src/services/game.service';
+import { userInfo } from 'os';
+import { UserService } from 'src/services/user.service';
 
 @WebSocketGateway()
 export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private gameService: GameService) {}
+  constructor(
+    private gameService: GameService,
+    private userService: UserService,
+  ) {}
 
   @SubscribeMessage('playermove') handleEvent(
     @MessageBody() e: { data: PlayerDTO; gameid: string },
@@ -94,6 +99,12 @@ export class GameGateway {
           }
           this.gameService.deleteGame(e.gameid);
         }
+        this.userService.registerPongMatch({
+          user1Nickname: Game.player1,
+          user2Nickname: Game.player2,
+          user1Score: Game.score1,
+          user2Score: Game.score2,
+        });
       } else {
         const Gameviewver = this.gameService.getViewver(e.gameid);
         if (Gameviewver) {
