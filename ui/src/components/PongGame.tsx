@@ -408,6 +408,13 @@ export default function PongGame({
       setPauseT(true);
       setWinner(player);
     });
+
+    socket.on('Addtoviewver', () => {
+      if (playerID === 1)
+      {
+        socket.emit('gameOption', { data: gameInfo, gameid: gameID });
+      }
+    });
   }, [socket]);
 
   useEffect(() => {

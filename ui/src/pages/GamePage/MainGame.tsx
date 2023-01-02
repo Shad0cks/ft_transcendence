@@ -169,6 +169,11 @@ function MainGame() {
           player: gameRef?.current?.player2.nickname,
         });
       }
+      else
+      {
+        console.log(user?.nickname, "leave ", location.state.gameid);
+        socket.emit("Leaveviewver", {Gameid: location.state.gameid, viewver: user?.nickname});
+      }
     };
   }, [selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 

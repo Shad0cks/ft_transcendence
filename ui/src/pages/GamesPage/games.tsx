@@ -95,7 +95,7 @@ export default function Games() {
                       className="btn btn-primary"
                       onClick={() =>
                         {
-                        socket.emit("Addtoviewver", e.gameid, user);
+                        socket.emit("Addtoviewver", {Gameid: e.gameid, viewver: user?.nickname});
                         navigate('/game_' + e.gameid, {
                           state: { gameid: e.gameid },
                         })
