@@ -52,7 +52,7 @@ function MainGame() {
 
   function setPlayerSocket(playerID: number) {
     if (
-      !username &&
+      !username ||
       username !== selectedPlayer?.player1 &&
       username !== selectedPlayer?.player2
     )

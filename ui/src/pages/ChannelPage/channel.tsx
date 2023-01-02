@@ -125,7 +125,7 @@ export default function Channel() {
               ban
             </Button>
           ) : null}{' '}
-          {currChannel.type === 'channel' ? (
+          {currChannel.type === 'channel' && isUserAmin(username!) ? (
             <Button
               variant="primary"
               onClick={() => {
