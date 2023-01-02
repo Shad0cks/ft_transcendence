@@ -168,11 +168,9 @@ function MainGame() {
           gameid: location.state.gameid,
           player: gameRef?.current?.player2.nickname,
         });
-      }
-      else
-      {
-        console.log(user?.nickname, "leave ", location.state.gameid);
-        socket.emit("Leaveviewver", {Gameid: location.state.gameid, viewver: user?.nickname});
+      } else {
+        // console.log(user?.nickname, "leave ", location.state.gameid);
+        // socket.emit("Leaveviewver", {Gameid: location.state.gameid, viewver: user?.nickname});
       }
     };
   }, [selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -234,7 +232,7 @@ function MainGame() {
   return username ? (
     <div>
       <Header username={username} iconUser={user?.avatar} />
-      <Background/>
+      <Background />
       {setGameOp()}
     </div>
   ) : null;
