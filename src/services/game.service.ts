@@ -25,7 +25,9 @@ export class GameService {
   }
 
   async addViewver(gameid: string, viewver: string) {
-    this.Game.get(gameid).viewver.push(viewver);
+    if (this.Game.get(gameid)) {
+      this.Game.get(gameid).viewver.push(viewver);
+    }
   }
 
   async removeViewver(gameid: string, viewver: string) {

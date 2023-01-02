@@ -142,8 +142,17 @@ export class GameGateway {
   }
 
   @SubscribeMessage('Addtoviewver')
-  async onAddtoviewver(socket: CustomSocket, Gameid: string, viewver: string) {
-    this.gameService.addViewver(Gameid, viewver);
+  async onAddtoviewver(
+    socket: CustomSocket,
+    e: { Gameid: string; viewver: string },
+  ) {
+    this.gameService.addViewver(e.Gameid, e.viewver);
+    const Gameviewver = this.gameService.getViewver(e.Gameid);
+    if (Gameviewver) {
+      for (const viewver of Gameviewver) {
+        this.server.to(Clients.getSocketId(viewver)).emit('Addtoviewver');
+      }
+    }
   }
 
   @SubscribeMessage('Leaveviewver')

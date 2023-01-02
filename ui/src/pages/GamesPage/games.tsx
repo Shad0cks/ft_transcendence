@@ -13,7 +13,7 @@ import useReceiveInvite from '../../customHooks/receiveInvite';
 import Background from '../../components/background';
 
 type gameProp = {
-  gameid: string; 
+  gameid: string;
   player1: string;
   player2: string;
 };
@@ -52,30 +52,34 @@ export default function Games() {
       <Header username={username} iconUser={user?.avatar} />
       <div className="ListeParty_block">
         {localStorage.getItem('searcheGame') ? (
-        <button style={{ display: 'block', margin: '150px auto', color: "#F1C40F"}}
-        className="playBtn"
-        onClick={() => {
-          socket.emit('LeaveQueue', username);
-          snackbar.setMessage('Game queue left');
-          snackbar.setSeverity('error');
-          snackbar.setOpen(true);
-          localStorage.removeItem('searcheGame');
-        }}>
-          Quit Queue
-          <svg>
-            <rect style={{stroke: "#F1C40F", strokeWidth: "0.2rem"}} />
-          </svg>
-        </button>
+          <button
+            style={{ display: 'block', margin: '150px auto', color: '#F1C40F' }}
+            className="playBtn"
+            onClick={() => {
+              socket.emit('LeaveQueue', username);
+              snackbar.setMessage('Game queue left');
+              snackbar.setSeverity('error');
+              snackbar.setOpen(true);
+              localStorage.removeItem('searcheGame');
+            }}
+          >
+            Quit Queue
+            <svg>
+              <rect style={{ stroke: '#F1C40F', strokeWidth: '0.2rem' }} />
+            </svg>
+          </button>
         ) : (
-          <button style={{ display: 'block', margin: '150px auto'}}
-          className="playBtn"
-          onClick={() => {
-            socket.emit('Addtoqueue', username);
-            snackbar.setMessage('Added to Game queue');
-            snackbar.setSeverity('success');
-            snackbar.setOpen(true);
-            localStorage.setItem('searcheGame', 'true');
-          }}>
+          <button
+            style={{ display: 'block', margin: '150px auto' }}
+            className="playBtn"
+            onClick={() => {
+              socket.emit('Addtoqueue', username);
+              snackbar.setMessage('Added to Game queue');
+              snackbar.setSeverity('success');
+              snackbar.setOpen(true);
+              localStorage.setItem('searcheGame', 'true');
+            }}
+          >
             Play New Game
             <svg>
               <rect />
@@ -93,14 +97,15 @@ export default function Games() {
                     </h5>
                     <button
                       className="btn btn-primary"
-                      onClick={() =>
-                        {
-                        socket.emit("Addtoviewver", e.gameid, user);
+                      onClick={() => {
+                        socket.emit('Addtoviewver', {
+                          Gameid: e.gameid,
+                          viewver: user?.nickname,
+                        });
                         navigate('/game_' + e.gameid, {
                           state: { gameid: e.gameid },
-                        })
-                        }
-                      }
+                        });
+                      }}
                     >
                       Spetatate
                     </button>
