@@ -67,11 +67,16 @@ export default function Chat({
     }
   }
   function getTime(time: string) {
-    return new Date(time).toLocaleTimeString('fr-FR', {
+    const hour = new Date(time).toLocaleTimeString('fr-FR', {
       timeStyle: 'short',
       hour12: false,
       timeZone: 'Europe/Bucharest',
     });
+    const date = new Date(time);
+    let day = date.getDate().toString();
+
+    if (day.length === 1) day = '0' + day;
+    return hour + ' ' + day + '/' + date.getMonth() + 1;
   }
 
   useEffect(() => {
@@ -182,7 +187,7 @@ export default function Chat({
                   sentTime: getTime(e.sent_at),
                   sender: e.author,
                   direction:
-                    e.author === SelfUser?.nickname ? 'incoming' : 'outgoing',
+                    e.author === SelfUser?.nickname ? 'outgoing' : 'incoming',
                   position: 'first',
                 }}
               >

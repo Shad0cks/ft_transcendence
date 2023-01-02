@@ -27,6 +27,8 @@ import { searchUser } from '../SearchPage/searchPage';
 import ModalBlockUser from '../../components/modalBlockUser';
 import useReceiveInvite from '../../customHooks/receiveInvite';
 import TSSnackbar from '../../components/TSSnackbar';
+import RestrictionPopUp from '../../components/restrictionPopUp';
+import { resType } from '../../models/res';
 
 export default function Channel() {
   const navigate = useNavigate();
@@ -42,6 +44,8 @@ export default function Channel() {
   const [admins, setAdmins] = useState<{ nickname: string }[]>();
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const [openBlockUsers, setOpenBlockUsers] = useState(false);
+  const [openRestriction, setOpenRestriction] = useState(false);
+  const [applyRes, setApplyRes] = useState<resType>();
 
   const snackbar = useSnackbar();
   const sender = useReceiveInvite(snackbar, navigate);
@@ -113,12 +117,13 @@ export default function Channel() {
             <Button
               variant="danger"
               onClick={() => {
-                socket?.emit('AddRestriction', {
+                setOpenRestriction(true);
+                setApplyRes({
                   userNickname: player,
                   adminNickname: user?.nickname,
                   channelName: currChannel.channelBase.name,
                   restriction: 'ban',
-                  end: '2023-12-04 18:07:18.363',
+                  end: 'none',
                 });
               }}
             >
@@ -129,19 +134,22 @@ export default function Channel() {
             <Button
               variant="primary"
               onClick={() => {
-                socket?.emit('AddRestriction', {
+                setOpenRestriction(true);
+                setApplyRes({
                   userNickname: player,
                   adminNickname: user?.nickname,
                   channelName: currChannel.channelBase.name,
                   restriction: 'mute',
-                  end: '2023-12-04 18:07:18.363',
+                  end: 'none',
                 });
               }}
             >
               mute
             </Button>
           ) : null}{' '}
-          {!isAdminUser && currChannel.type === 'channel' ? (
+          {!isAdminUser &&
+          isUserAmin(username!) &&
+          currChannel.type === 'channel' ? (
             <Button
               variant="primary"
               onClick={() => {
@@ -491,6 +499,11 @@ export default function Channel() {
         message={snackbar.message}
         senderInvite={sender}
         username={username}
+      />
+      <RestrictionPopUp
+        applyRes={applyRes!}
+        open={openRestriction}
+        setOpen={setOpenRestriction}
       />
     </div>
   ) : null;

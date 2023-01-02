@@ -53,8 +53,8 @@ function MainGame() {
   function setPlayerSocket(playerID: number) {
     if (
       !username ||
-      username !== selectedPlayer?.player1 &&
-      username !== selectedPlayer?.player2
+      (username !== selectedPlayer?.player1 &&
+        username !== selectedPlayer?.player2)
     )
       return;
     if (playerID === 1) {
