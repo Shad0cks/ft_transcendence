@@ -86,7 +86,7 @@ export class GameService {
   async getallgame() {
     const keyiterator = this.Game.keys();
     if (keyiterator) {
-      let gamereturn: Array<{
+      const gamereturn: Array<{
         gameid: string;
         player1: string;
         player2: string;

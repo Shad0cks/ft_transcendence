@@ -12,7 +12,6 @@ import { GameObjDTO } from 'src/dto/game.dto';
 import { PlayerDTO } from 'src/dto/player.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { GameService } from 'src/services/game.service';
-import { userInfo } from 'os';
 import { UserService } from 'src/services/user.service';
 
 @WebSocketGateway()

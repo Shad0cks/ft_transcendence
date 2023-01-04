@@ -410,8 +410,7 @@ export default function PongGame({
     });
 
     socket.on('Addtoviewver', () => {
-      if (playerID === 1)
-      {
+      if (playerID === 1) {
         socket.emit('gameOption', { data: gameInfo, gameid: gameID });
       }
     });
