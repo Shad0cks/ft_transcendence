@@ -214,7 +214,10 @@ export class UserService {
     }
   }
 
-  async registerPongMatch(registerPongMatchDTO: RegisterPongMatchDTO) {
+  async registerPongMatch(
+    registerPongMatchDTO: RegisterPongMatchDTO,
+    Winner: string,
+  ) {
     try {
       const match = new PongMatch();
       const user1 = await this.findOneByNickname(
@@ -226,10 +229,42 @@ export class UserService {
         null,
       );
 
+      let Win: User;
+      let Looser: User;
+
+      if (registerPongMatchDTO.user1Nickname === Winner) {
+        Win = user1;
+        Looser = user2;
+      } else {
+        Win = user2;
+        Looser = user1;
+      }
+
+      this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set({ wins: Win.wins + 1 })
+        .where({
+          id: Win.id,
+        })
+        .returning('*')
+        .execute();
+
+      this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set({ losses: Looser.losses + 1 })
+        .where({
+          id: Looser.id,
+        })
+        .returning('*')
+        .execute();
+
       match.user1 = user1;
       match.user2 = user2;
       match.score1 = registerPongMatchDTO.user1Score;
       match.score2 = registerPongMatchDTO.user2Score;
+      match.winner = Winner;
       await this.matchRepository.save(match);
     } catch (error) {
       return error;
@@ -262,6 +297,7 @@ export class UserService {
           nickname: true,
           avatar: true,
         },
+        winner: true,
       },
       order: {
         created_at: 'DESC',

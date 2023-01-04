@@ -115,7 +115,7 @@ function MainGame() {
       if (checkOnline(statusMapTmp)) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: gameRef?.current?.player2.nickname,
+          player: undefined,
         });
       }
     });
@@ -158,7 +158,7 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: gameRef?.current?.player1.nickname,
+          player: undefined,
         });
       } else if (
         socket.id === gameRef?.current?.player2.socket ||
@@ -166,7 +166,7 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: gameRef?.current?.player2.nickname,
+          player: undefined,
         });
       } else {
         // console.log(user?.nickname, "leave ", location.state.gameid);

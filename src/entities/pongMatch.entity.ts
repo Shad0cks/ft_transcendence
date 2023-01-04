@@ -18,6 +18,9 @@ export class PongMatch {
   @Column()
   score2: number;
 
+  @Column()
+  winner: string;
+
   @CreateDateColumn()
   created_at: Date;
 

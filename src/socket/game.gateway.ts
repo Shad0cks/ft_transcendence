@@ -83,7 +83,6 @@ export class GameGateway {
     const Game = await this.gameService.get(e.gameid);
     if (Game) {
       if (Game.score1 === 5 || Game.score2 === 5) {
-        console.log(e.player, 'Win');
         const Gameviewver = this.gameService.getViewver(e.gameid);
         if (Gameviewver) {
           for (const viewver of Gameviewver) {
@@ -98,12 +97,18 @@ export class GameGateway {
           }
           this.gameService.deleteGame(e.gameid);
         }
-        this.userService.registerPongMatch({
-          user1Nickname: Game.player1,
-          user2Nickname: Game.player2,
-          user1Score: Game.score1,
-          user2Score: Game.score2,
-        });
+        let winner;
+        if (Game.score1 === 5) winner = Game.player1;
+        else winner = Game.player2;
+        this.userService.registerPongMatch(
+          {
+            user1Nickname: Game.player1,
+            user2Nickname: Game.player2,
+            user1Score: Game.score1,
+            user2Score: Game.score2,
+          },
+          winner,
+        );
       } else {
         const Gameviewver = this.gameService.getViewver(e.gameid);
         if (Gameviewver) {
@@ -140,12 +145,27 @@ export class GameGateway {
     socket: CustomSocket,
     e: { gameid: string; player: string | undefined },
   ) {
+    const Game = await this.gameService.get(e.gameid);
     const Gameviewver = this.gameService.getViewver(e.gameid);
     if (Gameviewver) {
       for (const viewver of Gameviewver) {
         this.server
           .to(Clients.getSocketId(viewver))
           .emit('Gameforceend', e.player);
+      }
+      if (e.player) {
+        let winner: string;
+        if (Game.player1 === e.player) winner = Game.player2;
+        else winner = Game.player1;
+        this.userService.registerPongMatch(
+          {
+            user1Nickname: Game.player1,
+            user2Nickname: Game.player2,
+            user1Score: Game.score1,
+            user2Score: Game.score2,
+          },
+          winner,
+        );
       }
       this.gameService.deleteGame(e.gameid);
     }
@@ -178,13 +198,6 @@ export class GameGateway {
     socket: CustomSocket,
     e: { InvitationSender: string; InvitationReceiver: string },
   ) {
-    console.log(
-      'receive sender ',
-      e.InvitationSender,
-      'receiver ',
-      e.InvitationReceiver,
-    );
-
     this.server
       .to(Clients.getSocketId(e.InvitationReceiver))
       .emit('InvitationGame', e.InvitationSender);
