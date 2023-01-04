@@ -477,7 +477,7 @@ export default function PongGame({
           ) : (
             <>
               <h1 style={{ color: 'blue' }}>{seconds}</h1>
-              <h2>Before user1 win</h2>
+              <h2>Before Game END</h2>
             </>
           )}
         </div>
