@@ -124,20 +124,24 @@ export class GameGateway {
 
   @SubscribeMessage('Addtoqueue')
   async OnAddtoqueue(socket: CustomSocket, player: string) {
-    const findgame = await this.gameService.Addtoqueue(player);
-    if (findgame.bo) {
-      const GameID = await this.gameService.create(findgame.player, player);
-      this.server.to(socket.id).emit('FindGame', GameID);
-      this.server
-        .to(Clients.getSocketId(findgame.player))
-        .emit('FindGame', GameID);
+    if (player === socket.user.nickname) {
+      const findgame = await this.gameService.Addtoqueue(player);
+      if (findgame.bo) {
+        const GameID = await this.gameService.create(findgame.player, player);
+        this.server.to(socket.id).emit('FindGame', GameID);
+        this.server
+          .to(Clients.getSocketId(findgame.player))
+          .emit('FindGame', GameID);
+      }
     }
   }
 
   @SubscribeMessage('LeaveQueue')
   async onLeavequeue(socket: CustomSocket, player: string) {
-    this.gameService.Removetoqueue(player);
-    this.server.to(socket.id).emit('QueueLeave');
+    if (player === socket.user.nickname) {
+      this.gameService.Removetoqueue(player);
+      this.server.to(socket.id).emit('QueueLeave');
+    }
   }
 
   @SubscribeMessage('Gameforceend')
