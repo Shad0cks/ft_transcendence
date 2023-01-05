@@ -43,7 +43,11 @@ export default function AvailableParty({
             </button>
           ) : null}
           {password === 'private' && isIn && isAdmin ? (
-            <button className="btn btn-primary" style={{marginRight: "2px", marginTop: "10px"}} onClick={editWhitelist}>
+            <button
+              className="btn btn-primary"
+              style={{ marginRight: '2px', marginTop: '10px' }}
+              onClick={editWhitelist}
+            >
               Whitelist
             </button>
           ) : null}
