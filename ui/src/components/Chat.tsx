@@ -158,7 +158,7 @@ export default function Chat({
                 />
               )
             ) : (
-              <AvatarGroup size="sm" max={4}>
+              <AvatarGroup size="xs" max={9}>
                 {usersInChannel.map((e) => (
                   <Avatar src={e.avatar} name={e.nickname} />
                 ))}
