@@ -192,12 +192,8 @@ export class GameGateway {
   }
 
   @SubscribeMessage('Leaveviewver')
-  async onLeaveviewver(
-    socket: CustomSocket,
-    e: { Gameid: string; viewver: string },
-  ) {
-    if (e.viewver === socket.user.nickname)
-      this.gameService.removeViewver(e.Gameid, e.viewver);
+  async onLeaveviewver(socket: CustomSocket, gameid: string) {
+    this.gameService.removeViewver(gameid, socket.user.nickname);
   }
 
   @SubscribeMessage('InvitationGame')
