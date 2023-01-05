@@ -40,11 +40,6 @@ export class ChatGateway {
 
   //connexion
   handleConnection(client: CustomSocket) {
-    // const decodedtoken  = await jwt.verify(client.handshake.headers.authorization, String(process.env.JWT_SECRET));
-    // const TempUsersocket = await this.userService.createUsersocket(decodedtoken.nickname, client.id);
-    // client.data.user = this.userService.findOneByNickname(String(decodedtoken.nickname), null);
-    // this.Usersockets.push(TempUsersocket);
-
     this.userstat.set(client.user.nickname, 'online');
     for (const user of Clients.get()) {
       this.server
@@ -90,20 +85,21 @@ export class ChatGateway {
 
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
-    const Userfromchannel = await this.chatService.getParticipantsNickname(
-      messageDTO.channelName,
-    );
-    const messageEntity = await this.chatService.registerChannelMessage(
-      messageDTO,
-    );
-
-    messageDTO.sent_at = messageEntity.sent_at;
-    for (const user of Userfromchannel) {
-      const UserBlocked = this.userService.getBlockedNicknames(user);
-      if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
-        this.server
-          .to(Clients.getSocketId(user))
-          .emit('messageAdded', messageDTO);
+    if (messageDTO.senderNickname === socket.user.nickname) {
+      const Userfromchannel = await this.chatService.getParticipantsNickname(
+        messageDTO.channelName,
+      );
+      const messageEntity = await this.chatService.registerChannelMessage(
+        messageDTO,
+      );
+      messageDTO.sent_at = messageEntity.sent_at;
+      for (const user of Userfromchannel) {
+        const UserBlocked = this.userService.getBlockedNicknames(user);
+        if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
+          this.server
+            .to(Clients.getSocketId(user))
+            .emit('messageAdded', messageDTO);
+        }
       }
     }
     return;
@@ -112,27 +108,31 @@ export class ChatGateway {
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
   async onAddMessagePrivate(socket: CustomSocket, message: DirectMessageDTO) {
-    try {
-      const blockedUsers = await this.userService.getBlockedNicknames(
-        message.receiverNickname,
-      );
-      if (!(await blockedUsers).includes(message.senderNickname)) {
-        const messageEntity = await this.chatService.registerDirectMessage(
-          message,
+    if (message.senderNickname === socket.user.nickname) {
+      try {
+        const blockedUsers = await this.userService.getBlockedNicknames(
+          message.receiverNickname,
         );
-        message.sent_at = messageEntity.sent_at;
-        this.server
-          .to(Clients.getSocketId(message.receiverNickname))
-          .emit('messageprivateAdded', message);
-      }
-      this.server.to(socket.id).emit('messageprivateAdded', message);
-    } catch (error) {}
+        if (!(await blockedUsers).includes(message.senderNickname)) {
+          const messageEntity = await this.chatService.registerDirectMessage(
+            message,
+          );
+          message.sent_at = messageEntity.sent_at;
+          this.server
+            .to(Clients.getSocketId(message.receiverNickname))
+            .emit('messageprivateAdded', message);
+        }
+        this.server.to(socket.id).emit('messageprivateAdded', message);
+      } catch (error) {}
+    }
   }
 
   @SubscribeMessage('createChannel')
   async onCreateChannel(socket: CustomSocket, channel: CreateChannelDTO) {
-    await this.chatService.createChannel(channel);
-    this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
+    if (channel.creatorNickname === socket.user.nickname) {
+      await this.chatService.createChannel(channel);
+      this.server.emit('createChannel'); // Ping pour que la page re Get les channel à la création d'un channel
+    }
   }
 
   @SubscribeMessage('AddAdmin')
@@ -151,10 +151,12 @@ export class ChatGateway {
     socket: CustomSocket,
     restriction: ChannelRestrictionDTO,
   ) {
-    try {
-      await this.chatService.addRestriction(restriction);
-    } catch (error) {
-      this.server.to(socket.id).emit('error', error.message);
+    if (restriction.userNickname === socket.user.nickname) {
+      try {
+        await this.chatService.addRestriction(restriction);
+      } catch (error) {
+        this.server.to(socket.id).emit('error', error.message);
+      }
     }
   }
 
@@ -204,15 +206,16 @@ export class ChatGateway {
 
   @SubscribeMessage('joinChannel')
   async onJoinChannel(socket: CustomSocket, channel: JoinChannelDTO) {
-    await this.chatService.joinChannel(channel);
-    const userfromchannel: Promise<string[]> =
-      this.chatService.getParticipantsNickname(channel.channelName);
-    for (const user of await userfromchannel) {
-      await this.server
-        .to(Clients.getSocketId(user))
-        .emit('joinChannel', channel);
+    if (channel.userNickname === socket.user.nickname) {
+      await this.chatService.joinChannel(channel);
+      const userfromchannel: Promise<string[]> =
+        this.chatService.getParticipantsNickname(channel.channelName);
+      for (const user of await userfromchannel) {
+        await this.server
+          .to(Clients.getSocketId(user))
+          .emit('joinChannel', channel);
+      }
     }
-    // await this.server.to(socket.id).emit('messages', getMessageFromChannel(channel.channelName)); // envoye les messages
   }
 
   @SubscribeMessage('GetUserFromChannel')
@@ -225,12 +228,14 @@ export class ChatGateway {
 
   @SubscribeMessage('leaveChannel')
   async onLeaveChannel(socket: CustomSocket, channel: LeaveChannelDTO) {
-    await this.chatService.leaveChannel(channel);
-    const Userfromchannel: Promise<string[]> =
-      this.chatService.getParticipantsNickname(channel.channelName);
-    for (const user of await Userfromchannel) {
-      this.server.to(user).emit('leaveChannel', channel);
+    if (channel.userNickname === socket.user.nickname) {
+      await this.chatService.leaveChannel(channel);
+      const Userfromchannel: Promise<string[]> =
+        this.chatService.getParticipantsNickname(channel.channelName);
+      for (const user of await Userfromchannel) {
+        this.server.to(user).emit('leaveChannel', channel);
+      }
+      this.server.to(socket.id).emit('leaveChannel', channel);
     }
-    this.server.to(socket.id).emit('leaveChannel', channel);
   }
 }
