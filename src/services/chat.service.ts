@@ -255,7 +255,9 @@ export class ChatService {
     if (!userlogin) {
       throw new BadRequestException('Missing user name');
     }
+
     const channel = await this.findChannelByName(channelName, {});
+
     const user = channel.whitelist.find((element) => element === userlogin);
     if (!user) {
       throw new UnauthorizedException('Not whitelisted');
@@ -324,10 +326,9 @@ export class ChatService {
       if (channel.privacy === 'private') {
         await this.isWhitelist(
           joinChannelDTO.channelName,
-          participant.user.nickname,
+          joinChannelDTO.userNickname,
         );
       }
-
       // populate participant object
       participant.channel = channel;
       participant.user = await this.userService.findOneByNickname(

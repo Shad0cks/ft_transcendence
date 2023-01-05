@@ -36,14 +36,14 @@ export default function AvailableParty({
               Leave
             </button>
           )}
-
+          &nbsp;
           {isIn && isAdmin ? (
             <button className="btn btn-danger" onClick={editChannel}>
               Edit
             </button>
           ) : null}
           {password === 'private' && isIn && isAdmin ? (
-            <button className="btn btn-danger" onClick={editWhitelist}>
+            <button className="btn btn-primary" style={{marginRight: "2px", marginTop: "10px"}} onClick={editWhitelist}>
               Whitelist
             </button>
           ) : null}

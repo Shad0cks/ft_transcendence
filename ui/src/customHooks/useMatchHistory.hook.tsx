@@ -16,7 +16,6 @@ export default function useMatchHistory(nickname: string) {
           disconnect(navigate);
         } else if (e.ok) {
           history.current = await e.json();
-          console.log(history.current);
           if (!history.current) {
             disconnect(navigate);
           }

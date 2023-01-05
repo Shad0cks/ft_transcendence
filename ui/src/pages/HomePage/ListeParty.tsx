@@ -75,7 +75,9 @@ export default function ListeParty({
   };
 
   useEffect(() => {
-    getListChannel().then((e) => setChannel(e));
+    getListChannel().then((e) => {
+      setChannel(e);
+    });
     getListInChannel().then((e) => setInChannel(e));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -83,6 +85,7 @@ export default function ListeParty({
     socket?.on('createChannel', function () {
       getListChannel().then((e) => setChannel(e));
       getListInChannel().then((e) => setInChannel(e));
+      getAdminListChannel();
     });
 
     socket?.on('channelEdited', function () {
@@ -167,6 +170,8 @@ export default function ListeParty({
       <div className="ListeParty_list">
         {channel.map((e: ChannelDTO, i: number) => {
           return e.privacy !== 'private' ||
+            (e.privacy === 'private' &&
+              e.whitelist.find((x) => x === username)) ||
             inChannel?.find((x) => x.name === e.name) ? (
             <AvailableParty
               key={i}
@@ -255,7 +260,7 @@ export default function ListeParty({
               ref={addUserWL}
             />
             <Button
-              variant="outline-dark"
+              variant="outline-success"
               id="button-addon2"
               onClick={() => addUserWhitelist()}
             >

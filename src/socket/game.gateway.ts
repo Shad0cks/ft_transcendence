@@ -24,6 +24,12 @@ export class GameGateway {
     private userService: UserService,
   ) {}
 
+  //deconnexion
+  async handleDisconnect(client: CustomSocket) {
+    const game = await this.gameService.getGameidbyname(client.user.nickname);
+    this.onGameforceend(client, { gameid: game, player: client.user.nickname });
+  }
+
   @SubscribeMessage('playermove') handleEvent(
     @MessageBody() e: { data: PlayerDTO; gameid: string },
   ) {

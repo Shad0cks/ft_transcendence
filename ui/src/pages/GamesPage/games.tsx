@@ -98,7 +98,6 @@ export default function Games() {
                     <button
                       className="btn btn-primary"
                       onClick={() => {
-                        console.log('viewver add');
                         socket.emit('Addtoviewver', {
                           Gameid: e.gameid,
                           viewver: user?.nickname,
