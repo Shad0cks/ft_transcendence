@@ -247,8 +247,8 @@ export class GameGateway {
     const game = await this.gameService.get(gameid);
     if (game) {
       this.server.to(socket.id).emit('getUserbyGameid', {
-        player1: game.player1,
-        player2: game.player2,
+        player1: Clients.getSocketId(game.player1),
+        player2: Clients.getSocketId(game.player2),
       });
     }
   }
