@@ -45,17 +45,12 @@ export default function SearchPage() {
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
   >();
-  
+
   useEffect(() => {
-    if(location.state && location.state.defSearch)
-    {
-      searchUser(
-        location.state.defSearch,
-        setSearchedUser,
-        snackbar,
-      )
+    if (location.state && location.state.defSearch) {
+      searchUser(location.state.defSearch, setSearchedUser, snackbar);
     }
-  }, [])
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let getUserProfile;
   let getMatchHistory;

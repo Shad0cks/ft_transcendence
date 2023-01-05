@@ -1,7 +1,6 @@
 import Popup from 'reactjs-popup';
 import { SnackbarHook } from '../customHooks/useSnackbar';
 import { GetUserIt } from '../models/getUser';
-import Background from './background';
 import UserProfile from './UserProfile';
 
 interface ModalUserProfileProps {
@@ -14,7 +13,7 @@ interface ModalUserProfileProps {
 
 export function ModalUserProfile(props: ModalUserProfileProps) {
   let getUserProfile;
-  const contentStyle = { border: 'none', padding: "0", width: "auto" };
+  const contentStyle = { border: 'none', padding: '0', width: 'auto' };
   if (!props.searchedUser) {
     getUserProfile = () => {
       return <div></div>;
@@ -35,12 +34,9 @@ export function ModalUserProfile(props: ModalUserProfileProps) {
       open={props.open}
       closeOnDocumentClick
       onClose={() => props.setOpen(false)}
-      {...{contentStyle}}
-      
+      {...{ contentStyle }}
     >
-      <div>
-        {getUserProfile()}
-      </div>
+      <div>{getUserProfile()}</div>
     </Popup>
   );
 }

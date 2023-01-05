@@ -1,5 +1,5 @@
 import { Image, ListGroup } from 'react-bootstrap';
-import { AiFillTrophy } from 'react-icons/ai'
+import { AiFillTrophy } from 'react-icons/ai';
 interface MatchProps {
   nickname1: string;
   avatar1: string;
@@ -19,7 +19,13 @@ export function MatchCard(props: MatchProps) {
         src={props.avatar1}
         roundedCircle
       />{' '}
-      {props.winner === props.nickname1 ? <AiFillTrophy color='#D68910'/> : null} {props.nickname1} {props.score1} - {props.score2} {props.nickname2}{' '}{props.winner === props.nickname2 ? <AiFillTrophy color='#D68910'/> : null}
+      {props.winner === props.nickname1 ? (
+        <AiFillTrophy color="#D68910" />
+      ) : null}{' '}
+      {props.nickname1} {props.score1} - {props.score2} {props.nickname2}{' '}
+      {props.winner === props.nickname2 ? (
+        <AiFillTrophy color="#D68910" />
+      ) : null}
       <Image
         style={{ width: '50px', height: '50px', cursor: 'pointer' }}
         src={props.avatar2}

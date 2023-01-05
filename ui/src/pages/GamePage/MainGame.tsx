@@ -36,7 +36,6 @@ function MainGame() {
   const gameRef = useRef<GameObj | null>(null);
   gameRef.current = game;
 
-
   function setPlayerSocket(playerID: number) {
     if (
       !username ||
@@ -135,7 +134,10 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: gameRef?.current?.screen === 4 ? gameRef?.current?.player1.nickname : undefined,
+          player:
+            gameRef?.current?.screen === 4
+              ? gameRef?.current?.player1.nickname
+              : undefined,
         });
       } else if (
         socket.id === gameRef?.current?.player2.socket ||
@@ -143,7 +145,10 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player:  gameRef?.current?.screen === 4 ? gameRef?.current?.player2.nickname : undefined,
+          player:
+            gameRef?.current?.screen === 4
+              ? gameRef?.current?.player2.nickname
+              : undefined,
         });
       } else {
         // console.log(user?.nickname, "leave ", location.state.gameid);
