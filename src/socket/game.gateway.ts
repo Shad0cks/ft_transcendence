@@ -180,11 +180,13 @@ export class GameGateway {
     socket: CustomSocket,
     e: { Gameid: string; viewver: string },
   ) {
-    this.gameService.addViewver(e.Gameid, e.viewver);
-    const Gameviewver = this.gameService.getViewver(e.Gameid);
-    if (Gameviewver) {
-      for (const viewver of Gameviewver) {
-        this.server.to(Clients.getSocketId(viewver)).emit('Addtoviewver');
+    if (e.viewver === socket.user.nickname) {
+      this.gameService.addViewver(e.Gameid, e.viewver);
+      const Gameviewver = this.gameService.getViewver(e.Gameid);
+      if (Gameviewver) {
+        for (const viewver of Gameviewver) {
+          this.server.to(Clients.getSocketId(viewver)).emit('Addtoviewver');
+        }
       }
     }
   }
@@ -194,7 +196,8 @@ export class GameGateway {
     socket: CustomSocket,
     e: { Gameid: string; viewver: string },
   ) {
-    this.gameService.removeViewver(e.Gameid, e.viewver);
+    if (e.viewver === socket.user.nickname)
+      this.gameService.removeViewver(e.Gameid, e.viewver);
   }
 
   @SubscribeMessage('InvitationGame')
