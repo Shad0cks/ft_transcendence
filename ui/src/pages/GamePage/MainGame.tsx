@@ -77,6 +77,7 @@ function MainGame() {
     socket.emit('getUserbyGameid', location.state.gameid);
     return () => {
       socket.emit('SetStatus', 'online');
+      socket.emit('Leaveviewver', location.state.gameid);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -103,6 +104,13 @@ function MainGame() {
       },
     );
 
+    socket.on('Playerleave', (player: string) => {
+      socket.emit('Gameforceend', {
+        gameid: location.state.gameid,
+        player: game.screen === 4 ? player : undefined,
+      });
+    });
+
     return () => {
       socket?.off('gameOption');
     };
@@ -119,37 +127,6 @@ function MainGame() {
           navigate('/');
         } else if (e.ok) e.text().then((i) => setUser(JSON.parse(i)));
       });
-
-    return () => {
-      if (!location.state) return;
-      if (
-        socket.id === gameRef?.current?.player1.socket ||
-        socket.id === selectedPlayer?.player1
-      ) {
-        socket.emit('Gameforceend', {
-          gameid: location.state.gameid,
-          player:
-            gameRef?.current?.screen === 4
-              ? gameRef?.current?.player1.nickname
-              : undefined,
-        });
-      } else if (
-        socket.id === gameRef?.current?.player2.socket ||
-        selectedPlayer?.player2 === socket.id
-      ) {
-        socket.emit('Gameforceend', {
-          gameid: location.state.gameid,
-          player:
-            gameRef?.current?.screen === 4
-              ? gameRef?.current?.player2.nickname
-              : undefined,
-        });
-      } else if (
-        gameRef?.current?.player2.socket !== undefined &&
-        gameRef?.current?.player1.socket !== undefined
-      )
-        socket.emit('Leaveviewver', location.state.gameid);
-    };
   }, [selectedPlayer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setGameOp = () => {
