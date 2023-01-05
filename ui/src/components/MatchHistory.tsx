@@ -17,10 +17,11 @@ export function MatchHistory(props: MatchHistoryProps) {
 
   return (
     <div>
-      <ListGroup>
+      <ListGroup style={{boxShadow: "-1px 1px 9px 2px rgba(0,0,0,0.8)"}}>
         {history.data.map((e: historyMatchIt, i: number) => {
           return (
             <MatchCard
+              winner={e.winner}
               nickname1={e.user1.nickname}
               avatar1={e.user1.avatar}
               score1={e.score1}

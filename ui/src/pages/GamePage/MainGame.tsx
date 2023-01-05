@@ -36,19 +36,6 @@ function MainGame() {
   const gameRef = useRef<GameObj | null>(null);
   gameRef.current = game;
 
-  // function isPlayer() : boolean
-  // {
-  //     if (game.player1.socket === socket?.id || game.player2.socket === socket?.id) return true
-  //     return false;
-  // }
-
-  function checkOnline(statusMaptmp: Map<string, string>): boolean {
-    if (!selectedPlayer) return false;
-    return (
-      statusMaptmp.get(selectedPlayer.player1) === undefined ||
-      statusMaptmp.get(selectedPlayer.player2) === undefined
-    );
-  }
 
   function setPlayerSocket(playerID: number) {
     if (
@@ -110,16 +97,6 @@ function MainGame() {
       navigate('/');
     });
 
-    socket.on('StatusUpdate', function (e: any) {
-      const statusMapTmp: Map<string, string> = new Map(JSON.parse(e));
-      if (checkOnline(statusMapTmp)) {
-        socket.emit('Gameforceend', {
-          gameid: location.state.gameid,
-          player: undefined,
-        });
-      }
-    });
-
     socket.on(
       'getUserbyGameid',
       (players: { player1: string; player2: string }) => {
@@ -158,7 +135,7 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: undefined,
+          player: gameRef?.current?.screen === 4 ? gameRef?.current?.player1.nickname : undefined,
         });
       } else if (
         socket.id === gameRef?.current?.player2.socket ||
@@ -166,7 +143,7 @@ function MainGame() {
       ) {
         socket.emit('Gameforceend', {
           gameid: location.state.gameid,
-          player: undefined,
+          player:  gameRef?.current?.screen === 4 ? gameRef?.current?.player2.nickname : undefined,
         });
       } else {
         // console.log(user?.nickname, "leave ", location.state.gameid);

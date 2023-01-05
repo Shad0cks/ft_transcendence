@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Header from '../../components/Header';
 import useLoggedUser from '../../customHooks/useLoggedUser.hook';
 import { Button, InputGroup, Form } from 'react-bootstrap';
@@ -9,7 +9,7 @@ import TSSnackbar from '../../components/TSSnackbar';
 import { GetUserInfo } from '../../services/User/getUserInfo';
 import { MatchHistory } from '../../components/MatchHistory';
 import useReceiveInvite from '../../customHooks/receiveInvite';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Background from '../../components/background';
 
 export function searchUser(
@@ -38,12 +38,25 @@ export function searchUser(
 export default function SearchPage() {
   const user = useLoggedUser().user;
   const snackbar = useSnackbar();
+  const location = useLocation();
   const navigate = useNavigate();
   const sender = useReceiveInvite(snackbar, navigate);
   const searchUserNicknameInput = useRef<HTMLInputElement>(null);
   const [searchedUser, setSearchedUser] = useState<
     GetUserIt | undefined | null
   >();
+  
+  useEffect(() => {
+    if(location.state && location.state.defSearch)
+    {
+      searchUser(
+        location.state.defSearch,
+        setSearchedUser,
+        snackbar,
+      )
+    }
+  }, [])
+
   let getUserProfile;
   let getMatchHistory;
 

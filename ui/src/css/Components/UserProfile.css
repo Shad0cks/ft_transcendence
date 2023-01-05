@@ -1,0 +1,26 @@
+.dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    right: 50%;
+    transform: translate(50%, -25%);
+  }
+
+.dot.Offline{
+    background-color: #bbb;
+}
+
+.dot.online{
+    background-color: #28B463;
+}
+
+.dot.ingame{
+    background-color: #0084FF;
+}
+
+.nameCont
+{
+    display: flex;
+    align-items: center;
+}

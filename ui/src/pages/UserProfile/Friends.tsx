@@ -156,7 +156,11 @@ export default function Friends() {
                   >
                     Play
                   </Button>
-                  <Button variant="secondary">Profile</Button>
+                  <Button variant="secondary"
+                  onClick={
+                    () => navigate('/search', { state: { defSearch: elem.nickname } })
+                  }
+                  >Profile</Button>
                   <Button
                     variant="secondary"
                     onClick={() =>
