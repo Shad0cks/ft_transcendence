@@ -31,11 +31,12 @@ export class GameService {
   }
 
   async removeViewver(gameid: string, viewver: string) {
-    console.log(viewver);
-    this.Game.get(gameid).viewver.splice(
-      this.Game.get(gameid).viewver.indexOf(viewver),
-      1,
-    );
+    if (this.Game.get(gameid)) {
+      this.Game.get(gameid).viewver.splice(
+        this.Game.get(gameid).viewver.indexOf(viewver),
+        1,
+      );
+    }
   }
 
   getViewver(gameid: string) {
