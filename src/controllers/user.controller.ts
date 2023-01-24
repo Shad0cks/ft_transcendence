@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ReqUser } from 'src/decorators/user.decorator';
+import { FaSetDTO } from 'src/dto/2faSet.dto';
 import { BlockedDTO } from 'src/dto/blocked.dto';
 import { FriendDTO } from 'src/dto/friend.dto';
 import { UserDTO } from 'src/dto/user.dto';
@@ -52,12 +53,12 @@ export class UserController {
 
   @Put('2fa')
   @UseGuards(JwtAuthGuard)
-  async edit2faAction(@Body() userDTO: UserDTO, @ReqUser() user: User) {
-    return await this.userService.edit2fa(
-      user,
-      userDTO.twofa_enabled,
-      userDTO.twofa_secret,
-    );
+  async edit2faAction(@Body() FaSetDTO: FaSetDTO, @ReqUser() user: User) {
+    if (FaSetDTO.stat) {
+      return await this.userService.edit2fa(user, FaSetDTO.data);
+    } else {
+      return await this.userService.unset2fa(user, FaSetDTO.data);
+    }
   }
 
   @Post('friends')

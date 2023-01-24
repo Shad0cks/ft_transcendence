@@ -201,7 +201,8 @@ export class GameGateway {
   @SubscribeMessage('Leaveviewver')
   async onLeaveviewver(socket: CustomSocket, gameid: string) {
     const game = await this.gameService.get(gameid);
-    if (game) {
+    if (game) 
+    {
       if (
         game.player1 === socket.user.nickname ||
         game.player2 === socket.user.nickname

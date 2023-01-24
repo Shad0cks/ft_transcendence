@@ -32,7 +32,11 @@ export class AuthController {
     @Param('avatar') avatar: string,
   ) {
     if (nickname.length > 10) {
+<<<<<<< HEAD
       res.redirect('http://localhost:3000/register/?error=true');
+=======
+      res.redirect('http://localhost:3000/register/?error=2');
+>>>>>>> da65c44fd5d43479324a1108252ade77f826220e
       return;
     }
     if (avatar !== 'default')
