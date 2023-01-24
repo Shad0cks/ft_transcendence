@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>DB2 - SOCI (4.0.3)</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SOCI (4.0.3)</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Overview <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../quickstart/" class="dropdown-item">Getting Started</a>
+</li>
+                                    
+<li>
+    <a href="../../installation/" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../../structure/" class="dropdown-item">Library Structure</a>
+</li>
+                                    
+<li>
+    <a href="../../license/" class="dropdown-item">License</a>
+</li>
+                                    
+<li>
+    <a href="../../faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../connections/" class="dropdown-item">Connections</a>
+</li>
+                                    
+<li>
+    <a href="../../queries/" class="dropdown-item">Queries</a>
+</li>
+                                    
+<li>
+    <a href="../../binding/" class="dropdown-item">Data Binding</a>
+</li>
+                                    
+<li>
+    <a href="../../indicators/" class="dropdown-item">Data Indicators</a>
+</li>
+                                    
+<li>
+    <a href="../../types/" class="dropdown-item">Data Types</a>
+</li>
+                                    
+<li>
+    <a href="../../lobs/" class="dropdown-item">LOBs</a>
+</li>
+                                    
+<li>
+    <a href="../../statements/" class="dropdown-item">Statements</a>
+</li>
+                                    
+<li>
+    <a href="../../transactions/" class="dropdown-item">Transactions</a>
+</li>
+                                    
+<li>
+    <a href="../../procedures/" class="dropdown-item">Procedures</a>
+</li>
+                                    
+<li>
+    <a href="../../errors/" class="dropdown-item">Errors</a>
+</li>
+                                    
+<li>
+    <a href="../../logging/" class="dropdown-item">Logging</a>
+</li>
+                                    
+<li>
+    <a href="../../interfaces/" class="dropdown-item">Interfaces</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Backends <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">DB2</a>
+</li>
+                                    
+<li>
+    <a href="../firebird/" class="dropdown-item">Firebird</a>
+</li>
+                                    
+<li>
+    <a href="../mysql/" class="dropdown-item">MySQL</a>
+</li>
+                                    
+<li>
+    <a href="../odbc/" class="dropdown-item">ODBC</a>
+</li>
+                                    
+<li>
+    <a href="../oracle/" class="dropdown-item">Oracle</a>
+</li>
+                                    
+<li>
+    <a href="../postgresql/" class="dropdown-item">PostgreSQL</a>
+</li>
+                                    
+<li>
+    <a href="../sqlite3/" class="dropdown-item">SQLite3</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Miscellaneous <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../beyond/" class="dropdown-item">Beyond SQL</a>
+</li>
+                                    
+<li>
+    <a href="../../multithreading/" class="dropdown-item">Multi-threading</a>
+</li>
+                                    
+<li>
+    <a href="../../boost/" class="dropdown-item">Boost</a>
+</li>
+                                    
+<li>
+    <a href="../../utilities/" class="dropdown-item">Utilities</a>
+</li>
+                                    
+<li>
+    <a href="../../vagrant/" class="dropdown-item">Vagrant</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/client/" class="dropdown-item">Client API</a>
+</li>
+                                    
+<li>
+    <a href="../../api/backend/" class="dropdown-item">Backend API</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Ada</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../languages/ada/" class="dropdown-item">Ada Bindings</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/concepts/" class="dropdown-item">Ada Concepts</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/idioms/" class="dropdown-item">Ada Idioms</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/reference/" class="dropdown-item">Ada API Reference</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../firebird/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/SOCI/soci/edit/master/docs/backends/db2.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#db2-backend-reference" class="nav-link">DB2 Backend Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#prerequisites" class="nav-link">Prerequisites</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#connecting-to-the-database" class="nav-link">Connecting to the Database</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#soci-feature-support" class="nav-link">SOCI Feature Support</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#native-api-access" class="nav-link">Native API Access</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#backend-specific-extensions" class="nav-link">Backend-specific extensions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#configuration-options" class="nav-link">Configuration options</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="db2-backend-reference">DB2 Backend Reference</h1>
+<p>SOCI backend for accessing IBM DB2 database.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="supported-versions">Supported Versions</h3>
+<p>See <a href="#tested-platforms">Tested Platforms</a>.</p>
+<h3 id="tested-platforms">Tested Platforms</h3>
+<table>
+<thead>
+<tr>
+<th>DB2</th>
+<th>OS</th>
+<th>Compiler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-</td>
+<td>Linux PPC64</td>
+<td>GCC</td>
+</tr>
+<tr>
+<td>9.1</td>
+<td>Linux</td>
+<td>GCC</td>
+</tr>
+<tr>
+<td>9.5</td>
+<td>Linux</td>
+<td>GCC</td>
+</tr>
+<tr>
+<td>9.7</td>
+<td>Linux</td>
+<td>GCC</td>
+</tr>
+<tr>
+<td>10.1</td>
+<td>Linux</td>
+<td>GCC</td>
+</tr>
+<tr>
+<td>10.1</td>
+<td>Windows 8</td>
+<td>Visual Studio 2012</td>
+</tr>
+<tr>
+<td>10.5.0.5</td>
+<td>macOS High Sierra 10.13.5</td>
+<td>AppleClang 9.1.0.9020039</td>
+</tr>
+</tbody>
+</table>
+<h3 id="required-client-libraries">Required Client Libraries</h3>
+<p>The SOCI DB2 backend requires client library from the <a href="https://www-01.ibm.com/support/docview.wss?uid=swg21385217">IBM Data Server Driver Package (DS Driver)</a>.</p>
+<h2 id="connecting-to-the-database">Connecting to the Database</h2>
+<p>On Unix, before using the DB2 backend please make sure, that you have sourced DB2 profile into your environment:</p>
+<pre><code class="language-console">. ~/db2inst1/sqllib/db2profile
+</code></pre>
+<p>To establish a connection to the DB2 database, create a session object using the DB2
+backend factory together with the database file name:</p>
+<pre><code class="language-cpp">soci::session sql(soci::db2, &quot;your DB2 connection string here&quot;);
+</code></pre>
+<h2 id="soci-feature-support">SOCI Feature Support</h2>
+<h3 id="dynamic-binding">Dynamic Binding</h3>
+<p>TODO</p>
+<h3 id="bulk-operations">Bulk Operations</h3>
+<p>Supported, but with caution as it hasn't been extensively tested.</p>
+<h3 id="transactions">Transactions</h3>
+<p>Currently, not supported.</p>
+<h3 id="blob-data-type">BLOB Data Type</h3>
+<p>Currently, not supported.</p>
+<h3 id="nested-statements">Nested Statements</h3>
+<p>Nesting statements are not processed by SOCI in any special way and they work as implemented
+by the DB2 database.</p>
+<h3 id="stored-procedures">Stored Procedures</h3>
+<p>Stored procedures are supported, with <code>CALL</code> statement.</p>
+<h2 id="native-api-access">Native API Access</h2>
+<p>TODO</p>
+<h2 id="backend-specific-extensions">Backend-specific extensions</h2>
+<p>None.</p>
+<h2 id="configuration-options">Configuration options</h2>
+<p>This backend supports <code>db2_option_driver_complete</code> option which can be passed to it via
+<code>connection_parameters</code> class. The value of this option is passed to <code>SQLDriverConnect()</code>
+function as "driver completion" parameter and so must be one of <code>SQL_DRIVER_XXX</code> values,
+in the string form. The default value of this option is <code>SQL_DRIVER_PROMPT</code> meaning
+that the driver will query the user for the user name and/or the password if they are
+not stored together with the connection. If this is undesirable for some reason,
+you can use <code>SQL_DRIVER_NOPROMPT</code> value for this option to suppress showing the message box:</p>
+<pre><code class="language-cpp">connection_parameters parameters(&quot;db2&quot;, &quot;DSN=sample&quot;);
+parameters.set_option(db2_option_driver_complete, &quot;0&quot; /* SQL_DRIVER_NOPROMPT */);
+session sql(parameters);
+</code></pre>
+<p>Note, <code>db2_option_driver_complete</code> controls driver completion specific to the IBM DB2 driver
+for ODBC and CLI.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Copyright &copy; 2017 <a href="https://github.com/msobczak">Maciej Sobczak</a> and <a href="http://soci.sourceforge.net/people.html">SOCI Team</a>.</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

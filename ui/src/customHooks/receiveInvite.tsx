@@ -12,7 +12,7 @@ export default function useReceiveInvite(
   useEffect(() => {
     socket.on('FindGame', (gameID: string) => {
       localStorage.removeItem('searcheGame');
-      navigate('/game_' + gameID, { state: { gameid: gameID } });
+      navigate('/game/' + gameID, { state: { gameid: gameID } });
     });
   }, [socket]); // eslint-disable-line react-hooks/exhaustive-deps
 

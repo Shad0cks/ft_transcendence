@@ -22,6 +22,7 @@ import { MessageGetList } from '../models/messageGetList';
 import { MessageSend } from '../models/messageSend';
 import { ChannelType } from '../models/channelType';
 import { PrivateMessageDTO } from '../models/privateMessageDTO';
+import { SnackbarHook } from '../customHooks/useSnackbar';
 
 export default function Chat({
   SelfUser,
@@ -32,6 +33,7 @@ export default function Chat({
   messageList,
   setMessageList,
   refreshChannel,
+  snackbar
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
@@ -41,6 +43,7 @@ export default function Chat({
   messageList: MessageGetList[];
   setMessageList: React.Dispatch<React.SetStateAction<MessageGetList[]>>;
   refreshChannel: () => Promise<void>;
+  snackbar: SnackbarHook;
 }) {
   const [currentChannel, setCurrentChannel] = useState<ChannelType>();
   const [inputSearch, setInputSearch] = useState('');
@@ -52,6 +55,23 @@ export default function Chat({
       return 'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
   }
   function sendMessage(e: string) {
+
+    var withoutBR = e.replace('<br>','');
+    if (withoutBR.length > 255)
+    {
+      snackbar.setMessage('Max message charactere : 255');
+      snackbar.setSeverity('error');
+      snackbar.setOpen(true);
+      return;
+    }
+    if (withoutBR.includes("<"))
+    {
+      snackbar.setMessage('No HTML Balise allowed');
+      snackbar.setSeverity('error');
+      snackbar.setOpen(true);
+      return;
+    }
+  
     if (currentChannel?.type === 'channel') {
       socket?.emit('addMessage', {
         message: e,
@@ -132,11 +152,6 @@ export default function Chat({
                   info={elem.type === 'channel' ? 'Channel' : 'Private Message'}
                   active={elem.id === channelSelected}
                 >
-                  {/* <Avatar
-                  src={'https://picsum.photos/50/50'}
-                  name={elem.name}
-                  status="available"
-                /> */}
                 </Conversation>
               ) : null,
             )}
@@ -203,6 +218,7 @@ export default function Chat({
             placeholder="Type message here"
             onSend={(e) => sendMessage(e)}
             disabled={channelList.length === 0}
+            attachButton={false}
           />
         </ChatContainer>
       </MainContainer>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Oracle - SOCI (4.0.3)</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SOCI (4.0.3)</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Overview <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../quickstart/" class="dropdown-item">Getting Started</a>
+</li>
+                                    
+<li>
+    <a href="../../installation/" class="dropdown-item">Installation</a>
+</li>
+                                    
+<li>
+    <a href="../../structure/" class="dropdown-item">Library Structure</a>
+</li>
+                                    
+<li>
+    <a href="../../license/" class="dropdown-item">License</a>
+</li>
+                                    
+<li>
+    <a href="../../faq/" class="dropdown-item">FAQ</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../connections/" class="dropdown-item">Connections</a>
+</li>
+                                    
+<li>
+    <a href="../../queries/" class="dropdown-item">Queries</a>
+</li>
+                                    
+<li>
+    <a href="../../binding/" class="dropdown-item">Data Binding</a>
+</li>
+                                    
+<li>
+    <a href="../../indicators/" class="dropdown-item">Data Indicators</a>
+</li>
+                                    
+<li>
+    <a href="../../types/" class="dropdown-item">Data Types</a>
+</li>
+                                    
+<li>
+    <a href="../../lobs/" class="dropdown-item">LOBs</a>
+</li>
+                                    
+<li>
+    <a href="../../statements/" class="dropdown-item">Statements</a>
+</li>
+                                    
+<li>
+    <a href="../../transactions/" class="dropdown-item">Transactions</a>
+</li>
+                                    
+<li>
+    <a href="../../procedures/" class="dropdown-item">Procedures</a>
+</li>
+                                    
+<li>
+    <a href="../../errors/" class="dropdown-item">Errors</a>
+</li>
+                                    
+<li>
+    <a href="../../logging/" class="dropdown-item">Logging</a>
+</li>
+                                    
+<li>
+    <a href="../../interfaces/" class="dropdown-item">Interfaces</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Backends <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../db2/" class="dropdown-item">DB2</a>
+</li>
+                                    
+<li>
+    <a href="../firebird/" class="dropdown-item">Firebird</a>
+</li>
+                                    
+<li>
+    <a href="../mysql/" class="dropdown-item">MySQL</a>
+</li>
+                                    
+<li>
+    <a href="../odbc/" class="dropdown-item">ODBC</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">Oracle</a>
+</li>
+                                    
+<li>
+    <a href="../postgresql/" class="dropdown-item">PostgreSQL</a>
+</li>
+                                    
+<li>
+    <a href="../sqlite3/" class="dropdown-item">SQLite3</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Miscellaneous <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../beyond/" class="dropdown-item">Beyond SQL</a>
+</li>
+                                    
+<li>
+    <a href="../../multithreading/" class="dropdown-item">Multi-threading</a>
+</li>
+                                    
+<li>
+    <a href="../../boost/" class="dropdown-item">Boost</a>
+</li>
+                                    
+<li>
+    <a href="../../utilities/" class="dropdown-item">Utilities</a>
+</li>
+                                    
+<li>
+    <a href="../../vagrant/" class="dropdown-item">Vagrant</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/client/" class="dropdown-item">Client API</a>
+</li>
+                                    
+<li>
+    <a href="../../api/backend/" class="dropdown-item">Backend API</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Ada</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../languages/ada/" class="dropdown-item">Ada Bindings</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/concepts/" class="dropdown-item">Ada Concepts</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/idioms/" class="dropdown-item">Ada Idioms</a>
+</li>
+            
+<li>
+    <a href="../../languages/ada/reference/" class="dropdown-item">Ada API Reference</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../odbc/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../postgresql/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/SOCI/soci/edit/master/docs/backends/oracle.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#oracle-backend-reference" class="nav-link">Oracle Backend Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#prerequisites" class="nav-link">Prerequisites</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#soci-feature-support" class="nav-link">SOCI Feature Support</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#native-api-access" class="nav-link">Native API Access</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#backend-specific-extensions" class="nav-link">Backend-specific extensions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="oracle-backend-reference">Oracle Backend Reference</h1>
+<p>SOCI backend for accessing Oracle database.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="supported-versions">Supported Versions</h3>
+<p>The SOCI Oracle backend is currently supported for use with Oracle 10 or later.
+Older versions of Oracle may work as well, but they have not been tested by the SOCI team.</p>
+<h3 id="tested-platforms">Tested Platforms</h3>
+<table>
+<thead>
+<tr>
+<th>Oracle</th>
+<th>OS</th>
+<th>Compiler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.2.0 (XE)</td>
+<td>RedHat 5</td>
+<td>g++ 4.3</td>
+</tr>
+<tr>
+<td>11.2.0 (XE)</td>
+<td>Ubuntu 12.04</td>
+<td>g++ 4.6.3</td>
+</tr>
+<tr>
+<td>12.2.0.1</td>
+<td>macOS High Sierra 10.13.5</td>
+<td>AppleClang 9.1.0.9020039</td>
+</tr>
+</tbody>
+</table>
+<h3 id="required-client-libraries">Required Client Libraries</h3>
+<p>The SOCI Oracle backend requires Oracle's <code>libclntsh</code> client library. Depending on the particular system, the <code>libnnz10</code> library might be needed as well.</p>
+<p>Note that the SOCI library itself depends also on <code>libdl</code>, so the minimum set of libraries needed to compile a basic client program is:</p>
+<pre><code class="language-console">-lsoci_core -lsoci_oracle -ldl -lclntsh -lnnz10
+</code></pre>
+<h3 id="connecting-to-the-database">Connecting to the Database</h3>
+<p>To establish a connection to an Oracle database, create a <code>session</code> object using the oracle backend factory together with a connection string:</p>
+<pre><code class="language-cpp">session sql(oracle, &quot;service=orcl user=scott password=tiger&quot;);
+
+// or:
+session sql(&quot;oracle&quot;, &quot;service=orcl user=scott password=tiger&quot;);
+
+// or:
+session sql(&quot;oracle://service=orcl user=scott password=tiger&quot;);
+
+// or:
+session sql(oracle, &quot;service=//your_host:1521/your_sid  user=scott password=tiger&quot;);
+</code></pre>
+<p>The set of parameters used in the connection string for Oracle is:</p>
+<ul>
+<li><code>service</code></li>
+<li><code>user</code></li>
+<li><code>password</code></li>
+<li><code>mode</code> (optional; valid values are <code>sysdba</code>, <code>sysoper</code> and <code>default</code>)</li>
+<li><code>charset</code> and <code>ncharset</code> (optional; valid values are <code>utf8</code>, <code>utf16</code>, <code>we8mswin1252</code> and <code>win1252</code>)</li>
+</ul>
+<p>If both <code>user</code> and <code>password</code> are provided, the session will authenticate using the database credentials, whereas if none of them is set, then external Oracle credentials will be used - this allows integration with so called Oracle wallet authentication.</p>
+<p>Once you have created a <code>session</code> object as shown above, you can use it to access the database, for example:</p>
+<pre><code class="language-cpp">int count;
+sql &lt;&lt; &quot;select count(*) from user_tables&quot;, into(count);
+</code></pre>
+<p>(See the <a href="../../connections/">connection</a> and <a href="../../binding/">data binding</a> documentation for general information on using the <code>session</code> class.)</p>
+<h2 id="soci-feature-support">SOCI Feature Support</h2>
+<h3 id="dynamic-binding">Dynamic Binding</h3>
+<p>The Oracle backend supports the use of the SOCI <code>row</code> class, which facilitates retrieval of data which type is not known at compile time.</p>
+<p>When calling <code>row::get&lt;T&gt;()</code>, the type you should pass as <code>T</code> depends upon the underlying database type. For the Oracle backend, this type mapping is:</p>
+<table>
+<thead>
+<tr>
+<th>Oracle Data Type</th>
+<th>SOCI Data Type</th>
+<th><code>row::get&lt;T&gt;</code> specializations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>number (where scale &gt; 0)</td>
+<td>dt_double</td>
+<td>double</td>
+</tr>
+<tr>
+<td>number(where scale = 0 and precision ≤ <code>std::numeric_limits&lt;int&gt;::digits10</code>)</td>
+<td>dt_integer</td>
+<td>int</td>
+</tr>
+<tr>
+<td>number</td>
+<td>dt_long_long</td>
+<td>long long</td>
+</tr>
+<tr>
+<td>char, varchar, varchar2</td>
+<td>dt_string</td>
+<td>std::string</td>
+</tr>
+<tr>
+<td>date</td>
+<td>dt_date</td>
+<td>std::tm</td>
+</tr>
+</tbody>
+</table>
+<p>(See the <a href="../../types/#dynamic-binding">dynamic resultset binding</a> documentation for general information on using the <code>row</code> class.)</p>
+<h3 id="binding-by-name">Binding by Name</h3>
+<p>In addition to <a href="../../binding/#binding-by-position">binding by position</a>, the Oracle backend supports <a href="../../binding/#binding-by-name">binding by name</a>, via an overload of the <code>use()</code> function:</p>
+<pre><code class="language-cpp">int id = 7;
+sql &lt;&lt; &quot;select name from person where id = :id&quot;, use(id, &quot;id&quot;)
+</code></pre>
+<p>SOCI's use of ':' to indicate a value to be bound within a SQL string is
+consistent with the underlying Oracle client library syntax.</p>
+<h3 id="bulk-operations">Bulk Operations</h3>
+<p>The Oracle backend has full support for SOCI's <a href="../../binding/#bulk-operations">bulk operations</a> interface.</p>
+<h3 id="transactions">Transactions</h3>
+<p><a href="../../statements/#transactions">Transactions</a> are also fully supported by
+the Oracle backend, although transactions with non-default isolation levels
+have to be managed by explicit SQL statements.</p>
+<h3 id="blob-data-type">blob Data Type</h3>
+<p>The Oracle backend supports working with data stored in columns of type Blob, via SOCI's <a href="../../lobs/">blob</a> class.</p>
+<h3 id="rowid-data-type">rowid Data Type</h3>
+<p>Oracle rowid's are accessible via SOCI's <a href="../../api/client/#class-rowid">rowid</a> class.</p>
+<h3 id="nested-statements">Nested Statements</h3>
+<p>The Oracle backend supports selecting into objects of type <code>statement</code>, so that you may work with nested sql statements and PL/SQL cursors:</p>
+<pre><code class="language-cpp">statement stInner(sql);
+statement stOuter = (sql.prepare &lt;&lt;
+    &quot;select cursor(select name from person order by id)&quot;
+    &quot; from person where id = 1&quot;,
+    into(stInner));
+stInner.exchange(into(name));
+stOuter.execute();
+stOuter.fetch();
+
+while (stInner.fetch())
+{
+    std::cout &lt;&lt; name &lt;&lt; '\n';
+}
+</code></pre>
+<h3 id="stored-procedures">Stored Procedures</h3>
+<p>Oracle stored procedures can be executed by using SOCI's <a href="../../procedures/">procedure</a> class.</p>
+<h2 id="native-api-access">Native API Access</h2>
+<p>SOCI provides access to underlying datbabase APIs via several <code>get_backend()</code> functions, as described in the <a href="../../beyond/">Beyond SOCI</a> documentation.</p>
+<p>The Oracle backend provides the following concrete classes for navite API access:</p>
+<table>
+<thead>
+<tr>
+<th>Accessor Function</th>
+<th>Concrete Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>session_backend * session::get_backend()</td>
+<td>oracle_session_backend</td>
+</tr>
+<tr>
+<td>statement_backend * statement::get_backend()</td>
+<td>oracle_statement_backend</td>
+</tr>
+<tr>
+<td>blob_backend * blob::get_backend()</td>
+<td>oracle_blob_backend</td>
+</tr>
+<tr>
+<td>rowid_backend * rowid::get_backend()</td>
+<td>oracle_rowid_backend</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backend-specific-extensions">Backend-specific extensions</h2>
+<h3 id="oracle_soci_error">oracle_soci_error</h3>
+<p>The Oracle backend can throw instances of class <code>oracle_soci_error</code>, which is publicly derived from <code>soci_error</code> and has an additional public <code>err_num_</code> member containing the Oracle error code:</p>
+<pre><code class="language-cpp">int main()
+{
+    try
+    {
+        // regular code
+    }
+    catch (oracle_soci_error const &amp; e)
+    {
+        cerr &lt;&lt; &quot;Oracle error: &quot; &lt;&lt; e.err_num_
+            &lt;&lt; &quot; &quot; &lt;&lt; e.what() &lt;&lt; endl;
+    }
+    catch (exception const &amp; e)
+    {
+        cerr &lt;&lt; &quot;Some other error: &quot;&lt;&lt; e.what() &lt;&lt; endl;
+    }
+}
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Copyright &copy; 2017 <a href="https://github.com/msobczak">Maciej Sobczak</a> and <a href="http://soci.sourceforge.net/people.html">SOCI Team</a>.</p>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

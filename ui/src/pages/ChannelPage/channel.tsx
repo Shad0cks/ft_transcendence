@@ -361,7 +361,7 @@ export default function Channel() {
     });
 
     socket?.on('getGameByPseudo', function (gameid: string) {
-      navigate('/game_' + gameid, { state: { gameid: gameid } });
+      navigate('/game/' + gameid, { state: { gameid: gameid } });
     });
 
     socket?.on('NewAdmin', function (e) {
@@ -417,6 +417,7 @@ export default function Channel() {
             messageList={messageList}
             setMessageList={setMessageList}
             refreshChannel={getAllChannels}
+            snackbar={snackbar}
           />
           <div
             className="playerList"

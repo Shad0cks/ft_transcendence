@@ -102,7 +102,7 @@ export default function Games() {
                           Gameid: e.gameid,
                           viewver: user?.nickname,
                         });
-                        navigate('/game_' + e.gameid, {
+                        navigate('/game/' + e.gameid, {
                           state: { gameid: e.gameid },
                         });
                       }}

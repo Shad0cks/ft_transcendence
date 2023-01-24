@@ -23,7 +23,7 @@ root.render(
       <Route path="/register" element={<Register />} />
       <Route path="/callback" element={<App />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/game_:id" element={<MainGame />} />
+      <Route path="/game/:id" element={<MainGame />} />
       <Route path="/channelManager" element={<PartyManage />} />
       <Route path="/editProfile" element={<MainUserProfile />} />
       <Route path="/friends" element={<Friends />} />
