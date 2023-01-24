@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class PrivateMessageDTO {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   message: string;
 
   @IsNotEmpty()

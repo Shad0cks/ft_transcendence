@@ -28,6 +28,7 @@ export class GameGateway {
   async handleDisconnect(client: CustomSocket) {
     const game = await this.gameService.getGameidbyname(client.user.nickname);
     this.onGameforceend(client, { gameid: game, player: client.user.nickname });
+    this.gameService.Removetoqueue(client.user.nickname);
   }
 
   @SubscribeMessage('playermove') handleEvent(

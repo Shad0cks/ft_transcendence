@@ -85,6 +85,7 @@ export class ChatGateway {
 
   @SubscribeMessage('addMessage')
   async onAddMessage(socket: CustomSocket, messageDTO: ChannelMessageDTO) {
+    if (messageDTO.message.length > 255) return;
     if (messageDTO.senderNickname === socket.user.nickname) {
       const Userfromchannel = await this.chatService.getParticipantsNickname(
         messageDTO.channelName,
@@ -108,6 +109,7 @@ export class ChatGateway {
   //TODO Message privée.
   @SubscribeMessage('addMessagePrivate')
   async onAddMessagePrivate(socket: CustomSocket, message: DirectMessageDTO) {
+    if (message.message.length > 255) return;
     if (message.senderNickname === socket.user.nickname) {
       try {
         const blockedUsers = await this.userService.getBlockedNicknames(
@@ -197,6 +199,7 @@ export class ChatGateway {
     socket: CustomSocket,
     password: ChannelPasswordDTO,
   ) {
+    if (password.password.length > 10) return;
     this.chatService.editChannelPassword(password);
   }
 

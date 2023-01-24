@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class ChannelMessageDTO {
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   message: string;
 
   @IsNotEmpty()

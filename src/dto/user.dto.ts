@@ -6,6 +6,7 @@ import {
   IsUrl,
   Min,
   IsAlphanumeric,
+  MaxLength,
 } from 'class-validator';
 
 export class UserDTO {
@@ -13,6 +14,7 @@ export class UserDTO {
   @IsNotEmpty()
   @IsString()
   @IsAlphanumeric()
+  @MaxLength(10)
   nickname: string;
 
   @IsOptional()

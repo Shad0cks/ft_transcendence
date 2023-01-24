@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class ChannelPasswordDTO {
   @IsNotEmpty()
@@ -7,5 +7,6 @@ export class ChannelPasswordDTO {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(10)
   password: string;
 }
