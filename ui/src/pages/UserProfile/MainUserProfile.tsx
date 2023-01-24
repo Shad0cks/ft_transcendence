@@ -150,9 +150,9 @@ export default function MainUserProfile() {
     }
   }
 
-  function unsetOTP() {
+  function unsetOTP(token: string) {
     if (username && user) {
-      UserSettwofa(false, 'none').then(async (res) => {
+      UserSettwofa(false, token).then(async (res) => {
         if (res.status === 401) {
           await UserLogout();
           window.location.reload();

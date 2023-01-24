@@ -31,8 +31,7 @@ export class AuthController {
     @Param('nickname') nickname: string,
     @Param('avatar') avatar: string,
   ) {
-    if (nickname.length > 10)
-    {
+    if (nickname.length > 10) {
       res.redirect('http://localhost:3000/register/?error=2');
       return;
     }

@@ -170,17 +170,36 @@ export class UserService {
     return result.raw[0];
   }
 
-  async edit2fa(user: User, enabled: boolean, secret: string) {
-    if (!enabled && enabled !== false) {
-      throw new BadRequestException('enabled is missing');
-    }
+  async edit2fa(user: User, secret: string) {
     if (!secret) {
       throw new BadRequestException('Secret is missing');
     }
     const result = await this.userRepository
       .createQueryBuilder()
       .update(User)
-      .set({ twofa_enabled: enabled, twofa_secret: secret })
+      .set({ twofa_enabled: true, twofa_secret: secret })
+      .where({
+        login42: user.login42,
+      })
+      .returning('*')
+      .execute();
+    return result.raw[0];
+  }
+
+  async unset2fa(user: User, token: string) {
+    const speakeasy = require('speakeasy');
+    const res = speakeasy.totp.verify({
+      secret: user.twofa_secret,
+      encoding: 'ascii',
+      token: token,
+    });
+    if (!res) {
+      throw new BadRequestException('Wrong 2fa token');
+    }
+    const result = await this.userRepository
+      .createQueryBuilder()
+      .update(User)
+      .set({ twofa_enabled: false, twofa_secret: 'none' })
       .where({
         login42: user.login42,
       })
