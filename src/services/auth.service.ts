@@ -60,7 +60,7 @@ export class AuthService {
             user = await this.userService.createUser(userDTO, login42);
           } catch (error) {
             if (error instanceof ConflictException)
-              response.redirect('http://localhost:3000/register/?error=true');
+              response.redirect('http://localhost:3000/register/?error=1');
             return;
           }
         } else {
