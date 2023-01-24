@@ -153,7 +153,7 @@ export class ChatGateway {
     socket: CustomSocket,
     restriction: ChannelRestrictionDTO,
   ) {
-    if (restriction.userNickname === socket.user.nickname) {
+    if (restriction.adminNickname === socket.user.nickname) {
       try {
         await this.chatService.addRestriction(restriction);
       } catch (error) {

@@ -25,6 +25,7 @@ import Background from '../../components/background';
 export default function MainUserProfile() {
   const navigate = useNavigate();
   const newName = useRef(null);
+  const disable2fa = useRef(null);
   const [user, setUser] = useState<GetUserIt>();
   const [username, setUsername] = useState<string | null>(null);
   const [secret, setSecret] = useState({
@@ -60,6 +61,13 @@ export default function MainUserProfile() {
       return;
     }
     const newValue = (newName.current as HTMLInputElement).value;
+    if (newValue.length > 10)
+    {
+      snackbar.setMessage('Nickname max lengh : 10');
+      snackbar.setSeverity('error');
+      snackbar.setOpen(true);
+      return;
+    }
     if (user && newValue !== '') {
       SetUserNickname(user.nickname, newValue).then(async (res) => {
         if (res.status === 401) {
@@ -98,7 +106,7 @@ export default function MainUserProfile() {
 
     if (user && event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
-      const fileExt = file.name.substring(file.name.lastIndexOf('.'));
+      const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLocaleLowerCase();
       if (
         (fileExt !== '.jpeg' && fileExt !== '.png') ||
         file.name.indexOf('.') === -1
@@ -150,13 +158,21 @@ export default function MainUserProfile() {
     }
   }
 
-  function unsetOTP(token: string) {
+  function unsetOTP() {
+    if (!disable2fa.current)
+      return;
+    const token : string = (disable2fa.current as HTMLInputElement).value
     if (username && user) {
       UserSettwofa(false, token).then(async (res) => {
         if (res.status === 401) {
           await UserLogout();
           window.location.reload();
         } else if (res.ok) window.location.reload();
+        else{
+          snackbar.setMessage('Code not valid');
+          snackbar.setSeverity('error');
+          snackbar.setOpen(true);
+        }
       });
     }
   }
@@ -180,6 +196,7 @@ export default function MainUserProfile() {
               aria-describedby="basic-addon2"
               defaultValue={username}
               ref={newName}
+              maxLength={10}
             />
             <Button
               onClick={() => updateName(snackbar)}
@@ -200,11 +217,25 @@ export default function MainUserProfile() {
               />
             </div>
           </InputGroup>
+
           <div>
             {user.twofa_enabled ? (
-              <button type="button" onClick={() => unsetOTP()}>
-                Disable 2FA
-              </button>
+              <InputGroup className="mb-3" style={{ width: '300px' }}>
+              <Form.Control
+                placeholder="Code 2FA"
+                aria-label="Recipient's 2fa"
+                aria-describedby="basic-addon2"
+                ref={disable2fa}
+                maxLength={6}
+              />
+                <Button
+                  onClick={() => unsetOTP()}
+                  variant="outline-dark"
+                  id="button-addon2"
+                >
+                  Disable 2FA
+                </Button>
+            </InputGroup>
             ) : (
               <button
                 type="button"
@@ -215,7 +246,7 @@ export default function MainUserProfile() {
             )}
           </div>
         </div>
-      </div>
+      </div> 
       <Popup
         open={openModal}
         closeOnDocumentClick

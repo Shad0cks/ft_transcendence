@@ -23,7 +23,6 @@ import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
 import {
   ChatRestriction,
-  ChannelRestrictionType,
 } from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { WsException } from '@nestjs/websockets';
@@ -148,9 +147,9 @@ export class ChatService {
       restriction.channel = adminParticipant.channel;
       restriction.end_date = channelRestrictionDTO.end;
 
-      if (channelRestrictionDTO.restriction as ChannelRestrictionType)
+      if (channelRestrictionDTO.restriction === "ban" || channelRestrictionDTO.restriction === "mute")
         restriction.restriction =
-          channelRestrictionDTO.restriction as ChannelRestrictionType;
+          channelRestrictionDTO.restriction;
       else throw new UnauthorizedException('Not valide restriction type');
 
       // verify user is in channel

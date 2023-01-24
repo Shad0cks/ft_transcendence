@@ -215,6 +215,7 @@ export default function ListeParty({
                 aria-label="Recipient's token"
                 aria-describedby="basic-addon2"
                 ref={joinPassword}
+                maxLength={10}
               />
               <Button
                 variant="outline-dark"
@@ -258,6 +259,7 @@ export default function ListeParty({
               aria-label="Recipient's token"
               aria-describedby="basic-addon2"
               ref={addUserWL}
+              maxLength={10}
             />
             <Button
               variant="outline-success"

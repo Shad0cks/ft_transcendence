@@ -92,6 +92,7 @@ export default function SearchPage() {
           aria-label="Recipient's username"
           aria-describedby="basic-addon2"
           ref={searchUserNicknameInput}
+          maxLength={10}
         />
         <Button
           variant="outline-dark"

@@ -81,6 +81,7 @@ export default function ModalBlockUser({
             aria-label="Recipient's token"
             aria-describedby="basic-addon2"
             ref={inputRef}
+            maxLength={10}
           />
           <Button
             variant="outline-warning"

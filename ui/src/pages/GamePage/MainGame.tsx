@@ -20,6 +20,7 @@ function MainGame() {
     emiter: undefined,
     screen: 1,
     mapColor: 'null',
+    ballSpeed: 5,
     player1: { taken: false, socket: undefined, nickname: undefined },
     player2: { taken: false, socket: undefined, nickname: undefined },
   });
@@ -168,6 +169,7 @@ function MainGame() {
               height={600}
               gameInfo={game}
               gameID={gameid!}
+              navigate={navigate}
             />
           </div>
         );

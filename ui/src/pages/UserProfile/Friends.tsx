@@ -125,6 +125,7 @@ export default function Friends() {
             aria-label="Recipient's username"
             aria-describedby="basic-addon2"
             ref={newFriend}
+            maxLength={10}
           />
           <Button
             variant="outline-dark"
@@ -138,7 +139,7 @@ export default function Friends() {
         <div className="containerRow">
           {friendsList?.map((elem, key) => (
             <Card style={{ width: '18rem' }} key={key} border="primary">
-              <Card.Img variant="top" src={elem.avatar} />
+              <Card.Img variant="top" height={300} width={300} src={elem.avatar} />
               <Card.Body className="cardBody">
                 <Card.Title>{elem.nickname}</Card.Title>
                 <Card.Text>

@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import '../css/Components/PongGame.css';
+import { NavigateFunction } from 'react-router-dom';
 import { socket } from '../services/socket';
 import { GameObj } from '../models/game';
 import Popup from 'reactjs-popup';
+import { Button } from 'react-bootstrap';
 
 export default function PongGame({
   width,
   height,
   gameInfo,
   gameID,
+  navigate
 }: {
   width: number;
   height: number;
   gameInfo: GameObj;
   gameID: string;
+  navigate: NavigateFunction;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let pause = false;
@@ -234,14 +238,14 @@ export default function PongGame({
       angleCollision = colidePoint * (Math.PI / 4);
       ball.velocityX = ball.speed * Math.cos(angleCollision);
       ball.velocityY = ball.speed * Math.sin(angleCollision);
-      ball.speed += 0.4;
+      ball.speed += (gameInfo.ballSpeed * 5) / 10;
     } else if (player_collision(user2)) {
       colidePoint =
         (ball.y - (user2.y + user2.height / 2)) / (user2.height / 2);
       angleCollision = colidePoint * (Math.PI / 4);
       ball.velocityX = -ball.speed * Math.cos(angleCollision);
       ball.velocityY = ball.speed * Math.sin(angleCollision);
-      ball.speed += 2;
+      ball.speed += (gameInfo.ballSpeed * 5) / 10;
     } else if (ball.x + ball.r >= width || ball.x - ball.r <= 0) {
       if (ball.x + ball.r >= width) {
         ball.user1score += 1;
@@ -480,6 +484,7 @@ export default function PongGame({
               <h2>Before Game END</h2>
             </>
           )}
+          <Button style={{ marginTop: '50px' }} className='primary' onClick={() => navigate('/')}>Back To Menu</Button>
         </div>
       </Popup>
     </>

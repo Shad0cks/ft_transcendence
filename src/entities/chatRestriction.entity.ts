@@ -2,8 +2,6 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Channel } from './channel.entity';
 import { User } from './user.entity';
 
-export type ChannelRestrictionType = 'ban' | 'mute';
-
 @Entity()
 export class ChatRestriction {
   @PrimaryGeneratedColumn()
@@ -22,7 +20,7 @@ export class ChatRestriction {
     type: 'enum',
     enum: ['ban', 'mute'],
   })
-  restriction: ChannelRestrictionType;
+  restriction: string;
 
   @Column({ type: 'timestamptz' })
   end_date: Date;

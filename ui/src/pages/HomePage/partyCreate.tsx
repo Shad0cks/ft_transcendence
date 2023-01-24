@@ -27,6 +27,9 @@ export default function PartyCreate({
   ) => {
     data.creatorNickname = username!;
 
+    if (data.privacy != "protected" && data.privacy != "public" && data.privacy != "private")
+      return;
+
     if (socket && socket.id !== undefined) {
       if (channelEdit) {
         if (data.privacy === channelEdit.privacy)
@@ -56,6 +59,7 @@ export default function PartyCreate({
           <Form.Group className="mb-3">
             <Form.Label htmlFor="gameName">Channel name</Form.Label>
             <Form.Control
+              maxLength={10}
               id="gameName"
               placeholder="Wanderful name"
               {...register('channelName')}
@@ -79,6 +83,7 @@ export default function PartyCreate({
           <Form.Group className="mb-3">
             <Form.Label htmlFor="gamePass">Password</Form.Label>
             <Form.Control
+              maxLength={10}
               id="gamePass"
               placeholder={channelEdit ? 'New Password' : '1234'}
               type="password"
