@@ -13,7 +13,6 @@ import {
   Search,
   Sidebar,
   ConversationHeader,
-  EllipsisButton,
   AvatarGroup,
 } from '@chatscope/chat-ui-kit-react';
 import { socket } from '../services/socket';
@@ -51,7 +50,7 @@ export default function Chat({
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
     if (user) return user.avatar;
-    else if (SelfUser.nickname === username) return SelfUser.avatar;
+    else if (SelfUser && SelfUser.nickname === username) return SelfUser.avatar;
     else
       return 'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
   }
@@ -185,9 +184,6 @@ export default function Chat({
                   : 'Private Message'
               }
             />
-            <ConversationHeader.Actions>
-              <EllipsisButton orientation="vertical" />
-            </ConversationHeader.Actions>
           </ConversationHeader>
 
           <MessageList>

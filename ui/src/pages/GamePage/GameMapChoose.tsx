@@ -71,7 +71,7 @@ export default function GameMapChoose({
           type="range"
           className="form-range"
           onChange={(e) => {
-            if (isPlayer()) {
+            if (isPlayer() && parseInt(e.target.value) > 0) {
               setGame({
                 ...game,
                 ballSpeed: parseInt(e.target.value),
