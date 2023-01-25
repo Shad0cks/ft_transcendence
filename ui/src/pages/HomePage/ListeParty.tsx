@@ -218,7 +218,7 @@ export default function ListeParty({
                 maxLength={10}
               />
               <Button
-                variant="outline-dark"
+                variant="outline-primary"
                 id="button-addon2"
                 onClick={() => joinWithPass()}
               >
