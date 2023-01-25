@@ -201,8 +201,7 @@ export class GameGateway {
   @SubscribeMessage('Leaveviewver')
   async onLeaveviewver(socket: CustomSocket, gameid: string) {
     const game = await this.gameService.get(gameid);
-    if (game) 
-    {
+    if (game) {
       if (
         game.player1 === socket.user.nickname ||
         game.player2 === socket.user.nickname
@@ -268,5 +267,12 @@ export class GameGateway {
         player2: Clients.getSocketId(game.player2),
       });
     }
+  }
+
+  @SubscribeMessage('IsGameValide')
+  async onIsGameValide(socket: CustomSocket, gameid: string) {
+    if (await this.gameService.isGamevalide(gameid))
+      this.server.to(socket.id).emit('IsGameValide', true);
+    else this.server.to(socket.id).emit('IsGameValide', false);
   }
 }

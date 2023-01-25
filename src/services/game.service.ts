@@ -118,4 +118,12 @@ export class GameService {
     }
     return null;
   }
+
+  async isGamevalide(gameid: string) {
+    const allgame = await this.getallgame();
+    for (const game of allgame) {
+      if (game.gameid === gameid) return true;
+    }
+    return false;
+  }
 }
