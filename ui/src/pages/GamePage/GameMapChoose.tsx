@@ -20,18 +20,16 @@ export default function GameMapChoose({
     return false;
   }
 
-  function checkLighness(color: string)
-  {
-    var c = color.substring(1);      // strip #
-    var rgb = parseInt(c, 16);   // convert rrggbb to decimal
-    var r = (rgb >> 16) & 0xff;  // extract red
-    var g = (rgb >>  8) & 0xff;  // extract green
-    var b = (rgb >>  0) & 0xff;  // extract blue
+  function checkLighness(color: string) {
+    var c = color.substring(1); // strip #
+    var rgb = parseInt(c, 16); // convert rrggbb to decimal
+    var r = (rgb >> 16) & 0xff; // extract red
+    var g = (rgb >> 8) & 0xff; // extract green
+    var b = (rgb >> 0) & 0xff; // extract blue
 
     var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
 
-    if (luma < 40) 
-      return false;
+    if (luma < 40) return false;
     return true;
   }
 
@@ -67,16 +65,18 @@ export default function GameMapChoose({
           value="#000000"
         />
       </div>
-      <div
-        className="GamePlayerChoose_range"
-      >
+      <div className="GamePlayerChoose_range">
         <label className="form-label">Ball Speed : {game.ballSpeed}</label>
         <input
           type="range"
           className="form-range"
           onChange={(e) => {
             if (isPlayer()) {
-              setGame({ ...game, ballSpeed: parseInt(e.target.value), emiter: socket.id });
+              setGame({
+                ...game,
+                ballSpeed: parseInt(e.target.value),
+                emiter: socket.id,
+              });
             }
           }}
           min="1"

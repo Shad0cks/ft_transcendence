@@ -27,7 +27,11 @@ export default function PartyCreate({
   ) => {
     data.creatorNickname = username!;
 
-    if (data.privacy != "protected" && data.privacy != "public" && data.privacy != "private")
+    if (
+      data.privacy !== 'protected' &&
+      data.privacy !== 'public' &&
+      data.privacy !== 'private'
+    )
       return;
 
     if (socket && socket.id !== undefined) {

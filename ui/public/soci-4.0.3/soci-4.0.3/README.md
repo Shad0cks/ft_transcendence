@@ -12,10 +12,10 @@
 
 ## Build Status
 
-| Branches    | GitHub Actions | AppVeyor-CI | Documentation | Coverity Scan  |
-|-------------|----------------|-------------|---------------|----------------|
-| master      | [![Build Status](https://github.com/SOCI/soci/actions/workflows/ci.yml/badge.svg)](https://github.com/SOCI/soci/actions) | [![Build status](https://ci.appveyor.com/api/projects/status/dtp5mvbeyu9aqupr/branch/master?svg=true)](https://ci.appveyor.com/project/SOCI/soci/branch/master) | [![Docs Status](https://circleci.com/gh/SOCI/soci/tree/master.svg?style=svg&circle-token=5d31c692ed5fcffa5c5fc6b7fe2257b34d78f3c9)](https://circleci.com/gh/SOCI/soci/tree/master) | [![Coverage](https://scan.coverity.com/projects/6581/badge.svg)](https://scan.coverity.com/projects/soci-soci) |
-| release/4.0 | [![Build Status](https://github.com/SOCI/soci/actions/workflows/ci.yml/badge.svg?branch=release/4.0)](https://github.com/SOCI/soci/actions) | [![Build status](https://ci.appveyor.com/api/projects/status/dtp5mvbeyu9aqupr/branch/release/4.0?svg=true)](https://ci.appveyor.com/project/SOCI/soci/branch/release/4.0) | [![Docs Status](https://circleci.com/gh/SOCI/soci/tree/release%2F4.0.svg?style=svg&circle-token=5d31c692ed5fcffa5c5fc6b7fe2257b34d78f3c9)](https://circleci.com/gh/SOCI/soci/tree/release%2F4.0) | |
+| Branches    | GitHub Actions                                                                                                                              | AppVeyor-CI                                                                                                                                                               | Documentation                                                                                                                                                                                    | Coverity Scan                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| master      | [![Build Status](https://github.com/SOCI/soci/actions/workflows/ci.yml/badge.svg)](https://github.com/SOCI/soci/actions)                    | [![Build status](https://ci.appveyor.com/api/projects/status/dtp5mvbeyu9aqupr/branch/master?svg=true)](https://ci.appveyor.com/project/SOCI/soci/branch/master)           | [![Docs Status](https://circleci.com/gh/SOCI/soci/tree/master.svg?style=svg&circle-token=5d31c692ed5fcffa5c5fc6b7fe2257b34d78f3c9)](https://circleci.com/gh/SOCI/soci/tree/master)               | [![Coverage](https://scan.coverity.com/projects/6581/badge.svg)](https://scan.coverity.com/projects/soci-soci) |
+| release/4.0 | [![Build Status](https://github.com/SOCI/soci/actions/workflows/ci.yml/badge.svg?branch=release/4.0)](https://github.com/SOCI/soci/actions) | [![Build status](https://ci.appveyor.com/api/projects/status/dtp5mvbeyu9aqupr/branch/release/4.0?svg=true)](https://ci.appveyor.com/project/SOCI/soci/branch/release/4.0) | [![Docs Status](https://circleci.com/gh/SOCI/soci/tree/release%2F4.0.svg?style=svg&circle-token=5d31c692ed5fcffa5c5fc6b7fe2257b34d78f3c9)](https://circleci.com/gh/SOCI/soci/tree/release%2F4.0) |                                                                                                                |
 
 ## History
 
@@ -40,18 +40,18 @@ SOCI library is distributed under the terms of the [Boost Software License](http
 
 Core:
 
-* C++ compiler
-* Boost C++ Libraries (optional, headers and Boost.DateTime)
+- C++ compiler
+- Boost C++ Libraries (optional, headers and Boost.DateTime)
 
 Backend specific client libraries for:
 
-* DB2
-* Firebird
-* MySQL
-* ODBC with specific database driver
-* Oracle
-* PostgreSQL
-* SQLite 3
+- DB2
+- Firebird
+- MySQL
+- ODBC with specific database driver
+- Oracle
+- PostgreSQL
+- SQLite 3
 
 See documentation at [soci.sourceforge.net](http://soci.sourceforge.net) for details
 

@@ -22,9 +22,8 @@ export default function Register() {
     }
     const nickname = (newName.current as HTMLInputElement).value;
     const sendavatar = avatar !== 'default.jpg' ? avatar : 'default';
-    
-    if (nickname.length > 10)
-    {
+
+    if (nickname.length > 10) {
       snackbar.setMessage('Nickname max lengh : 10');
       snackbar.setSeverity('error');
       snackbar.setOpen(true);
@@ -49,7 +48,9 @@ export default function Register() {
 
     if (event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
-      const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLocaleLowerCase();
+      const fileExt = file.name
+        .substring(file.name.lastIndexOf('.'))
+        .toLocaleLowerCase();
       if (
         (fileExt !== '.jpeg' && fileExt !== '.png') ||
         file.name.indexOf('.') === -1
@@ -103,6 +104,7 @@ export default function Register() {
               aria-describedby="basic-addon2"
               defaultValue={''}
               ref={newName}
+              maxLength={10}
             />
             <div style={{ marginTop: '40px' }}>
               <label htmlFor="avatar">Change profile picture:</label>

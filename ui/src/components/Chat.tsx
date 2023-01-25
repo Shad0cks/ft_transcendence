@@ -33,7 +33,7 @@ export default function Chat({
   messageList,
   setMessageList,
   refreshChannel,
-  snackbar
+  snackbar,
 }: {
   SelfUser: GetUserIt;
   channelList: ChannelType[];
@@ -51,29 +51,25 @@ export default function Chat({
   function getAvatar(username: string) {
     let user = usersInChannel.find((user) => user.nickname === username);
     if (user) return user.avatar;
-    else if (SelfUser.nickname == username)
-      return SelfUser.avatar;
+    else if (SelfUser.nickname === username) return SelfUser.avatar;
     else
       return 'https://avataruserstorage.blob.core.windows.net/avatarimg/default.jpg';
   }
   function sendMessage(e: string) {
-
-    var withoutBR = e.replace('<br>','');
-    if (withoutBR.length > 255)
-    {
+    var withoutBR = e.replace('<br>', '');
+    if (withoutBR.length > 255) {
       snackbar.setMessage('Max message charactere : 255');
       snackbar.setSeverity('error');
       snackbar.setOpen(true);
       return;
     }
-    if (withoutBR.includes("<"))
-    {
+    if (withoutBR.includes('<')) {
       snackbar.setMessage('No HTML Balise allowed');
       snackbar.setSeverity('error');
       snackbar.setOpen(true);
       return;
     }
-  
+
     if (currentChannel?.type === 'channel') {
       socket?.emit('addMessage', {
         message: e,
@@ -153,8 +149,7 @@ export default function Chat({
                   lastSenderName="Type"
                   info={elem.type === 'channel' ? 'Channel' : 'Private Message'}
                   active={elem.id === channelSelected}
-                >
-                </Conversation>
+                ></Conversation>
               ) : null,
             )}
           </ConversationList>

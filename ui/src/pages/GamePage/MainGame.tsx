@@ -12,7 +12,6 @@ import { GetUserInfo } from '../../services/User/getUserInfo';
 import { GetUserIt } from '../../models/getUser';
 import { UserLogout } from '../../services/User/userDelog';
 import Background from '../../components/background';
-import { boolean } from 'zod';
 
 function MainGame() {
   const navigate = useNavigate();

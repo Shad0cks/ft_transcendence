@@ -59,6 +59,7 @@ export default function FaPage() {
             aria-label="Recipient's token"
             aria-describedby="basic-addon2"
             ref={token}
+            maxLength={6}
           />
           <Button onClick={callLogin} variant="outline-dark" id="button-addon2">
             Verify

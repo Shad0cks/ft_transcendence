@@ -11,7 +11,7 @@ export default function PongGame({
   height,
   gameInfo,
   gameID,
-  navigate
+  navigate,
 }: {
   width: number;
   height: number;
@@ -484,7 +484,13 @@ export default function PongGame({
               <h2>Before Game END</h2>
             </>
           )}
-          <Button style={{ marginTop: '50px' }} className='primary' onClick={() => navigate('/')}>Back To Menu</Button>
+          <Button
+            style={{ marginTop: '50px' }}
+            className="primary"
+            onClick={() => navigate('/')}
+          >
+            Back To Menu
+          </Button>
         </div>
       </Popup>
     </>

@@ -1,24 +1,21 @@
 This is the SQLite extension for Tcl using the Tcl Extension
-Architecture (TEA).  For additional information on SQLite see
+Architecture (TEA). For additional information on SQLite see
 
         http://www.sqlite.org/
 
-
-UNIX BUILD
-==========
+# UNIX BUILD
 
 Building under most UNIX systems is easy, just run the configure script
 and then run make. For more information about the build process, see
 the tcl/unix/README file in the Tcl src dist. The following minimal
 example will install the extension in the /opt/tcl directory.
 
-	$ cd sqlite-*-tea
-	$ ./configure --prefix=/opt/tcl
-	$ make
-	$ make install
+    $ cd sqlite-*-tea
+    $ ./configure --prefix=/opt/tcl
+    $ make
+    $ make install
 
-WINDOWS BUILD
-=============
+# WINDOWS BUILD
 
 The recommended method to build extensions under windows is to use the
 Msys + Mingw build process. This provides a Unix-style build while

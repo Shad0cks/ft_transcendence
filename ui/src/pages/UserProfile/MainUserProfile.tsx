@@ -61,8 +61,7 @@ export default function MainUserProfile() {
       return;
     }
     const newValue = (newName.current as HTMLInputElement).value;
-    if (newValue.length > 10)
-    {
+    if (newValue.length > 10) {
       snackbar.setMessage('Nickname max lengh : 10');
       snackbar.setSeverity('error');
       snackbar.setOpen(true);
@@ -106,7 +105,9 @@ export default function MainUserProfile() {
 
     if (user && event.target.files && event.target.files.length === 1) {
       const file = event.target.files[0];
-      const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLocaleLowerCase();
+      const fileExt = file.name
+        .substring(file.name.lastIndexOf('.'))
+        .toLocaleLowerCase();
       if (
         (fileExt !== '.jpeg' && fileExt !== '.png') ||
         file.name.indexOf('.') === -1
@@ -159,16 +160,15 @@ export default function MainUserProfile() {
   }
 
   function unsetOTP() {
-    if (!disable2fa.current)
-      return;
-    const token : string = (disable2fa.current as HTMLInputElement).value
+    if (!disable2fa.current) return;
+    const token: string = (disable2fa.current as HTMLInputElement).value;
     if (username && user) {
       UserSettwofa(false, token).then(async (res) => {
         if (res.status === 401) {
           await UserLogout();
           window.location.reload();
         } else if (res.ok) window.location.reload();
-        else{
+        else {
           snackbar.setMessage('Code not valid');
           snackbar.setSeverity('error');
           snackbar.setOpen(true);
@@ -221,13 +221,13 @@ export default function MainUserProfile() {
           <div>
             {user.twofa_enabled ? (
               <InputGroup className="mb-3" style={{ width: '300px' }}>
-              <Form.Control
-                placeholder="Code 2FA"
-                aria-label="Recipient's 2fa"
-                aria-describedby="basic-addon2"
-                ref={disable2fa}
-                maxLength={6}
-              />
+                <Form.Control
+                  placeholder="Code 2FA"
+                  aria-label="Recipient's 2fa"
+                  aria-describedby="basic-addon2"
+                  ref={disable2fa}
+                  maxLength={6}
+                />
                 <Button
                   onClick={() => unsetOTP()}
                   variant="outline-dark"
@@ -235,7 +235,7 @@ export default function MainUserProfile() {
                 >
                   Disable 2FA
                 </Button>
-            </InputGroup>
+              </InputGroup>
             ) : (
               <button
                 type="button"
@@ -246,7 +246,7 @@ export default function MainUserProfile() {
             )}
           </div>
         </div>
-      </div> 
+      </div>
       <Popup
         open={openModal}
         closeOnDocumentClick

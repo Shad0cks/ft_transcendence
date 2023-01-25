@@ -139,7 +139,12 @@ export default function Friends() {
         <div className="containerRow">
           {friendsList?.map((elem, key) => (
             <Card style={{ width: '18rem' }} key={key} border="primary">
-              <Card.Img variant="top" height={300} width={300} src={elem.avatar} />
+              <Card.Img
+                variant="top"
+                height={300}
+                width={300}
+                src={elem.avatar}
+              />
               <Card.Body className="cardBody">
                 <Card.Title>{elem.nickname}</Card.Title>
                 <Card.Text>

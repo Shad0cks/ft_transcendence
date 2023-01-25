@@ -53,7 +53,12 @@ export function UserCard(props: UserCardProps) {
   }
   return (
     <Card style={{ boxShadow: '-1px 1px 9px 2px rgba(0,0,0,0.8)' }}>
-      <Card.Img height={300} width={300} variant="top" src={props.user.avatar} />
+      <Card.Img
+        height={300}
+        width={300}
+        variant="top"
+        src={props.user.avatar}
+      />
       <Card.Body className="cardBody">
         <div className="nameCont">
           <Card.Title>{props.user.nickname}</Card.Title>

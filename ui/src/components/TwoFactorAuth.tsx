@@ -86,6 +86,7 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({
                 style={{ width: 'auto', margin: '0 10px 0 10px' }}
               >
                 <Form.Control
+                  maxLength={6}
                   className="inputCode"
                   placeholder="Auth Code"
                   {...register('token')}
