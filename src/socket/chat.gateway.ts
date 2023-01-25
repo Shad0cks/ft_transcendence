@@ -20,6 +20,7 @@ import { JoinChannelDTO } from 'src/dto/joinChannel.dto';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { Clients } from 'src/adapters/socket.adapter';
 import { DirectMessageDTO } from 'src/dto/directMessage.dto';
+import { use } from 'passport';
 //import { GameObjDTO } from 'src/dto/game.dto';
 //import { PlayerDTO } from 'src/dto/player.dto';
 //import { ballDTO } from 'src/dto/ballGame.dto';
@@ -97,9 +98,20 @@ export class ChatGateway {
       for (const user of Userfromchannel) {
         const UserBlocked = this.userService.getBlockedNicknames(user);
         if (!(await UserBlocked).includes(messageDTO.senderNickname)) {
-          this.server
-            .to(Clients.getSocketId(user))
-            .emit('messageAdded', messageDTO);
+          if (
+            !this.chatService.isBanned(
+              await this.chatService.getActiveRestrictions(
+                await this.chatService.findParticipant(
+                  user,
+                  messageDTO.channelName,
+                ),
+              ),
+            )
+          ) {
+            this.server
+              .to(Clients.getSocketId(user))
+              .emit('messageAdded', messageDTO);
+          }
         }
       }
     }

@@ -21,9 +21,7 @@ import { ChannelRestrictionDTO } from 'src/dto/channelRestriction.dto';
 import { UserService } from './user.service';
 import { ChannelMessage } from 'src/entities/channelMessage.entity';
 import { User } from 'src/entities/user.entity';
-import {
-  ChatRestriction,
-} from 'src/entities/chatRestriction.entity';
+import { ChatRestriction } from 'src/entities/chatRestriction.entity';
 import { LeaveChannelDTO } from 'src/dto/leaveChannel.dto';
 import { WsException } from '@nestjs/websockets';
 import { DirectMessage } from 'src/entities/directMessage.entity';
@@ -147,9 +145,11 @@ export class ChatService {
       restriction.channel = adminParticipant.channel;
       restriction.end_date = channelRestrictionDTO.end;
 
-      if (channelRestrictionDTO.restriction === "ban" || channelRestrictionDTO.restriction === "mute")
-        restriction.restriction =
-          channelRestrictionDTO.restriction;
+      if (
+        channelRestrictionDTO.restriction === 'ban' ||
+        channelRestrictionDTO.restriction === 'mute'
+      )
+        restriction.restriction = channelRestrictionDTO.restriction;
       else throw new UnauthorizedException('Not valide restriction type');
 
       // verify user is in channel
@@ -501,12 +501,15 @@ export class ChatService {
         },
       });
       const messages = [];
+      const blockeduser = this.userService.getBlockedNicknames(user.nickname);
       for (let i = 0; i < rawMessages.length; ++i) {
-        messages.push({
-          sent_at: rawMessages[i].sent_at,
-          message: rawMessages[i].message,
-          author: rawMessages[i].sender.nickname,
-        });
+        if (!(await blockeduser).includes(rawMessages[i].sender.nickname)) {
+          messages.push({
+            sent_at: rawMessages[i].sent_at,
+            message: rawMessages[i].message,
+            author: rawMessages[i].sender.nickname,
+          });
+        }
       }
       return messages;
     } catch (error) {

@@ -268,11 +268,4 @@ export class GameGateway {
       });
     }
   }
-
-  @SubscribeMessage('IsGameValide')
-  async onIsGameValide(socket: CustomSocket, gameid: string) {
-    if (await this.gameService.isGamevalide(gameid))
-      this.server.to(socket.id).emit('IsGameValide', true);
-    else this.server.to(socket.id).emit('IsGameValide', false);
-  }
 }
