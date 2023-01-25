@@ -73,7 +73,7 @@ function MainGame() {
   }
 
   useEffect(() => {
-    if (!location.state) navigate('/games');
+    if (!location.state) return;
     setGameid(location.state.gameid);
     socket.emit('SetStatus', 'ingame');
     socket.emit('getUserbyGameid', location.state.gameid);
@@ -84,6 +84,7 @@ function MainGame() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (!location.state) navigate('/games');
     if (socket && socket.id !== undefined) {
       if (game.emiter !== socket.id) return;
       socket.emit('gameOption', { data: game, gameid: gameid });
