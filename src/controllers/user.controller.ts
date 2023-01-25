@@ -54,6 +54,7 @@ export class UserController {
   @Put('2fa')
   @UseGuards(JwtAuthGuard)
   async edit2faAction(@Body() FaSetDTO: FaSetDTO, @ReqUser() user: User) {
+    if (FaSetDTO.data.length > 30) return;
     if (FaSetDTO.stat) {
       return await this.userService.edit2fa(user, FaSetDTO.data);
     } else {
