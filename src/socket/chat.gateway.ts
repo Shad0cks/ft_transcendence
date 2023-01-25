@@ -135,8 +135,8 @@ export class ChatGateway {
           this.server
             .to(Clients.getSocketId(message.receiverNickname))
             .emit('messageprivateAdded', message);
+          this.server.to(socket.id).emit('messageprivateAdded', message);
         }
-        this.server.to(socket.id).emit('messageprivateAdded', message);
       } catch (error) {}
     }
   }
