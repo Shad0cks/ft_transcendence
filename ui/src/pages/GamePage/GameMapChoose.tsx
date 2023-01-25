@@ -61,7 +61,7 @@ export default function GameMapChoose({
           id="head"
           name="color picker"
           onChange={(e) => {
-            if (isPlayer() && checkLighness(e.target.value))
+            if (isPlayer() && !checkLighness(e.target.value))
               setGame({ ...game, mapColor: e.target.value, emiter: socket.id });
           }}
           value="#000000"
@@ -89,7 +89,7 @@ export default function GameMapChoose({
       {game.mapColor !== 'null' ? (
         <button
           type="button"
-          className="btn btn-outline-dark"
+          className="btn btn-outline-danger"
           style={{ margin: '0 auto' }}
           onClick={() => (isPlayer() ? nextPage() : null)}
         >
