@@ -230,6 +230,9 @@ export class ChatGateway {
             channelName: whitelist.channelName,
             userNickname: whitelist.userNickname,
           });
+        this.server
+          .to(Clients.getSocketId(whitelist.userNickname))
+          .emit('KickWhiteList');
       }
     } catch (error) {
       return error;

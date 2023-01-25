@@ -366,6 +366,10 @@ export default function Channel() {
       setUsersInChannel(usersInChannel.filter((user) => user !== username));
     });
 
+    socket?.on('KickWhiteList', function () {
+      window.location.reload();
+    });
+
     socket?.on('getGameByPseudo', function (gameid: string) {
       navigate('/game/' + gameid, { state: { gameid: gameid } });
     });
