@@ -172,6 +172,12 @@ export default function Channel() {
     if (!currChannel) return;
 
     GetMessages(currChannel.channelBase.name).then(async (e) => {
+      if (e.status === 500) {
+        snackbar.setMessage('You are Ban from the channel');
+        snackbar.setSeverity('error');
+        snackbar.setOpen(true);
+        setMessageList([]);
+      }
       if (e.status === 401) {
         await UserLogout();
         navigate('/');
