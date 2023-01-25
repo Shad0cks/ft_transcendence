@@ -151,12 +151,19 @@ export class ChatGateway {
 
   @SubscribeMessage('AddAdmin')
   async onAddAdmin(socket: CustomSocket, newadmin: ChannelAdminDTO) {
-    this.chatService.addAdmin(newadmin);
-    const Userfromchannel = await this.chatService.getParticipantsNickname(
-      newadmin.channelName,
-    );
-    for (const user of Userfromchannel) {
-      this.server.to(Clients.getSocketId(user)).emit('NewAdmin', newadmin);
+    try {
+      if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:newadmin.channelName}))
+      {
+        this.chatService.addAdmin(newadmin);
+        const Userfromchannel = await this.chatService.getParticipantsNickname(
+          newadmin.channelName,
+        );
+        for (const user of Userfromchannel) {
+          this.server.to(Clients.getSocketId(user)).emit('NewAdmin', newadmin);
+        }
+      }
+    } catch (error) {
+      return error;
     }
   }
 
@@ -167,20 +174,34 @@ export class ChatGateway {
   ) {
     if (restriction.adminNickname === socket.user.nickname) {
       try {
+        if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:restriction.channelName}))
+        {
+      try {
         await this.chatService.addRestriction(restriction);
       } catch (error) {
         this.server.to(socket.id).emit('error', error.message);
       }
     }
+    } catch (error) {
+      return error;
+    }
+    }
   }
 
   @SubscribeMessage('AddToWhitelist')
   async onAddToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
+    try {
+      if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:whitelist.channelName}))
     await this.chatService.addToWhitelist(whitelist);
+  } catch (error) {
+    return error;
+  }
   }
 
   @SubscribeMessage('RemoveToWhitelist')
   async onRemoveToWhitelist(socket: CustomSocket, whitelist: EditWhitelistDTO) {
+    try {
+      if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:whitelist.channelName}))
     this.chatService.removeFromWhitelist(whitelist);
     const Userfromchannel = await this.chatService.getParticipantsNickname(
       whitelist.channelName,
@@ -190,6 +211,9 @@ export class ChatGateway {
         channelName: whitelist.channelName,
         userNickname: whitelist.userNickname,
       });
+    } catch (error) {
+      return error;
+    }
   }
 
   @SubscribeMessage('ChangeChannelToPrivacy')
@@ -197,6 +221,8 @@ export class ChatGateway {
     socket: CustomSocket,
     channel: ChannelPrivacyDTO,
   ) {
+    try {
+      if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:channel.name}))
     this.chatService.changeChannelPrivacy(channel);
     const Userfromchannel = await this.chatService.getParticipantsNickname(
       channel.name,
@@ -204,6 +230,9 @@ export class ChatGateway {
     for (const user of Userfromchannel) {
       this.server.to(Clients.getSocketId(user)).emit('channelEdited');
     }
+  } catch (error) {
+    return error;
+  }
   }
 
   @SubscribeMessage('EditChannelPassword')
@@ -211,8 +240,13 @@ export class ChatGateway {
     socket: CustomSocket,
     password: ChannelPasswordDTO,
   ) {
+    try {
+      if (this.chatService.isAdmin({userNickname: socket.user.nickname, channelName:password.channel}))
     if (password.password.length > 10) return;
     this.chatService.editChannelPassword(password);
+  } catch (error) {
+    return error;
+  }
   }
 
   //TODO Invite une game
