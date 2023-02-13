@@ -1,4 +1,4 @@
-# Project ft_Transcendence
+# Project ft_transcendence
 
 ft_transcendence is a browser-based online gaming application that offers the ability to play the popular game Pong with live chat functionality for a real-time gaming experience. (42 project)
 
