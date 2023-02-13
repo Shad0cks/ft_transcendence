@@ -1,9 +1,6 @@
-
 # Project Ft-Transcendence
 
 Ft-Transcendence est une application de jeu en ligne basée sur le navigateur qui offre la possibilité de jouer au célèbre jeu Pong avec une fonctionnalité de chat en direct pour une expérience de jeu en temps réel.
-
-
 
 ## Features
 
@@ -13,7 +10,6 @@ Ft-Transcendence est une application de jeu en ligne basée sur le navigateur qu
 - Mute/Ban/Bloquer une personne.
 - 2FA à la connection.
 
-
 ## Tech Stack
 
 **Client:** React.
@@ -22,7 +18,6 @@ Ft-Transcendence est une application de jeu en ligne basée sur le navigateur qu
 
 **DB**: Azure, PostgreSQL.
 
-
 ## Environment Variables
 
 Pour exécuter ce projet, vous devrez ajouter les variables d'environnement suivantes à votre fichier .env
@@ -30,7 +25,6 @@ Pour exécuter ce projet, vous devrez ajouter les variables d'environnement suiv
 `UID_42`
 `SECRET_42`
 `REDIRECT_URI_42`
-
 
 ## Run Locally
 
@@ -45,7 +39,9 @@ Go to the project directory
 ```bash
   cd Transcendence
 ```
+
 Start the project
+
 ```bash
   Make
 ```
@@ -59,7 +55,6 @@ Start the project
 ![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731613084196864/Capture3.PNG)
 
 ![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731628586344528/Capture4.PNG)
-
 
 ## Authors
 
