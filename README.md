@@ -1,26 +1,26 @@
-# Project Ft-Transcendence
+# Project ft_Transcendence
 
-Ft-Transcendence est une application de jeu en ligne basée sur le navigateur qui offre la possibilité de jouer au célèbre jeu Pong avec une fonctionnalité de chat en direct pour une expérience de jeu en temps réel.
+ft_transcendence is a browser-based online gaming application that offers the ability to play the popular game Pong with live chat functionality for a real-time gaming experience. (42 project)
 
 ## Features
 
-- Création de channel. / Méssage privée.
-- Historique de Match.
-- Ajouter un amis.
-- Mute/Ban/Bloquer une personne.
-- 2FA à la connection.
+- Channel / DM chat
+- Pong Game
+- Friends
+- Mute / Ban / Block users
+- 2FA connection
 
 ## Tech Stack
 
-**Client:** React.
+**Client:** React
 
-**Server:** Nestjs.
+**Server:** Nestjs
 
-**DB**: Azure, PostgreSQL.
+**DB**: Azure, PostgreSQL
 
 ## Environment Variables
 
-Pour exécuter ce projet, vous devrez ajouter les variables d'environnement suivantes à votre fichier .env
+To run this project, you will need to be a 42 student and add the following environment variables to your .env file
 
 `UID_42`
 `SECRET_42`
@@ -31,19 +31,19 @@ Pour exécuter ce projet, vous devrez ajouter les variables d'environnement suiv
 Clone the project
 
 ```bash
-  git clone https://github.com/AdilBl/Transcendence.git
+  git clone https://github.com/Shad0cks/ft_transcendence.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd Transcendence
+  cd ft_transcendence
 ```
 
 Start the project
 
 ```bash
-  Make
+  make
 ```
 
 ## Screenshots
