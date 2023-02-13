@@ -1,45 +1,69 @@
-## Prérequis
 
-Node version 18.9.0
+# Project Ft-Transcendence
 
-## Backend
+Ft-Transcendence est une application de jeu en ligne basée sur le navigateur qui offre la possibilité de jouer au célèbre jeu Pong avec une fonctionnalité de chat en direct pour une expérience de jeu en temps réel.
 
-Installation
 
-```bash
-$ npm install
-```
 
-Lancement
+## Features
 
-```bash
-$ npm run start:dev
-```
+- Création de channel. / Méssage privée.
+- Historique de Match.
+- Ajouter un amis.
+- Mute/Ban/Bloquer une personne.
+- 2FA à la connection.
 
-## Frontend
 
-Installation
+## Tech Stack
 
-```bash
-$ npm install
-```
+**Client:** React.
 
-Lancement
+**Server:** Nestjs.
 
-```bash
-$ npm run start
-```
+**DB**: Azure, PostgreSQL.
 
-## Docker
 
-Pour lancer toute l'application conteneurisée
+## Environment Variables
 
-```bash
-$ docker-compose up -d
-```
+Pour exécuter ce projet, vous devrez ajouter les variables d'environnement suivantes à votre fichier .env
 
-Pour lancer seulement la base de données
+`UID_42`
+`SECRET_42`
+`REDIRECT_URI_42`
+
+
+## Run Locally
+
+Clone the project
 
 ```bash
-$ docker-compose up -d db
+  git clone https://github.com/AdilBl/Transcendence.git
 ```
+
+Go to the project directory
+
+```bash
+  cd Transcendence
+```
+Start the project
+```bash
+  Make
+```
+
+## Screenshots
+
+![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731574077161522/Capture1.PNG)
+
+![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731600128004116/Capture2.PNG)
+
+![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731613084196864/Capture3.PNG)
+
+![App Screenshot](https://cdn.discordapp.com/attachments/921439493519732747/1074731628586344528/Capture4.PNG)
+
+
+## Authors
+
+- [@AdilBl](https://github.com/AdilBl)
+- [@Shad0cks](https://github.com/Shad0cks)
+- [@gregory-artaud](https://github.com/gregory-artaud)
+- [@Qroussea](https://github.com/Qroussea)
